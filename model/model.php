@@ -2,6 +2,10 @@
 class Model
 {
     public $db = null;
+
+    // ========================================================
+    // ===================== CONSTRUCTOR ======================
+    // ========================================================
     function __construct()
     {
         try {
@@ -11,7 +15,11 @@ class Model
         }
     }
 
-    // ===================== GET FUNCTIONS =====================
+    // ========================================================
+    // ===================== GET FUNCTIONS ====================
+    // ========================================================
+
+    // ----- USER DATA -----
     public function getUserById($userID)
     {
         $query = "SELECT * FROM user WHERE userID = ?";
@@ -67,6 +75,27 @@ class Model
         return $admins;
     }
 
+    public function getPicturePathById($userID)
+    {
+        $stmt = $this->db->prepare("SELECT profilePicture FROM user WHERE userID = ?");
+        $stmt->bind_param("i", $userID);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        return $row ? $row['profilePicture'] : null;
+    }
+
+    public function getUserPoints($userID)
+    {
+        $stmt = $this->db->prepare("SELECT totalCurrentPoints FROM user WHERE userID = ?");
+        $stmt->bind_param("i", $userID);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        return $row ? (int)$row['totalCurrentPoints'] : 0;
+    }
+
+    // ----- REWARD DATA -----
     public function getAllRewards()
     {
         $query = "SELECT * FROM reward ORDER BY pointsRequired ASC";
@@ -80,38 +109,18 @@ class Model
         return $rewards;
     }
 
-    public function getPicturePathById($userID)
+    public function getRewardById($rewardID)
     {
-        $stmt = $this->db->prepare("SELECT profilePicture FROM user WHERE userID = ?");
-        $stmt->bind_param("i", $userID);
+        $stmt = $this->db->prepare("SELECT * FROM reward WHERE rewardID = ?");
+        $stmt->bind_param("i", $rewardID);
         $stmt->execute();
         $result = $stmt->get_result();
-        $row = $result->fetch_assoc();
-        return $row ? $row['profilePicture'] : null;
+        return $result->fetch_assoc();
     }
-// --------get user points
-public function getUserPoints($userID)
-{
-    $stmt = $this->db->prepare("SELECT totalCurrentPoints FROM user WHERE userID = ?");
-    $stmt->bind_param("i", $userID);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $row = $result->fetch_assoc();
-    return $row ? (int)$row['totalCurrentPoints'] : 0;
-}
 
-// ----- get reward by Id
-public function getRewardById($rewardID)
-{
-    $stmt = $this->db->prepare("SELECT * FROM reward WHERE rewardID = ?");
-    $stmt->bind_param("i", $rewardID);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    return $result->fetch_assoc();
-}
-
-    // -----------------------------------------------------------------------------  Total Number Per Item
-    public function getTotalPlastic(){
+    // ----- TOTAL WASTE QUANTITY (All Users) -----
+    public function getTotalPlastic()
+    {
         $stmt = $this->db->prepare("SELECT SUM(quantity) as totalPlastic FROM wasteentry WHERE materialID = 1");
         $stmt->execute();
         $result = $stmt->get_result();
@@ -119,216 +128,127 @@ public function getRewardById($rewardID)
         return $row ? $row['totalPlastic'] : 0;
     }
 
-public function getTotalBottles(){
-    $stmt = $this->db->prepare("SELECT SUM(quantity) as totalBottles FROM wasteentry WHERE materialID = 2");
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $row = $result->fetch_assoc();
-    return $row ? $row['totalBottles'] : 0;
-}
+    public function getTotalBottles()
+    {
+        $stmt = $this->db->prepare("SELECT SUM(quantity) as totalBottles FROM wasteentry WHERE materialID = 2");
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        return $row ? $row['totalBottles'] : 0;
+    }
 
-    public function getTotalCans(){
+    public function getTotalCans()
+    {
         $stmt = $this->db->prepare("SELECT SUM(quantity) as totalCans FROM wasteentry WHERE materialID = 3");
         $stmt->execute();
         $result = $stmt->get_result();
         $row = $result->fetch_assoc();
         return $row ? $row['totalCans'] : 0;
     }
-// -------------------------------------------------------------------------Waste Contribution Per Month
+
+    // ----- WASTE STATS PER MONTH -----
     public function getWasteContributionsPerMaterialThisMonth()
-{
-    $stmt = $this->db->prepare("
-        SELECT m.materialName, SUM(w.quantity) AS totalQuantity
-        FROM wasteentry w
-        JOIN materialType m ON w.materialID = m.materialID
-        WHERE MONTH(w.dateDeposited) = MONTH(CURRENT_DATE())
-          AND YEAR(w.dateDeposited) = YEAR(CURRENT_DATE())
-        GROUP BY m.materialName
-    ");
-    $stmt->execute();
-    $result = $stmt->get_result();
+    {
+        $stmt = $this->db->prepare("
+            SELECT m.materialName, SUM(w.quantity) AS totalQuantity
+            FROM wasteentry w
+            JOIN materialType m ON w.materialID = m.materialID
+            WHERE MONTH(w.dateDeposited) = MONTH(CURRENT_DATE())
+              AND YEAR(w.dateDeposited) = YEAR(CURRENT_DATE())
+            GROUP BY m.materialName
+        ");
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-    $data = [];
-    while ($row = $result->fetch_assoc()) {
-        $data[] = [
-            'materialType' => $row['materialName'],
-            'totalQuantity' => (int)$row['totalQuantity']
-        ];
+        $data = [];
+        while ($row = $result->fetch_assoc()) {
+            $data[] = [
+                'materialType' => $row['materialName'],
+                'totalQuantity' => (int)$row['totalQuantity']
+            ];
+        }
+
+        return $data;
     }
 
-    return $data;
-}
+    // ----- CONTRIBUTIONS PER ZONE -----
+    public function getContZone1() { return $this->getZoneContribution('Zone 1'); }
+    public function getContZone2() { return $this->getZoneContribution('Zone 2'); }
+    public function getContZone3() { return $this->getZoneContribution('Zone 3'); }
+    public function getContZone4() { return $this->getZoneContribution('Zone 4'); }
+    public function getContZone5() { return $this->getZoneContribution('Zone 5'); }
+    public function getContZone6() { return $this->getZoneContribution('Zone 6'); }
+    public function getContZone7() { return $this->getZoneContribution('Zone 7'); }
 
-// ---------------------------------------------------------------------
-
-// public function getContributionsPerZone()
-// {
-//     $stmt = $this->db->prepare("
-//         SELECT u.zone AS zone, 
-//                SUM(w.quantity) AS totalQuantity
-//         FROM user u
-//         LEFT JOIN wasteentry w ON w.userID = u.userID
-//         GROUP BY u.zone
-//         ORDER BY totalQuantity DESC
-//     ");
-//     $stmt->execute();
-//     $result = $stmt->get_result();
-
-//     $data = [];
-//     while ($row = $result->fetch_assoc()) {
-//         // Convert NULL sums to 0 in PHP instead of SQL
-//         $data[] = [
-//             'zone' => $row['zone'],
-//             'totalQuantity' => $row['totalQuantity'] !== null ? (int) $row['totalQuantity'] : 0
-//         ];
-//     }
-
-//     return $data;
-// }
-
-public function getContZone1(){
-    $stmt = $this->db->prepare("
-        SELECT SUM(w.quantity) AS totalQuantity
-        FROM wasteentry w
-        JOIN user u ON w.userID = u.userID
-        WHERE u.zone = 'Zone 1' 
-    ");
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $row = $result->fetch_assoc();
-    return $row ? (int)$row['totalQuantity'] : 0;
-}
-
-public function getContZone2(){
-    $stmt = $this->db->prepare("
-        SELECT SUM(w.quantity) AS totalQuantity
-        FROM wasteentry w
-        JOIN user u ON w.userID = u.userID
-        WHERE u.zone = 'Zone 2'
-    ");
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $row = $result->fetch_assoc();
-    return $row ? (int)$row['totalQuantity'] : 0;
-}
-
-public function getContZone3(){
-    $stmt = $this->db->prepare("
-        SELECT SUM(w.quantity) AS totalQuantity
-        FROM wasteentry w
-        JOIN user u ON w.userID = u.userID
-        WHERE u.zone = 'Zone 3'
-    ");
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $row = $result->fetch_assoc();
-    return $row ? (int)$row['totalQuantity'] : 0;
-}
-
-public function getContZone4(){
-    $stmt = $this->db->prepare("
-        SELECT SUM(w.quantity) AS totalQuantity
-        FROM wasteentry w
-        JOIN user u ON w.userID = u.userID
-        WHERE u.zone = 'Zone 4'
-    ");
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $row = $result->fetch_assoc();
-    return $row ? (int)$row['totalQuantity'] : 0;
-}
-
-public function getContZone5(){
-    $stmt = $this->db->prepare("
-        SELECT SUM(w.quantity) AS totalQuantity
-        FROM wasteentry w
-        JOIN user u ON w.userID = u.userID
-        WHERE u.zone = 'Zone 5'
-    ");
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $row = $result->fetch_assoc();
-    return $row ? (int)$row['totalQuantity'] : 0;
-}
-
-public function getContZone6(){
-    $stmt = $this->db->prepare("
-        SELECT SUM(w.quantity) AS totalQuantity
-        FROM wasteentry w
-        JOIN user u ON w.userID = u.userID
-        WHERE u.zone = 'Zone 6'
-    ");
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $row = $result->fetch_assoc();
-    return $row ? (int)$row['totalQuantity'] : 0;
-}
-public function getContZone7(){
-    $stmt = $this->db->prepare("
-        SELECT SUM(w.quantity) AS totalQuantity
-        FROM wasteentry w
-        JOIN user u ON w.userID = u.userID
-        WHERE u.zone = 'Zone 7'
-    ");
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $row = $result->fetch_assoc();
-    return $row ? (int)$row['totalQuantity'] : 0;
-}
-
-
-
-public function getWasteHistory()
-{
-    $stmt = $this->db->prepare("
-        SELECT w.*, u.fullName, m.materialName
-        FROM wasteentry w
-        JOIN user u ON w.userID = u.userID
-        JOIN materialType m ON w.materialID = m.materialID
-        ORDER BY w.dateDeposited DESC
-    ");
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    $history = [];
-    while ($row = $result->fetch_assoc()) {
-        $history[] = $row;
+    private function getZoneContribution($zone)
+    {
+        $stmt = $this->db->prepare("
+            SELECT SUM(w.quantity) AS totalQuantity
+            FROM wasteentry w
+            JOIN user u ON w.userID = u.userID
+            WHERE u.zone = ?
+        ");
+        $stmt->bind_param("s", $zone);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        return $row ? (int)$row['totalQuantity'] : 0;
     }
-    return $history;
-}
 
-// ----------------------------------------------------------------------------
+    // ----- WASTE HISTORY -----
+    public function getWasteHistory()
+    {
+        $stmt = $this->db->prepare("
+            SELECT w.*, u.fullName, m.materialName
+            FROM wasteentry w
+            JOIN user u ON w.userID = u.userID
+            JOIN materialType m ON w.materialID = m.materialID
+            ORDER BY w.dateDeposited DESC
+        ");
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-// ------ get user total item
-public function getUserTotalPlastic($userID){
-    $stmt = $this->db->prepare("SELECT SUM(quantity) as totalPlastic FROM wasteentry WHERE userID = ? AND materialID = 1");
-    $stmt->bind_param("i", $userID);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $row = $result->fetch_assoc();
-    return $row ? (int)$row['totalPlastic'] : 0;
+        $history = [];
+        while ($row = $result->fetch_assoc()) {
+            $history[] = $row;
+        }
+        return $history;
+    }
 
-}
+    // ----- USER-SPECIFIC TOTALS -----
+    public function getUserTotalPlastic($userID)
+    {
+        $stmt = $this->db->prepare("SELECT SUM(quantity) as totalPlastic FROM wasteentry WHERE userID = ? AND materialID = 1");
+        $stmt->bind_param("i", $userID);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        return $row ? (int)$row['totalPlastic'] : 0;
+    }
 
-public function getUserTotalGlassBottles($userID){
-    $stmt = $this->db->prepare("SELECT SUM(quantity) as totalBottles FROM wasteentry WHERE userID = ? AND materialID = 2");
-    $stmt->bind_param("i", $userID);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $row = $result->fetch_assoc();
-    return $row ? (int)$row['totalBottles'] : 0;
-}
+    public function getUserTotalGlassBottles($userID)
+    {
+        $stmt = $this->db->prepare("SELECT SUM(quantity) as totalBottles FROM wasteentry WHERE userID = ? AND materialID = 2");
+        $stmt->bind_param("i", $userID);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        return $row ? (int)$row['totalBottles'] : 0;
+    }
 
-public function getUserTotalCans($userID){
-    $stmt = $this->db->prepare("SELECT SUM(quantity) as totalCans FROM wasteentry WHERE userID = ? AND materialID = 3");
-    $stmt->bind_param("i", $userID);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $row = $result->fetch_assoc();
-    return $row ? (int)$row['totalCans'] : 0;
-}
+    public function getUserTotalCans($userID)
+    {
+        $stmt = $this->db->prepare("SELECT SUM(quantity) as totalCans FROM wasteentry WHERE userID = ? AND materialID = 3");
+        $stmt->bind_param("i", $userID);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        return $row ? (int)$row['totalCans'] : 0;
+    }
 
-    // ===================== ADD FUNCTIONS =====================
+    // ========================================================
+    // ===================== ADD FUNCTIONS ===================
+    // ========================================================
     public function registerUser($fullname, $email, $zone, $contactNumber, $username, $password)
     {
         if ($this->userExists($username)) {
@@ -373,7 +293,9 @@ public function getUserTotalCans($userID){
         $stmt->close();
     }
 
-    // ===================== UPDATE FUNCTIONS =====================
+    // ========================================================
+    // ===================== UPDATE FUNCTIONS =================
+    // ========================================================
     public function updateProfileSettings($userID, $fullName, $zone, $position, $email, $contactNumber, $username, $hashedPassword = null, $profilePicturePath = null)
     {
         $fields = "fullName=?, zone=?, position=?, email=?, contactNumber=?, username=?";
@@ -423,23 +345,23 @@ public function getUserTotalCans($userID){
         return $stmt->execute();
     }
 
-    public function updateReward($rewardName, $pointsRequired, $slotNum, $availableStock, $rewardID, $imagePath, $availability) {
+    public function updateReward($rewardName, $pointsRequired, $slotNum, $availableStock, $rewardID, $imagePath, $availability)
+    {
         if (!empty($imagePath)) {
             $query = "UPDATE reward 
-                    SET rewardName = ?, pointsRequired = ?, slotNum = ?, availableStock = ?, availability = ?, rewardImg = ? 
-                    WHERE rewardID = ?";
-            $params = [$rewardName, $pointsRequired, $slotNum, $availableStock, $availability, $imagePath, $rewardID];
+                      SET rewardName = ?, pointsRequired = ?, slotNum = ?, availableStock = ?, availability = ?, rewardImg = ? 
+                      WHERE rewardID = ?";
+            $stmt = $this->db->prepare($query);
+            $stmt->bind_param("siiisii", $rewardName, $pointsRequired, $slotNum, $availableStock, $availability, $imagePath, $rewardID);
         } else {
             $query = "UPDATE reward 
-                    SET rewardName = ?, pointsRequired = ?, slotNum = ?, availableStock = ?, availability = ? 
-                    WHERE rewardID = ?";
-            $params = [$rewardName, $pointsRequired, $slotNum, $availableStock, $availability, $rewardID];
+                      SET rewardName = ?, pointsRequired = ?, slotNum = ?, availableStock = ?, availability = ? 
+                      WHERE rewardID = ?";
+            $stmt = $this->db->prepare($query);
+            $stmt->bind_param("siiiii", $rewardName, $pointsRequired, $slotNum, $availableStock, $availability, $rewardID);
         }
-
-        $stmt = $this->db->prepare($query);
-        return $stmt->execute($params);
+        return $stmt->execute();
     }
-
 
     public function calcPoints($userID, $materialID, $quantity)
     {
@@ -477,7 +399,9 @@ public function getUserTotalCans($userID){
         return 0;
     }
 
-    // ===================== DELETE FUNCTIONS =====================
+    // ========================================================
+    // ===================== DELETE FUNCTIONS =================
+    // ========================================================
     public function deleteReward($rewardID)
     {
         $stmt = $this->db->prepare("DELETE FROM reward WHERE rewardID = ?");
@@ -522,7 +446,9 @@ public function getUserTotalCans($userID){
         }
     }
 
-    // ===================== UTILITY FUNCTIONS =====================
+    // ========================================================
+    // ===================== UTILITY FUNCTIONS ================
+    // ========================================================
     public function loginUser($username, $password, $role)
     {
         $query = "SELECT * FROM user WHERE username = ? AND role = ?";
@@ -543,12 +469,16 @@ public function getUserTotalCans($userID){
 
     public function userExists($username)
     {
-        $query = "SELECT * FROM user WHERE username = ?";
-        $stmt = $this->db->prepare($query);
+        $query = "SELECT 1 FROM user WHERE username = ? LIMIT 1";
+        $stmt  = $this->db->prepare($query);
         $stmt->bind_param("s", $username);
         $stmt->execute();
-        $result = $stmt->get_result();
-        return $result->num_rows > 0;
+        // Use store_result to avoid dependency on mysqlnd for get_result()
+        $stmt->store_result();
+        $exists = $stmt->num_rows > 0;
+        $stmt->free_result();
+        $stmt->close();
+        return $exists;
     }
 }
 ?>
