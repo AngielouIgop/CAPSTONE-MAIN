@@ -1,0 +1,146 @@
+body, html {
+  height: 100%;
+  margin: 0;
+  font-family: sans-serif;
+  background: #f8f9fa;
+}
+
+.login-container {
+  display: flex;
+  flex-direction: row;
+  min-height: 100vh;
+}
+
+.logo-side {
+  flex: 1;
+  background: rgb(0, 48, 96);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 25px;
+}
+
+.logo-side img {
+  width: 550px; 
+  height: 550px; 
+  margin-bottom: none; 
+  filter: drop-shadow(10px 10px 15px rgba(0, 0, 0, 0.5));
+}
+
+.logo-side h2 {
+  margin-top: 0; 
+  /* filter: drop-shadow(10px 10px 15px rgba(0,0,0,0.5)); */
+}
+
+.form-side {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  padding-top: 110px;
+}
+
+.login-card {
+  background: #fff;
+  padding: 32px 24px;
+  border-radius: 10px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+  width: 100%;
+  max-width: 350px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.login-card h2 {
+  text-align: center;
+  color: rgb(0, 48, 96);
+  margin-bottom: 16px;
+}
+
+.login-card label {
+  margin-top: 8px;
+  margin-bottom: 4px;
+  color: #333;
+}
+
+.login-card input,
+.login-card select {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Password toggle styles */
+.password-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.password-toggle {
+  margin-left: auto;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #666;
+  padding: 5px;
+}
+
+.password-toggle:hover {
+  color: #333;
+}
+
+.password-container input[type="password"],
+.password-container input[type="text"] {
+  padding-right: 40px;
+}
+
+.btn-primary, .btn-secondary {
+  margin-top: 12px;
+  padding: 10px 0;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 1em;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+}
+
+.register-link{
+  text-align: center;
+}
+
+.btn-primary {
+  background: rgb(0, 48, 96);
+  color: #fff;
+}
+
+.btn-secondary {
+  background: #fff;
+  color: rgb(0, 48, 96);
+  border: 1px solid rgb(0, 48, 96);
+}
+
+.btn-primary:hover, .btn-secondary:hover {
+  opacity: 0.9;
+}
+
+@media (max-width: 900px) {
+  .login-container {
+    flex-direction: column;
+  }
+  .logo-side, .form-side {
+    width: 100%;
+    min-height: 200px;
+  }
+}

@@ -1,0 +1,128 @@
+.report-container {
+  padding: 14px;
+  font-family: 'Segoe UI', sans-serif;
+  background: #fdf5f5;
+  color: #222;
+  margin-left: 250px; /* shifted a bit more to the right */
+  margin-top: 65px;   /* slight spacing from the header */
+}
+
+.report-title {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+.summary-cards {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 14px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  width: 135px;
+  flex-shrink: 0;
+}
+
+.card img {
+  width: 40px;
+  margin-bottom: 6px;
+}
+
+.card p {
+  font-size: 11px;
+  margin: 0;
+}
+
+.card h2 {
+  margin: 6px 0 0;
+  font-size: 16px;
+}
+
+.date-picker {
+  margin-left: auto;
+  font-size: 11px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.main-reports {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 14px;
+}
+
+.contribution-graph,
+.leading-zones,
+.top-contributors {
+  background: #fff;
+  border-radius: 10px;
+  padding: 14px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.contribution-graph h3,
+.leading-zones h3,
+.top-contributors h3 {
+  font-size: 15px;
+  margin-bottom: 6px;
+}
+
+.total-waste {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.leading-zones ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.leading-zones li {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 12px;
+}
+
+.top-contributors {
+  grid-column: span 2;
+}
+
+.top-contributors .mini-date {
+  float: right;
+  font-size: 11px;
+  margin-top: -22px;
+  color: #555;
+}
+
+.top-contributors table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 6px;
+}
+
+.top-contributors th,
+.top-contributors td {
+  padding: 8px 6px;
+  font-size: 12px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.top-contributors td {
+  vertical-align: top;
+}
