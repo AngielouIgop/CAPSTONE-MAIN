@@ -79,6 +79,8 @@ class Controller
 
                                 if ($loginRole === 'admin') {
                                     header('Location: ?command=adminDashboard');
+                                } elseif ($loginRole === 'super admin') { 
+                                    header('Location: ?command=adminDashboard');  
                                 } else {
                                     header('Location: ?command=dashboard');
                                 }
@@ -275,7 +277,9 @@ class Controller
                 $totalPlastic = $this->model->getTotalPlastic();
                 $totalCans = $this->model->getTotalCans();
                 $totalGlassBottles = $this->model->getTotalBottles();
-                include_once('view/admindashboard.php');
+                $notification = $this->model->getNotifications();
+                // $notifStatusUpdate = $this->model->updateNotifStatus();
+                include_once('view/adminDashboard.php');
                 break;
 
             case 'manageUser':
@@ -376,6 +380,7 @@ class Controller
 
                 $userID = $_SESSION['user']['userID'];
                 $admin = $this->model->getUserData($userID);
+                
 
                 include_once('view/adminProfile.php');
                 break;
@@ -535,6 +540,9 @@ class Controller
                 exit();
                 break;
 
+            default:
+            include_once('view/404.php');
+            break;
         }
     }
 
