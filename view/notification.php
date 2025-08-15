@@ -24,12 +24,12 @@
       <div class="modal-body">
         <ul id="notification-list"></ul>
       </div>
-
-      <div class="modal-body">
-        <ul id="notification-list"></ul>
-      </div>
     </div>
   </div>
+
+  <script>
+  const notifications = <?php echo json_encode($notification); ?>;
+</script>
 
 <script>
 // Elements
@@ -38,11 +38,12 @@ const notificationList = document.getElementById('notification-list');
 
 // Fetch notifications (dummy data for now)
 function fetchNotifications() {
-  return [
-    { title: 'Notification 1', message: 'This is the first notification' },
-    { title: 'Notification 2', message: 'This is the second notification' }
-  ];
+  return notifications.map(n => ({
+    title: n.sensor_name,
+    message: n.message
+  }));
 }
+
 
 // Populate the notification list
 function populateNotificationList(notifications) {
