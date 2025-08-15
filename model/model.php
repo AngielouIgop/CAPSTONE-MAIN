@@ -30,6 +30,16 @@ class Model
         return $result->fetch_assoc();
     }
 
+    public function getNotifications(){
+        $stmt = $this->db->prepare("SELECT * FROM sensor_notifications WHERE status = 'unread' ");
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $notifications = [];
+        while ($row = $result->fetch_assoc()) {
+            $notifications[] = $row;
+        }
+        return $notifications;
+    }
     public function getUserData($userID)
     {
         $stmt = $this->db->prepare("SELECT fullName, username, password, email, contactNumber, zone, profilePicture FROM user WHERE userID = ?");
