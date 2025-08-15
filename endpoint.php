@@ -2,14 +2,17 @@
 session_start();
 require_once('model/model.php');
 
-class Endpoint {
+class Endpoint
+{
     private $model;
 
-    function __construct() {
+    function __construct()
+    {
         $this->model = new Model();
     }
 
-    public function processRequest() {
+    public function processRequest()
+    {
         header('Content-Type: application/json');
 
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -34,6 +37,38 @@ class Endpoint {
         $dateDeposited = date('Y-m-d');
         $timeDeposited = date('H:i:s');
         $userID = $_POST['userID'] ?? '';
+
+        // Check if this is just a bin-full notification
+        if (isset($_POST['binFull']) && $_POST['binFull'] == 1) {
+            error_log("Plastic bin full notification received for user $userID");
+
+
+            // Prepare insert
+            $sensorName = "Plastic Bin"; // Or $_POST['sensorName'] if sent from ESP32
+            $message = "Plastic bin is full";
+            $status = "unread";
+
+            $stmt = $this->model->db->prepare("INSERT INTO notifications (sensor_name, message, status) VALUES (?, ?, ?)");
+            $stmt->bind_param("sss", $sensorName, $message, $status);
+
+            if ($stmt->execute()) {
+                echo json_encode([
+                    "success" => true,
+                    "message" => "Bin full notification saved"
+                ]);
+            } else {
+                echo json_encode([
+                    "success" => false,
+                    "message" => "Failed to save notification"
+                ]);
+            }
+
+            $stmt->close();
+
+            return; // stop further processing
+        }
+
+
 
         if (empty($material) || !isset($_POST['weight']) || empty($userID)) {
             error_log("Missing required fields");
@@ -94,4 +129,3 @@ class Endpoint {
 $endpoint = new Endpoint();
 $endpoint->processRequest();
 ?>
-
