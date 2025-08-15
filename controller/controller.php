@@ -278,7 +278,6 @@ class Controller
                 $totalCans = $this->model->getTotalCans();
                 $totalGlassBottles = $this->model->getTotalBottles();
                 $notification = $this->model->getNotifications();
-                // $notifStatusUpdate = $this->model->updateNotifStatus();
                 include_once('view/adminDashboard.php');
                 break;
 
