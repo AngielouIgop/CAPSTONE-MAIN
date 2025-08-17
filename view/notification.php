@@ -23,6 +23,7 @@
       </div>
       <div class="modal-body">
         <ul id="notification-list"></ul>
+        <button  class="done-btn" id="done-btn">Done</button>
       </div>
     </div>
   </div>
@@ -48,25 +49,38 @@ function fetchNotifications() {
 // Populate the notification list
 function populateNotificationList(notifications) {
   notificationList.innerHTML = '';
-  
+
   notifications.forEach(n => {
     const li = document.createElement('li');
     li.classList.add('notification-item');
     li.innerHTML = `
-      <h5>${n.title}</h5>
+      <h5>${n.sensor_name}</h5>
       <p>${n.message}</p>
+      <button class="done-btn" data-id="${n.id}">Done</button>
       <button class="notif-close-btn">&times;</button>
     `;
     notificationList.appendChild(li);
   });
 
-  // Attach close events for each notification
-  document.querySelectorAll('.notif-close-btn').forEach(btn => {
+  document.querySelectorAll('.done-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      btn.parentElement.remove();
+      const notifId = btn.dataset.id;
+      fetch('updateNotification.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `id=${notifId}`
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          btn.parentElement.remove();
+        }
+      });
     });
   });
 }
+
+
 
 // Open modal
 function openNotificationModal() {
@@ -91,8 +105,26 @@ document.querySelector('.clear-btn').addEventListener('click', () => {
   notificationList.innerHTML = '';
 });
 </script>
-
-
+<script>
+document.getElementById('done-btn').addEventListener('click', () => {
+  fetch('updateNotification.php', {
+    method: 'POST'
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      alert('All notifications marked as read!');
+      // Optionally update UI
+      document.querySelectorAll('.notification-item').forEach(item => {
+        item.style.opacity = 0.5; // Fade out or visually mark as done
+      });
+    } else {
+      alert('Error: ' + data.message);
+    }
+  })
+  .catch(err => console.error('Error:', err));
+});
+</script>
 </body>
 
 </html>
