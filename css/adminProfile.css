@@ -12,6 +12,62 @@ body {
   .sidebar {
     width: 250px;
   }
+
+  .notification-container {
+  width: 300px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+}
+
+.notification-header {
+  background: #f1f1f1;
+  padding: 8px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+}
+
+.clear-btn {
+  background: none;
+  border: none;
+  color: #007BFF;
+  cursor: pointer;
+}
+
+.notification-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-top: 1px solid #ddd;
+  position: relative;
+}
+
+.icon {
+  color: red;
+  margin-right: 8px;
+}
+
+.message {
+  flex: 1;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #888;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.close-btn:hover {
+  color: #000;
+}
+
   
   .profile-settings-container {
     padding-top: 50px;
@@ -38,7 +94,7 @@ body {
     font-size: 2rem;
     font-weight: bold;
     margin-bottom: 1.5rem;
-    color: #fff;
+    color: #000000;
   }
   
  .profile-form-top {
