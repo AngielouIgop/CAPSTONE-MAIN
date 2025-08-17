@@ -30,16 +30,10 @@ class Model
         return $result->fetch_assoc();
     }
 
-    public function getNotifications(){
-        $stmt = $this->db->prepare("SELECT * FROM sensor_notifications WHERE status = 'unread' ");
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $notifications = [];
-        while ($row = $result->fetch_assoc()) {
-            $notifications[] = $row;
-        }
-        return $notifications;
-    }
+   public function getNotifications() {
+    $result = $this->db->query("SELECT * FROM sensor_notifications WHERE status = 'unread'");
+    return $result->fetch_all(MYSQLI_ASSOC);
+}
     public function getUserData($userID)
     {
         $stmt = $this->db->prepare("SELECT fullName, username, password, email, contactNumber, zone, profilePicture FROM user WHERE userID = ?");
@@ -407,6 +401,16 @@ class Model
             }
         }
         return 0;
+    }
+
+    public function updateNotifStatus($id) {
+    $stmt = $this->db->prepare("UPDATE sensor_notifications SET status = 'read' WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    return $stmt->execute();
+    }
+
+    public function markAllRead() {
+    return $this->db->query("UPDATE sensor_notifications SET status = 'read'");
     }
 
     // ========================================================
