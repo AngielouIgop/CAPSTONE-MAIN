@@ -105,9 +105,13 @@ class Controller
                 }
 
                 $userID = $_SESSION['user']['userID'];
-                $userTotalPlastic = $this->model->getUserTotalPlastic($userID);
-                $userTotalGlass = $this->model->getUserTotalGlassBottles($userID);
-                $userTotalCans = $this->model->getUserTotalCans($userID);
+                $user = $this->model->getUserByID($userID);
+                // $userTotalPlastic = $this->model->getUserTotalPlastic($userID);
+                // $userTotalGlass = $this->model->getUserTotalGlassBottles($userID);
+                // $userTotalCans = $this->model->getUserTotalCans($userID);
+                $topContributors = $this->model->getTopContributors();
+                $mostContributedWaste = $this->model->getMostContributedWaste();
+
 
                 include_once('view/dashboard.php');
                 break;
@@ -120,8 +124,7 @@ class Controller
                 }
                 $userID = $_SESSION['user']['userID'];
                 $users = $this->model->getUserData($userID);
-                $totalCurrentPoints = $this->model->getUserPoints($userID);
-                $wasteHistory = $this->model->getWasteHistory($userID);
+                $totalCurrentPoints = (float)$this->model->getUserPoints($userID);
                 $rewards = $this->model->getAllRewards();
 
                 // Debug line - remove after testing
