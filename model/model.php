@@ -30,10 +30,11 @@ class Model
         return $result->fetch_assoc();
     }
 
-   public function getNotifications() {
-    $result = $this->db->query("SELECT * FROM sensor_notifications WHERE status = 'unread'");
-    return $result->fetch_all(MYSQLI_ASSOC);
-}
+    public function getNotifications()
+    {
+        $result = $this->db->query("SELECT * FROM sensor_notifications WHERE status = 'unread'");
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
     public function getUserData($userID)
     {
         $stmt = $this->db->prepare("SELECT fullName, username, password, email, contactNumber, zone, profilePicture FROM user WHERE userID = ?");
@@ -92,12 +93,60 @@ class Model
     public function getUserPoints($userID)
     {
         $stmt = $this->db->prepare("SELECT totalCurrentPoints FROM user WHERE userID = ?");
-        $stmt->bind_param("i", $userID);
+        $stmt->bind_param("d", $userID);
         $stmt->execute();
         $result = $stmt->get_result();
         $row = $result->fetch_assoc();
-        return $row ? (int)$row['totalCurrentPoints'] : 0;
+        return $row ? (int) $row['totalCurrentPoints'] : 0;
     }
+
+  public function getTopContributors()
+{
+    $stmt = $this->db->prepare("
+        SELECT u.zone, u.userID, u.fullName, SUM(w.quantity) AS totalQuantity
+        FROM user u
+        LEFT JOIN wasteentry w ON u.userID = w.userID
+        WHERE u.role = 'user'
+        GROUP BY u.zone, u.userID, u.fullName
+        HAVING totalQuantity IS NOT NULL
+    ");
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $zoneLeaders = [];
+
+    // loop through results, keep only top contributor per zone
+    while ($row = $result->fetch_assoc()) {
+        $zone = $row['zone'];
+        $quantity = (int) $row['totalQuantity'];
+
+        if (!isset($zoneLeaders[$zone]) || $quantity > $zoneLeaders[$zone]['totalQuantity']) {
+            $zoneLeaders[$zone] = [
+                'userID' => $row['userID'],
+                'fullName' => $row['fullName'],
+                'totalQuantity' => $quantity
+            ];
+        }
+    }
+
+    return $zoneLeaders; // key = zone, value = top user
+}
+
+
+public function getMostContributedWaste()
+{
+    $stmt = $this->db->prepare("
+        SELECT m.materialID, m.materialName, m.materialImg, SUM(e.quantity) as totalQuantity
+        FROM wasteentry e
+        INNER JOIN materialtype m ON e.materialID = m.materialID
+        GROUP BY m.materialID
+        ORDER BY totalQuantity DESC
+        LIMIT 1
+    ");
+    $stmt->execute();
+    return $stmt->get_result()->fetch_assoc();
+}
+
 
     // ----- REWARD DATA -----
     public function getAllRewards()
@@ -168,7 +217,7 @@ class Model
         while ($row = $result->fetch_assoc()) {
             $data[] = [
                 'materialType' => $row['materialName'],
-                'totalQuantity' => (int)$row['totalQuantity']
+                'totalQuantity' => (int) $row['totalQuantity']
             ];
         }
 
@@ -176,13 +225,34 @@ class Model
     }
 
     // ----- CONTRIBUTIONS PER ZONE -----
-    public function getContZone1() { return $this->getZoneContribution('Zone 1'); }
-    public function getContZone2() { return $this->getZoneContribution('Zone 2'); }
-    public function getContZone3() { return $this->getZoneContribution('Zone 3'); }
-    public function getContZone4() { return $this->getZoneContribution('Zone 4'); }
-    public function getContZone5() { return $this->getZoneContribution('Zone 5'); }
-    public function getContZone6() { return $this->getZoneContribution('Zone 6'); }
-    public function getContZone7() { return $this->getZoneContribution('Zone 7'); }
+    public function getContZone1()
+    {
+        return $this->getZoneContribution('Zone 1');
+    }
+    public function getContZone2()
+    {
+        return $this->getZoneContribution('Zone 2');
+    }
+    public function getContZone3()
+    {
+        return $this->getZoneContribution('Zone 3');
+    }
+    public function getContZone4()
+    {
+        return $this->getZoneContribution('Zone 4');
+    }
+    public function getContZone5()
+    {
+        return $this->getZoneContribution('Zone 5');
+    }
+    public function getContZone6()
+    {
+        return $this->getZoneContribution('Zone 6');
+    }
+    public function getContZone7()
+    {
+        return $this->getZoneContribution('Zone 7');
+    }
 
     private function getZoneContribution($zone)
     {
@@ -196,7 +266,7 @@ class Model
         $stmt->execute();
         $result = $stmt->get_result();
         $row = $result->fetch_assoc();
-        return $row ? (int)$row['totalQuantity'] : 0;
+        return $row ? (int) $row['totalQuantity'] : 0;
     }
 
     // ----- WASTE HISTORY -----
@@ -227,7 +297,7 @@ class Model
         $stmt->execute();
         $result = $stmt->get_result();
         $row = $result->fetch_assoc();
-        return $row ? (int)$row['totalPlastic'] : 0;
+        return $row ? (int) $row['totalPlastic'] : 0;
     }
 
     public function getUserTotalGlassBottles($userID)
@@ -237,7 +307,7 @@ class Model
         $stmt->execute();
         $result = $stmt->get_result();
         $row = $result->fetch_assoc();
-        return $row ? (int)$row['totalBottles'] : 0;
+        return $row ? (int) $row['totalBottles'] : 0;
     }
 
     public function getUserTotalCans($userID)
@@ -247,7 +317,7 @@ class Model
         $stmt->execute();
         $result = $stmt->get_result();
         $row = $result->fetch_assoc();
-        return $row ? (int)$row['totalCans'] : 0;
+        return $row ? (int) $row['totalCans'] : 0;
     }
 
     // ========================================================
@@ -367,9 +437,12 @@ class Model
         return $stmt->execute();
     }
 
-    public function calcPoints($userID, $materialID, $quantity)
+    // 
+
+    public function calcPoints($userID, $materialID, $quantity, $materialWeight)
     {
-        $query = "SELECT pointsPerItem FROM materialType WHERE materialID = ?";
+        // Get material data (points per item + threshold weight)
+        $query = "SELECT pointsPerItem, thresholdMaterialWeight FROM materialType WHERE materialID = ?";
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("i", $materialID);
         $stmt->execute();
@@ -378,16 +451,28 @@ class Model
         if ($result && $result->num_rows > 0) {
             $row = $result->fetch_assoc();
             $pointsPerItem = $row['pointsPerItem'];
+            $thresholdMaterialWeight = $row['thresholdMaterialWeight'];
+
+            // Base points
             $pointsEarned = $pointsPerItem * $quantity;
 
-            $updateQuery = "UPDATE user SET totalCurrentPoints = COALESCE(totalCurrentPoints, 0) + ? WHERE userID = ?";
+            // ✅ Extra +0.5 points if inserted weight is greater than threshold
+            if ($materialWeight > $thresholdMaterialWeight) {
+                $pointsEarned += 0.5;
+            }
+
+            // Update user points
+            $updateQuery = "UPDATE user 
+                        SET totalCurrentPoints = COALESCE(totalCurrentPoints, 0) + ? 
+                        WHERE userID = ?";
             $updateStmt = $this->db->prepare($updateQuery);
             if (!$updateStmt) {
                 error_log("Prepare failed: " . $this->db->error);
                 return 0;
             }
 
-            if (!$updateStmt->bind_param("ii", $pointsEarned, $userID)) {
+            if (!$updateStmt->bind_param("di", $pointsEarned, $userID)) {
+                // "d" for float/double since points can now have decimals
                 error_log("Binding parameters failed: " . $updateStmt->error);
                 return 0;
             }
@@ -403,15 +488,6 @@ class Model
         return 0;
     }
 
-    public function updateNotifStatus($id) {
-    $stmt = $this->db->prepare("UPDATE sensor_notifications SET status = 'read' WHERE id = ?");
-    $stmt->bind_param("i", $id);
-    return $stmt->execute();
-    }
-
-    public function markAllRead() {
-    return $this->db->query("UPDATE sensor_notifications SET status = 'read'");
-    }
 
     // ========================================================
     // ===================== DELETE FUNCTIONS =================
@@ -484,7 +560,7 @@ class Model
     public function userExists($username)
     {
         $query = "SELECT 1 FROM user WHERE username = ? LIMIT 1";
-        $stmt  = $this->db->prepare($query);
+        $stmt = $this->db->prepare($query);
         $stmt->bind_param("s", $username);
         $stmt->execute();
         // Use store_result to avoid dependency on mysqlnd for get_result()
