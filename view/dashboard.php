@@ -3,6 +3,7 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -11,72 +12,75 @@
 </head>
 
 <body>
-  <div class="dashboard-container">
+  <div class="dashboard">
+    <h2>Dashboard</h2>
 
-    <!-- Summary Section -->
-    <section class="summary-section">
-      <div class="summary-card">
-        <img src="images/plasticBottle.png" alt="Plastic Bottles">
-        <p>Plastic Bottles</p>
-        <h2><?= htmlspecialchars($userTotalPlastic) ?></h2>
+    <div class="dashboard-top">
+      <div class="dashboard-header">
+        <h2>Welcome User <?= htmlspecialchars($user['fullName']) ?>!</h2>
       </div>
-      <div class="summary-card">
-        <img src="images/tincan.png" alt="Tin Cans">
-        <p>Tin Cans</p>
-        <h2><?= htmlspecialchars($userTotalCans) ?></h2>
-      </div>
-      <div class="summary-card">
-        <img src="images/glassBottle.png" alt="Glass Bottles">
-        <p>Glass Bottles</p>
-        <h2><?= htmlspecialchars($userTotalGlass) ?></h2>
+    </div>
+
+
+
+    <div class="dashboard-grid">
+      <!-- Top Left: Leading Zone Contributors -->
+      <div class="card chart-card">
+        <h3>Leading Zone Contributors</h3>
+        <canvas id="zoneChart"></canvas>
       </div>
 
-      <!-- Date Filter -->
-      <div class="filter-card">
-        <span>📅 Filter by date:</span>
-        <input type="date" id="date-filter" value="<?= date('Y-m-d') ?>">
-        <button id="apply-filter">Apply</button>
+      <!-- Top Right: Calendar -->
+      <div class="card calendar-card">
+        <h3 id="calendar-month-year"></h3> <!-- FIX: Added element for month/year -->
+        <div id="calendar"></div>
       </div>
-    </section>
-
-    <!-- Main Content -->
-    <section class="content-section">
-      <h2>Dashboard</h2>
-      <div class="card-row">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Account Info</h5>
-            <p class="card-text">View your personal details and account information.</p>
-            <a href="?command=userProfile" class="btn-primary">Go to Profile</a>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Settings</h5>
-            <p class="card-text">Update your account settings, preferences, and more.</p>
-            <a href="?command=userSettings" class="btn-primary">Go to Settings</a>
-          </div>
-        </div>
-
-        <!-- Calendar Card -->
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Calendar</h5>
-            <div id="calendar-month-year"></div>
-            <div id="calendar"></div>
-          </div>
+      <!-- Bottom Left: Top Contributors -->
+      <div class="card contributors-card">
+        <h3>Top Contributors Per Zone</h3>
+        <div class="contributors-grid">
+          <?php
+          $zones = ['Zone 1', 'Zone 2', 'Zone 3', 'Zone 4', 'Zone 5', 'Zone 6', 'Zone 7'];
+          foreach ($zones as $zone):
+            ?>
+            <div class="contributor">
+              <?php if (isset($topContributors[$zone])): ?>
+                <?= htmlspecialchars($topContributors[$zone]['fullName']) ?><br>
+                Points: <?= htmlspecialchars($topContributors[$zone]['totalQuantity']) ?><br>
+                <?= htmlspecialchars($zone) ?>
+              <?php else: ?>
+                No contributors yet<br>
+                <?= htmlspecialchars($zone) ?>
+              <?php endif; ?>
+            </div>
+          <?php endforeach; ?>
         </div>
       </div>
-    </section>
-  </div>
+
+
+
+      <!-- Bottom Right: Most Contributed Waste -->
+<div class="card waste-card">
+  <h3>Most Contributed Waste</h3>
+  <?php if ($mostContributedWaste): ?>
+      <img src="data:image/png;base64,<?= base64_encode($mostContributedWaste['materialImg']) ?>" 
+           alt="<?= htmlspecialchars($mostContributedWaste['materialName']) ?>" 
+           class="waste-img">
+      <p><?= htmlspecialchars($mostContributedWaste['materialName']) ?></p>
+      <small>Total: <?= $mostContributedWaste['totalQuantity'] ?></small>
+  <?php else: ?>
+      <p>No data yet</p>
+  <?php endif; ?>
+</div>
+
+
 
   <script>
     // Calendar Rendering
     const calendar = document.getElementById('calendar');
     const monthYear = document.getElementById('calendar-month-year');
     const months = ["January", "February", "March", "April", "May", "June",
-                    "July", "August", "September", "October", "November", "December"];
+      "July", "August", "September", "October", "November", "December"];
 
     function renderCalendar() {
       const today = new Date();
@@ -113,4 +117,5 @@
     renderCalendar();
   </script>
 </body>
+
 </html>
