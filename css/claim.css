@@ -2,10 +2,11 @@ body {
   background-color: #fdeeee;
   font-family: 'Segoe UI', Arial, sans-serif;
   margin: 0;
-  padding: 100px 40px 40px 220px;
+  padding: 100px 40px 40px 220px; /* Desktop default */
   box-sizing: border-box;
 }
 
+/* Header Section */
 .rewards-header {
   display: flex;
   justify-content: space-between;
@@ -13,6 +14,7 @@ body {
   max-width: 1000px;
   margin: 0 auto;
   padding: 10px;
+  flex-wrap: wrap; /* Makes it wrap nicely on mobile */
 }
 
 .rewards-header span {
@@ -27,6 +29,7 @@ body {
   color: #000;
 }
 
+/* Rewards List */
 .rewards-list {
   display: flex;
   flex-wrap: wrap;
@@ -36,6 +39,7 @@ body {
   margin: 30px auto;
 }
 
+/* Card Styling */
 .reward-card {
   width: 180px;
   background: #fff;
@@ -69,6 +73,7 @@ body {
   margin-bottom: 10px;
 }
 
+/* Buttons */
 .claim-btn {
   border: none;
   border-radius: 20px;
@@ -102,4 +107,78 @@ body {
 .reward-card.coming-soon .reward-name {
   color: #888;
   font-style: italic;
+}
+
+/* =========================
+   RESPONSIVE DESIGN
+   ========================= */
+
+/* Tablets */
+@media (max-width: 1024px) {
+  body {
+    padding: 90px 30px 30px 200px;
+  }
+
+  .reward-card {
+    width: 160px;
+  }
+}
+
+/* Mobile (Portrait & Landscape) */
+@media (max-width: 768px) {
+  body {
+    padding: 80px 20px 20px 20px; /* Remove sidebar padding */
+  }
+
+  .rewards-header {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    gap: 10px;
+  }
+
+  .rewards-header span {
+    font-size: 14px;
+  }
+
+  .rewards-header span b {
+    font-size: 22px;
+  }
+
+  .rewards-list {
+    gap: 20px;
+  }
+
+  .reward-card {
+    width: 45%; /* Two cards per row */
+  }
+}
+
+/* Extra Small Mobile */
+@media (max-width: 480px) {
+  body {
+    padding: 70px 15px 15px 15px;
+  }
+
+  .rewards-header span {
+    font-size: 13px;
+  }
+
+  .rewards-header span b {
+    font-size: 20px;
+  }
+
+  .reward-card {
+    width: 100%; /* One card per row */
+  }
+
+  .reward-card img {
+    width: 80px;
+    height: 80px;
+  }
+
+  .claim-btn {
+    padding: 5px 16px;
+    font-size: 13px;
+  }
 }
