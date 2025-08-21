@@ -72,14 +72,14 @@ class Endpoint
             $stmt->close();
 
             // Calculate points
-            $pointsEarned = $this->model->calcPoints($userID, $materialID, $quantity);
+            $pointsEarned = $this->model->calcPoints($userID, $materialID, $quantity, $weight);
             error_log("Points earned: $pointsEarned");
 
             // Insert waste entry
             $sql = "INSERT INTO wasteEntry (userID, materialID, quantity, pointsEarned, dateDeposited, timeDeposited, materialWeight)
                     VALUES (?, ?, ?, ?, ?, ?, ?)";
             $stmt = $this->model->db->prepare($sql);
-            $stmt->bind_param("iiisssd", $userID, $materialID, $quantity, $pointsEarned, $dateDeposited, $timeDeposited, $weight);
+            $stmt->bind_param("iiidssd", $userID, $materialID, $quantity, $pointsEarned, $dateDeposited, $timeDeposited, $weight);
 
             if ($stmt->execute()) {
                 echo json_encode([
