@@ -1,26 +1,42 @@
 <?php
 session_start();
 echo "<title>B.A.S.U.R.A. Rewards</title>";
-
-echo "<div>";
-    include_once("view/header.php");
-echo "</div>";
-
-echo "<div>";
-    include_once("controller/controller.php");
-    $controller = new Controller;
-    $controller->getWeb();
-echo "</div>";
-
-echo "<div>";
-    include_once("view/footer.php");
-echo "</div>";
-
-// if (isset($_SESSION['user'])){
-//     if($_SESSION['user']['role'] === 'admin'){
-//         include_once("view/adminSidebar.php");
-//     } else {
-//         include_once("view/sidebar.php");
-//     }
-// }
 ?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/uni-sidebar.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <div>
+    <?php include_once("view/header.php"); ?>
+  </div>
+
+  <!-- Sidebar -->
+  <div>
+    <?php include_once("view/sidebar.php"); ?>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <?php
+      include_once("controller/controller.php");
+      $controller = new Controller;
+      $controller->getWeb();
+    ?>
+  </div>
+
+  <!-- Footer -->
+  <div>
+    <?php include_once("view/footer.php"); ?>
+  </div>
+
+<script src="js/toggle.js"></script>
+
+</body>
+</html>
