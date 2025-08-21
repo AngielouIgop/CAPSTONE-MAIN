@@ -10,9 +10,6 @@
 
 <body>
 
-  <!-- Button to open modal -->
-  <button class="notifications-btn">View Notifications</button>
-
   <!-- Custom Modal -->
   <div id="notification-modal" class="modal">
     <div class="modal-content">

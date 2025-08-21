@@ -21,8 +21,7 @@
       </div>
     </div>
 
-
-
+    <!-- GRID CONTAINER -->
     <div class="dashboard-grid">
       <!-- Top Left: Leading Zone Contributors -->
       <div class="card chart-card">
@@ -32,17 +31,17 @@
 
       <!-- Top Right: Calendar -->
       <div class="card calendar-card">
-        <h3 id="calendar-month-year"></h3> <!-- FIX: Added element for month/year -->
+        <h3 id="calendar-month-year"></h3>
         <div id="calendar"></div>
       </div>
+
       <!-- Bottom Left: Top Contributors -->
       <div class="card contributors-card">
         <h3>Top Contributors Per Zone</h3>
         <div class="contributors-grid">
           <?php
           $zones = ['Zone 1', 'Zone 2', 'Zone 3', 'Zone 4', 'Zone 5', 'Zone 6', 'Zone 7'];
-          foreach ($zones as $zone):
-            ?>
+          foreach ($zones as $zone): ?>
             <div class="contributor">
               <?php if (isset($topContributors[$zone])): ?>
                 <?= htmlspecialchars($topContributors[$zone]['fullName']) ?><br>
@@ -57,24 +56,23 @@
         </div>
       </div>
 
-
-
       <!-- Bottom Right: Most Contributed Waste -->
-<div class="card waste-card">
-  <h3>Most Contributed Waste</h3>
-  <?php if ($mostContributedWaste): ?>
-      <img src="data:image/png;base64,<?= base64_encode($mostContributedWaste['materialImg']) ?>" 
-           alt="<?= htmlspecialchars($mostContributedWaste['materialName']) ?>" 
-           class="waste-img">
-      <p><?= htmlspecialchars($mostContributedWaste['materialName']) ?></p>
-      <small>Total: <?= $mostContributedWaste['totalQuantity'] ?></small>
-  <?php else: ?>
-      <p>No data yet</p>
-  <?php endif; ?>
-</div>
+      <div class="card waste-card">
+        <h3>Most Contributed Waste</h3>
+        <?php if ($mostContributedWaste): ?>
+          <img src="data:image/png;base64,<?= base64_encode($mostContributedWaste['materialImg']) ?>"
+            alt="<?= htmlspecialchars($mostContributedWaste['materialName']) ?>" class="waste-img">
+          <p><?= htmlspecialchars($mostContributedWaste['materialName']) ?></p>
+          <small>Total: <?= $mostContributedWaste['totalQuantity'] ?></small>
+        <?php else: ?>
+          <p>No data yet</p>
+        <?php endif; ?>
+      </div>
+    </div> <!-- ✅ CLOSE .dashboard-grid properly -->
+  </div> <!-- ✅ CLOSE .dashboard properly -->
 
-
-
+  <!-- Scripts should be OUTSIDE the grid -->
+  <script src="js/toggle.js"></script>
   <script>
     // Calendar Rendering
     const calendar = document.getElementById('calendar');
@@ -117,5 +115,4 @@
     renderCalendar();
   </script>
 </body>
-
 </html>

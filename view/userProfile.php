@@ -1,12 +1,6 @@
 <?php include 'header.php'; ?>
 <?php include 'contribute.php'; ?>
 
-<script>
-  var userID = '<?php echo $_SESSION['user']['userID']; ?>';
-</script>
-<script src="js/contributeModal.js"></script>
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -46,10 +40,10 @@
     <div class="rewards-section">
       <div class="points-row">
         <span class="points-label">Current Points:</span>
-        <span class="points-value"><?php echo htmlspecialchars($totalCurrentPoints); ?></span>
+        <span class="points-value"><?php echo number_format($totalCurrentPoints, 2); ?></span>
       </div>
       <div class="rewards-inner">
-        <p class="rewards-title">Available Rewards</p>
+        <p class="rewards-title"><strong>Available Rewards:</strong></p>
         <div class="rewards-list">
           <?php
             $hasAvailable = false;

@@ -1,11 +1,6 @@
 <?php include 'header.php'; ?>
 <?php include 'contribute.php'; ?>
 
-<script>
-  var userID = '<?php echo $_SESSION['user']['userID']; ?>';
-</script>
-<script src="js/contributeModal.js"></script>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,7 +13,7 @@
 
   <div class="rewards-header">
     <span>Available Rewards:</span>
-    <span>CURRENT POINTS: <b><?php echo htmlspecialchars($totalCurrentPoints); ?> pts</b></span>
+    <span>Current Points: <b><?php echo htmlspecialchars($totalCurrentPoints); ?> pts</b></span>
   </div>
 
   <div class="rewards-list">
