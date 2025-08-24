@@ -1,38 +1,28 @@
-<?php
+<?php 
 require_once('model/model.php');
-
-header('Content-Type: application/json'); // Always return JSON
+header('Content-Type: application/json');
 
 $model = new Model();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Check if the update function exists in Model
-    if (method_exists($model, 'updateNotifStatus')) {
-        $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
-        $result = $model->updateNotifStatus($id);
+    $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
 
-        if ($result) {
-            echo json_encode([
-                'success' => true,
-                'message' => 'All notifications marked as read.'
-            ]);
-        } else {
-            echo json_encode([
-                'success' => false,
-                'message' => 'Failed to update notifications.'
-            ]);
-        }
+    if ($id > 0) {
+        $result = $model->updateNotifStatus($id, 'read');
+        echo json_encode([
+            'success' => $result,
+            'message' => $result ? 'Notification marked as read.' : 'Failed to update notification.'
+        ]);
     } else {
         echo json_encode([
             'success' => false,
-            'message' => 'Function updateNotifStatus() not found in Model.'
+            'message' => 'Invalid notification ID.'
         ]);
     }
 } else {
-    http_response_code(405); // Method Not Allowed
+    http_response_code(405);
     echo json_encode([
         'success' => false,
-        'message' => 'Invalid request method. Please use POST.'
+        'message' => 'Invalid request method. Use POST.'
     ]);
 }
-?>
