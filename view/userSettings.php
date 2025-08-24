@@ -21,23 +21,6 @@
       }
     }
   </script>
-  <style>
-    .password-container {
-      display: flex;
-      align-items: center;
-    }
-
-    .password-container input {
-      flex: 1;
-    }
-
-    .password-toggle {
-      margin-left: 0.5rem;
-      padding: 0.3rem 0.6rem;
-      font-size: 0.85rem;
-      cursor: pointer;
-    }
-  </style>
 </head>
 
 <body>
