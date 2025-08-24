@@ -3,6 +3,7 @@ body, html {
   margin: 0;
   font-family: sans-serif;
   background: #f8f9fa;
+  padding-top: 30px;
 }
 
 .register-container {
