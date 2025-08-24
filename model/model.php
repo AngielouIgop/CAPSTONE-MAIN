@@ -487,6 +487,15 @@ public function getMostContributedWaste()
         }
         return 0;
     }
+public function updateNotifStatus($id, $status = 'read') {
+    $stmt = $this->db->prepare("UPDATE sensor_notifications SET status = ? WHERE id = ?");
+    if (!$stmt) {
+        return false;
+    }
+    $stmt->bind_param("si", $status, $id);
+    return $stmt->execute();
+}
+
 
 
     // ========================================================
