@@ -77,14 +77,14 @@ body {
   background: #2d316b;
   color: #fff;
   border: none;
-  border-radius: 20px;
-  padding: 6px 18px;
+  border-radius: 6px;
+  padding: 8px 16px;
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
   margin-right: 8px;
-  transition: background 0.2s;
   text-decoration: none;
+  transition: all 0.2s ease;
 }
 
 .reward-action-btn:last-child {
@@ -93,24 +93,33 @@ body {
 
 .reward-action-btn:hover {
   background: #1a1d4d;
-  text-decoration: underline;
+  transform: translateY(-1px);
+}
+
+.reward-action-btn:active {
+  transform: translateY(0);
 }
 
 .reward-pill-btn {
   background: #bfc8e6;
   color: #2d316b;
   border: none;
-  border-radius: 20px;
-  padding: 6px 18px;
+  border-radius: 6px;
+  padding: 8px 16px;
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
   margin-left: 12px;
-  transition: background 0.2s;
+  transition: all 0.2s ease;
 }
 
 .reward-pill-btn:hover {
   background: #a3b0d6;
+  transform: translateY(-1px);
+}
+
+.reward-pill-btn:active {
+  transform: translateY(0);
 }
 
 /* Modal Styling */
@@ -170,16 +179,17 @@ body {
     padding: 9px 12px;
     border: 1px solid #bfc9d1;
     border-radius: 5px;
-    font-size: 1em;
+    font-size: 16px;
     margin-bottom: 8px;
     background: #f8fafc;
-    transition: border 0.2s;
+    transition: border-color 0.2s ease;
 }
 
 .reward-modal input[type="text"]:focus,
 .reward-modal input[type="number"]:focus {
-    border: 1.5px solid #4a90e2;
+    border-color: #4a90e2;
     outline: none;
+    background: #fff;
 }
 
 .reward-modal small {
@@ -196,49 +206,205 @@ body {
 }
 
 .reward-btn-confirm {
-    background-color: #4CAF50;
+    background: #1d007e;
     color: #fff;
     border: none;
     padding: 10px 22px;
     border-radius: 5px;
     font-weight: bold;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.2s ease;
 }
+
 .reward-btn-confirm:hover {
-    background-color: #388e3c;
+    background: #5400db;
+    transform: translateY(-1px);
 }
 
 .reward-btn-cancel {
-    background-color: #f44336;
+    background: #f44336;
     color: #fff;
     border: none;
     padding: 10px 22px;
     border-radius: 5px;
     font-weight: bold;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.2s ease;
 }
+
 .reward-btn-cancel:hover {
-    background-color: #b71c1c;
+    background: #b71c1c;
+    transform: translateY(-1px);
+}
+
+@media (max-width: 1024px) {
+  body {
+    margin-left: 200px;
+    padding-top: 70px;
+  }
+  
+  .reward-section-header {
+    margin-left: 5rem;
+    font-size: 1.8rem;
+  }
+  
+  .reward-table-container {
+    max-width: 95%;
+    margin: 0 auto 28px auto;
+  }
 }
 
 @media (max-width: 800px) {
-  .reward-table-container {
-    max-width: 98vw;
-    margin: 0 1vw 24px 1vw;
+  body {
+    margin-left: 0;
+    padding-top: 60px;
   }
+  
   .reward-section-header {
-    font-size: 1.3rem;
-    padding: 6px 8px;
+    margin-left: 1rem;
+    font-size: 1.5rem;
+    padding: 8px 12px;
+    margin-right: 1rem;
   }
-  .reward-custom-table th, .reward-custom-table td {
-    padding: 8px 4px;
+  
+  .reward-table-container {
+    max-width: 98%;
+    margin: 0 1% 24px 1%;
+    border-radius: 8px;
+  }
+  
+  .reward-custom-table th, 
+  .reward-custom-table td {
+    padding: 10px 6px;
     font-size: 0.95rem;
   }
+  
+  .reward-profile-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 1.3rem;
+  }
+  
+  .reward-action-btn,
+  .reward-pill-btn {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+  }
+  
+  .reward-modal-content {
+    width: 95%;
+    margin: 5% auto;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  body {
+    padding-top: 50px;
+  }
+  
+  .reward-section-header {
+    font-size: 1.3rem;
+    margin: 16px 0 6px 0.5rem;
+    padding: 6px 10px;
+    margin-right: 0.5rem;
+  }
+  
+  .reward-table-container {
+    max-width: 100%;
+    margin: 0 0 20px 0;
+    border-radius: 0;
+    box-shadow: none;
+    border: 1px solid #e0e0e0;
+  }
+  
+  .reward-custom-table th {
+    padding: 8px 4px;
+    font-size: 0.9rem;
+  }
+  
+  .reward-custom-table td {
+    padding: 6px 4px;
+    font-size: 0.85rem;
+  }
+  
   .reward-profile-icon {
     width: 28px;
     height: 28px;
     font-size: 1.1rem;
+    margin-right: 6px;
+  }
+  
+  .reward-action-btn,
+  .reward-pill-btn {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    margin-right: 4px;
+    margin-bottom: 2px;
+    border-radius: 4px;
+  }
+  
+  .reward-pill-btn {
+    margin-left: 8px;
+  }
+  
+  .reward-modal-content {
+    width: 98%;
+    margin: 2% auto;
+    padding: 15px;
+  }
+  
+  .reward-modal-header {
+    font-size: 1.4em;
+  }
+  
+  .reward-modal-buttons {
+    text-align: center;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .reward-btn-confirm,
+  .reward-btn-cancel {
+    width: 100%;
+    padding: 12px;
+    margin: 0;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    padding-top: 45px;
+  }
+  
+  .reward-section-header {
+    font-size: 1.2rem;
+    margin: 12px 0 4px 0.3rem;
+    padding: 5px 8px;
+  }
+  
+  .reward-custom-table th,
+  .reward-custom-table td {
+    padding: 4px 2px;
+    font-size: 0.8rem;
+  }
+  
+  .reward-profile-icon {
+    width: 24px;
+    height: 24px;
+    font-size: 1rem;
+  }
+  
+  .reward-action-btn,
+  .reward-pill-btn {
+    padding: 5px 10px;
+    font-size: 0.75rem;
+    margin-right: 3px;
+  }
+  
+  .reward-modal-content {
+    padding: 12px;
   }
 }

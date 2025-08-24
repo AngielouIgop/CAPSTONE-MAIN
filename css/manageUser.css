@@ -77,14 +77,14 @@ body {
   background: #2d316b;
   color: #fff;
   border: none;
-  border-radius: 20px;
-  padding: 6px 18px;
+  border-radius: 6px;
+  padding: 8px 16px;
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
   margin-right: 8px;
-  transition: background 0.2s;
   text-decoration: none;
+  transition: all 0.2s ease;
 }
 
 .action-btn:last-child {
@@ -93,27 +93,35 @@ body {
 
 .action-btn:hover {
   background: #1a1d4d;
-  text-decoration: underline;
+  transform: translateY(-1px);
+}
+
+.action-btn:active {
+  transform: translateY(0);
 }
 
 .pill-btn {
   background: #bfc8e6;
   color: #2d316b;
   border: none;
-  border-radius: 20px;
-  padding: 6px 18px;
+  border-radius: 6px;
+  padding: 8px 16px;
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
   margin-right: 20px;
-  transition: background 0.2s;
+  transition: all 0.2s ease;
 }
 
 .pill-btn:hover {
   background: #a3b0d6;
+  transform: translateY(-1px);
 }
 
-/* Modal Styling */
+.pill-btn:active {
+  transform: translateY(0);
+}
+
 .modal {
     display: none;
     position: fixed;
@@ -165,6 +173,15 @@ body {
     border-radius: 5px;
     border: 1px solid #ccc;
     box-sizing: border-box;
+    font-size: 16px;
+    transition: border-color 0.2s ease;
+}
+
+#editUserForm input[type="text"]:focus,
+#editUserForm input[type="email"]:focus,
+#editUserForm input[type="password"]:focus {
+    border-color: #4a90e2;
+    outline: none;
 }
 
 #editUserForm small {
@@ -186,20 +203,30 @@ body {
     border-radius: 5px;
     cursor: pointer;
     font-weight: bold;
-}
-
-.btn-confirm {
-    background-color: #4CAF50;
-    color: white;
-}
-
-.btn-cancel {
-    background-color: #f44336;
-    color: white;
+    transition: all 0.2s ease;
     margin-left: 10px;
 }
 
-/* Add Administrator Modal Styles */
+.btn-confirm {
+    background: #4CAF50;
+    color: white;
+}
+
+.btn-confirm:hover {
+    background: #388e3c;
+    transform: translateY(-1px);
+}
+
+.btn-cancel {
+    background: #f44336;
+    color: white;
+}
+
+.btn-cancel:hover {
+    background: #d32f2f;
+    transform: translateY(-1px);
+}
+
 #addAdministratorModal.modal {
     display: none;
     position: fixed;
@@ -253,17 +280,18 @@ body {
     padding: 9px 12px;
     border: 1px solid #bfc9d1;
     border-radius: 5px;
-    font-size: 1em;
+    font-size: 16px;
     margin-bottom: 8px;
     background: #f8fafc;
-    transition: border 0.2s;
+    transition: border-color 0.2s ease;
 }
 
 #addAdministratorForm input[type="text"]:focus,
 #addAdministratorForm input[type="email"]:focus,
 #addAdministratorForm input[type="password"]:focus {
-    border: 1.5px solid #4a90e2;
+    border-color: #4a90e2;
     outline: none;
+    background: #fff;
 }
 
 #addAdministratorForm small {
@@ -280,31 +308,35 @@ body {
 }
 
 #addAdministratorModal .btn-confirm {
-    background-color: #331bcf;
+    background: #331bcf;
     color: #fff;
     border: none;
     padding: 10px 22px;
     border-radius: 5px;
     font-weight: bold;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.2s ease;
 }
+
 #addAdministratorModal .btn-confirm:hover {
-    background-color: #221172;
+    background: #221172;
+    transform: translateY(-1px);
 }
 
 #addAdministratorModal .btn-cancel {
-    background-color: #f44336;
+    background: #f44336;
     color: #fff;
     border: none;
     padding: 10px 22px;
     border-radius: 5px;
     font-weight: bold;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.2s ease;
 }
+
 #addAdministratorModal .btn-cancel:hover {
-    background-color: #b71c1c;
+    background: #b71c1c;
+    transform: translateY(-1px);
 }
 
 .password-toggle {
@@ -315,28 +347,211 @@ body {
   font-size: 14px;
   color: #666;
   padding: 5px;
+  transition: color 0.2s ease;
 }
 
 .password-toggle:hover {
   color: #333;
 }
 
-@media (max-width: 800px) {
-  .table-container {
-    max-width: 98vw;
-    margin: 0 1vw 24px 1vw;
+@media (max-width: 1024px) {
+  body {
+    margin-left: 200px;
+    padding-top: 70px;
   }
+  
   .section-header {
-    font-size: 1.3rem;
-    padding: 6px 8px;
+    margin-left: 5rem;
+    font-size: 1.8rem;
   }
-  .custom-table th, .custom-table td {
-    padding: 8px 4px;
+  
+  .table-container {
+    max-width: 95%;
+    margin: 0 auto 28px auto;
+  }
+}
+
+@media (max-width: 800px) {
+  body {
+    margin-left: 0;
+    padding-top: 60px;
+  }
+  
+  .section-header {
+    margin-left: 1rem;
+    font-size: 1.5rem;
+    padding: 8px 12px;
+    margin-right: 1rem;
+  }
+  
+  .table-container {
+    max-width: 98%;
+    margin: 0 1% 24px 1%;
+    border-radius: 8px;
+  }
+  
+  .custom-table th, 
+  .custom-table td {
+    padding: 10px 6px;
     font-size: 0.95rem;
   }
+  
+  .profile-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 1.3rem;
+  }
+  
+  .action-btn,
+  .pill-btn {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+  }
+  
+  .modal-content {
+    width: 95%;
+    margin: 5% auto;
+    padding: 15px;
+  }
+  
+  #addAdministratorModal .modal-content {
+    width: 95%;
+    margin: 5% auto;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  body {
+    padding-top: 50px;
+  }
+  
+  .section-header {
+    font-size: 1.3rem;
+    margin: 16px 0 6px 0.5rem;
+    padding: 6px 10px;
+    margin-right: 0.5rem;
+  }
+  
+  .table-container {
+    max-width: 100%;
+    margin: 0 0 20px 0;
+    border-radius: 0;
+    box-shadow: none;
+    border: 1px solid #e0e0e0;
+  }
+  
+  .custom-table th {
+    padding: 8px 4px;
+    font-size: 0.9rem;
+  }
+  
+  .custom-table td {
+    padding: 6px 4px;
+    font-size: 0.85rem;
+  }
+  
   .profile-icon {
     width: 28px;
     height: 28px;
     font-size: 1.1rem;
+    margin-right: 6px;
+  }
+  
+  .action-btn,
+  .pill-btn {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    margin-right: 4px;
+    margin-bottom: 2px;
+    border-radius: 4px;
+  }
+  
+  .pill-btn {
+    margin-right: 10px;
+  }
+  
+  .modal-content {
+    width: 98%;
+    margin: 2% auto;
+    padding: 12px;
+    border-radius: 8px;
+  }
+  
+  .modal-header {
+    font-size: 1.3em;
+    padding: 8px 12px;
+  }
+  
+  #addAdministratorModal .modal-content {
+    width: 98%;
+    margin: 2% auto;
+    padding: 15px;
+  }
+  
+  #addAdministratorModal .modal-header {
+    font-size: 1.4em;
+  }
+  
+  .modal-buttons {
+    text-align: center;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  #addAdministratorModal .modal-buttons {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .btn-confirm,
+  .btn-cancel,
+  #addAdministratorModal .btn-confirm,
+  #addAdministratorModal .btn-cancel {
+    width: 100%;
+    padding: 12px;
+    margin: 0;
+    font-size: 1rem;
+  }
+}
+/* For  */
+@media (max-width: 480px) {
+  body {
+    padding-top: 45px;
+  }
+  
+  .section-header {
+    font-size: 1.2rem;
+    margin: 12px 0 4px 0.3rem;
+    padding: 5px 8px;
+  }
+  
+  .custom-table th,
+  .custom-table td {
+    padding: 4px 2px;
+    font-size: 0.8rem;
+  }
+  
+  .profile-icon {
+    width: 24px;
+    height: 24px;
+    font-size: 1rem;
+  }
+  
+  .action-btn,
+  .pill-btn {
+    padding: 5px 10px;
+    font-size: 0.75rem;
+    margin-right: 3px;
+  }
+  
+  .modal-content {
+    padding: 10px;
+    margin: 1% auto;
+  }
+  
+  #addAdministratorModal .modal-content {
+    padding: 12px;
   }
 } 

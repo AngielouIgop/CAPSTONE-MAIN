@@ -1,18 +1,9 @@
 body {
-  background: #fbeeee;
+  background: #ffffff;
   font-family: 'Segoe UI', Arial, sans-serif;
   margin: 0;
-  padding-top: 60px;
 }
 
-/* Layout */
-.settings-layout {
-  display: flex;
-  justify-content: center;   /* ✅ Center layout horizontally */
-  align-items: flex-start;   /* keeps items aligned at the top */
-  gap: 2rem;
-  padding: 2rem;
-}
 
 .profile-settings-container {
   flex: 1;
@@ -32,7 +23,7 @@ body {
   max-width: 1300px;       /* ✅ Wider form for desktop */
   width: 100%;
   min-height: 600px;
-  margin-left: 250px;       /* ✅ Only for large desktop */
+  margin-left: 230px;       /* ✅ Only for large desktop */
 }
 
 .profile-form-title {
