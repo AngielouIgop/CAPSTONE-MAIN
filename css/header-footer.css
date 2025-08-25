@@ -12,12 +12,14 @@
     z-index: 1000;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); 
     transition: box-shadow 0.3s ease;
+    padding: 0 15px;
 }
 
 .header-nav{
-    
-    margin-right: 60px;
+    margin-left: auto;
+    /* margin-right: 300px; */
 }
+
 .header-nav ul {
     list-style: none;
     padding: 0;
@@ -53,10 +55,9 @@
     width: 70px;  
     object-fit: cover; 
     border-radius: 50%; 
-    padding: 0; /* Ensure no padding on all sides */
-    margin: 0; /* Ensure no margin on all sides */
+    padding: 0;
+    margin: 0;
 }
-
 
 .header-nav ul li a {
     text-decoration: none;
@@ -70,23 +71,7 @@
 }
 
 .header-nav ul li a:hover {
-    background-color: #006A71;
-}
-
-/* Mobile First */
-.header-main {
-  width: 100%;
-  height: 80px;
-  display: flex;
-  background-color: #2D336B;
-  justify-content: space-between;
-  align-items: center;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1000;
-  padding: 0 15px;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); 
+    background-color: #f7f7f7;
 }
 
 .menu-toggle {
@@ -96,8 +81,9 @@
   border: none;
   color: white;
   cursor: pointer;
+  margin-left: auto;
   margin-right: 20px;
-  z-index: 1001; /* Ensure it is above the header */
+  z-index: 1001;
 }
 
 /* Hide Menu button on desktop */
@@ -114,7 +100,8 @@
 
 /* Desktop navigation */
 .header-nav {
-  margin-right: 60px;
+  margin-left: auto;
+  margin-right: 20px;
 }
 
 .header-nav ul {
@@ -135,7 +122,7 @@
 }
 
 .header-nav ul li a:hover {
-  background-color: #006A71;
+  background-color: #3c0af1;
 }
 
 .footer-main {
@@ -148,11 +135,6 @@
     bottom: 0;
     z-index: 1000;
 }
-
-/* .with-sidebar .footer-main {
-    margin-left: 250px;
-    width: calc(100% - 250px);
-} */
 
 .footer-content {
     display: flex;
@@ -167,7 +149,7 @@
 }
 
 .footer-main p {
-    margin: 0;;
+    margin: 0;
     font-size: 14px;
     color: white;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -175,10 +157,10 @@
 
 /* --- Mobile Responsive --- */
 @media (max-width: 768px) {
-  
-
   .menu-toggle {
     display: block;
+    margin-left: auto;
+    margin-right: 20px;
   }
 
   .header-nav {
@@ -188,6 +170,10 @@
     left: 0;
     width: 100%;
     background: #2D336B;
+  }
+
+  .header-nav.active {
+    display: block;
   }
 
   .header-nav ul {
@@ -201,11 +187,7 @@
     width: 90%;
     text-align: center;
     padding: 10px;
-    color: white;
-    background: #444B8C;
-  }
-
-  .header-nav.active {
-    display: block;
+    color: rgb(0, 0, 0);
+    background: #ffffff;
   }
 }

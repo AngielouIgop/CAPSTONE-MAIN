@@ -1,17 +1,11 @@
 body, html {
   margin: 0;
   padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Segoe UI', Arial, sans-serif;
   background: #f8f9fa;
   height: 100%;
-  padding-top: 60px; /* spacing under header */
-}
-
-/* Desktop-only sidebar margin */
-@media (min-width: 901px) {
-  body, html {
-    margin-left: 130px;
-  }
+  padding-top: 30px;
+  margin-left: 130px;
 }
 
 .dashboard {
@@ -21,6 +15,8 @@ body, html {
 .dashboard h2 {
   margin-bottom: 20px;
   color: #003060;
+  font-size: 2rem;
+  font-weight: bold;
 }
 
 .dashboard-top {
@@ -36,9 +32,9 @@ body, html {
 /* === GRID LAYOUT === */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr; /* desktop layout */
+  grid-template-columns: 2fr 1fr;
   gap: 20px;
-  min-height: 100vh; /* ensures space for both rows */
+  min-height: 100vh;
 }
 
 /* Card styling */
@@ -54,9 +50,9 @@ body, html {
 .card h3 {
   margin-bottom: 15px;
   color: #003060;
+  font-size: 1.1rem;
+  font-weight: 600;
 }
-
-/* ✅ Let grid auto-place cards — removed manual grid-column/row */
 
 /* Contributors grid inside card */
 .contributors-grid {
@@ -70,39 +66,58 @@ body, html {
   background: #eef2ff;
   border-radius: 8px;
   padding: 10px;
+  transition: all 0.2s ease;
+}
+
+.contributor:hover {
+  background: #e0e7ff;
+  transform: translateY(-1px);
 }
 
 /* Waste card */
 .waste-card {
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .waste-img {
-  width: 90px;
-  height: 100px;
-  object-fit: contain;
-  margin: 10px 0;
+  width: 120px;
+  height: 140px;
+  object-fit: cover;
+  margin: 15px auto;
+  display: block;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 /* Calendar Box */
 #calendar {
-  overflow-x: auto; /* mobile scroll fix */
+  overflow-x: auto;
 }
+
 #calendar table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 280px; /* keep columns readable */
+  min-width: 280px;
 }
 
 #calendar th, #calendar td {
-  border: 1px solid #ddd;
+  border: 2px solid #000d7d;
   text-align: center;
-  padding: 3px;
-  font-size: 0.8em;
+  padding: 10px;
+  font-size: 1em;
 }
 
 #calendar th {
-  background-color: #f0f0f0;
+  background-color: #000d7d;
+  color: #fff;
+}
+
+#calendar td {
+  color: #000;
 }
 
 #calendar td.today {
@@ -110,47 +125,174 @@ body, html {
   color: #fff;
 }
 
-/* ========================= */
-/* ===== RESPONSIVE FIX ===== */
-/* ========================= */
+/* === RESPONSIVE DESIGN === */
 
-/* Tablet & Mobile */
-@media (max-width: 900px) {
-  .dashboard-grid {
-    grid-template-columns: 1fr; /* stack into 1 column */
+/* Tablet Responsive */
+@media (max-width: 1024px) {
+  body, html {
+    margin-left: 200px;
+    padding-top: 70px;
   }
-
+  
+  .dashboard {
+    padding: 18px;
+  }
+  
+  .dashboard h2 {
+    font-size: 1.8rem;
+  }
+  
+  .dashboard-grid {
+    gap: 18px;
+  }
+  
+  .card {
+    padding: 14px;
+  }
+  
   .contributors-grid {
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
   }
 }
 
-/* Small Phones */
-@media (max-width: 600px) {
-  .dashboard {
-    padding: 10px;
+/* Mobile Landscape */
+@media (max-width: 800px) {
+  body, html {
+    margin-left: 0;
+    padding-top: 60px;
   }
-
+  
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .dashboard {
+    padding: 15px;
+  }
+  
   .dashboard-top {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
   }
+  
+  .dashboard h2 {
+    font-size: 1.6rem;
+  }
+  
+  .card {
+    padding: 12px;
+  }
+  
+  .contributors-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
+}
 
+/* Mobile Portrait */
+@media (max-width: 600px) {
+  body, html {
+    padding-top: 50px;
+  }
+  
+  .dashboard {
+    padding: 10px;
+  }
+  
+  .dashboard h2 {
+    font-size: 1.4rem;
+    margin-bottom: 16px;
+  }
+  
+  .dashboard-grid {
+    gap: 12px;
+  }
+  
   .card {
     padding: 10px;
   }
-
+  
   .card h3 {
     font-size: 1rem;
+    margin-bottom: 12px;
   }
-
+  
   .contributors-grid {
     grid-template-columns: 1fr 1fr;
+    gap: 8px;
   }
-
+  
+  .contributor {
+    padding: 8px;
+  }
+  
   .waste-img {
-    width: 70px;
-    height: 80px;
+    width: 80px;
+    height: 100px;
+  }
+  
+  #calendar table {
+    min-width: 250px;
+  }
+  
+  #calendar th, #calendar td {
+    padding: 2px;
+    font-size: 0.75em;
   }
 }
+
+/* Small Mobile Devices */
+@media (max-width: 480px) {
+  body, html {
+    padding-top: 45px;
+  }
+  
+  .dashboard {
+    padding: 8px;
+  }
+  
+  .dashboard h2 {
+    font-size: 1.3rem;
+    margin-bottom: 12px;
+  }
+  
+  .dashboard-grid {
+    gap: 10px;
+  }
+  
+  .card {
+    padding: 8px;
+    border-radius: 8px;
+  }
+  
+  .card h3 {
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+  }
+  
+  .contributors-grid {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  
+  .contributor {
+    padding: 6px;
+    font-size: 0.9em;
+  }
+  
+  .waste-img {
+    width: 60px;
+    height: 70px;
+  }
+  
+  #calendar table {
+    min-width: 220px;
+  }
+  
+  #calendar th, #calendar td {
+    padding: px;
+    font-size: 0.7em;
+  }
+}
+

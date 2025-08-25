@@ -2,16 +2,19 @@ body {
   background: #ffffff;
   font-family: 'Segoe UI', Arial, sans-serif;
   margin: 0;
+  padding: 0;
+  padding-top: 80px;
+  margin-left: 240px;
 }
-
 
 .profile-settings-container {
   flex: 1;
   display: flex;
-  justify-content: center;   /* ✅ Center the profile form */
+  justify-content: center;
   align-items: flex-start;
   padding: 1rem;
   min-height: 100vh;
+  background: #fbeeee;
 }
 
 /* Profile form */
@@ -20,10 +23,10 @@ body {
   border-radius: 16px;
   padding: 2.5rem;
   box-shadow: 0 4px 24px rgba(0,0,0,0.1);
-  max-width: 1300px;       /* ✅ Wider form for desktop */
+  max-width: 1300px;
   width: 100%;
   min-height: 600px;
-  margin-left: 230px;       /* ✅ Only for large desktop */
+  margin-left: 0;
 }
 
 .profile-form-title {
@@ -32,7 +35,6 @@ body {
   font-weight: bold;
   margin-bottom: 1.5rem;
   color: #07008a;
-  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.2));
 }
 
 /* Profile image */
@@ -72,11 +74,13 @@ body {
   font-size: 1em;
   cursor: pointer;
   font-weight: 600;
-  transition: background 0.2s;
+  transition: all 0.2s ease;
   display: inline-block;
 }
+
 .change-picture-btn:hover {
   background: #1a237e;
+  transform: translateY(-1px);
 }
 
 /* Form fields */
@@ -112,6 +116,12 @@ body {
   font-size: 1em;
   background: #fff;
   box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+
+.form-group input:focus {
+  border-color: #2336b6;
+  outline: none;
 }
 
 /* Save button */
@@ -126,81 +136,216 @@ body {
   font-weight: bold;
   margin-top: 2rem;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s ease;
 }
+
 .save-btn:hover {
   background: #1a237e;
+  transform: translateY(-1px);
 }
 
 /* Password toggle */
 .password-container {
   display: flex;
   align-items: center;
+  gap: 0.5rem;
 }
+
 .password-container input {
   flex: 1;
 }
+
 .password-toggle {
-  margin-left: 0.5rem;
   padding: 0.3rem 0.6rem;
   font-size: 0.85rem;
   cursor: pointer;
   border: none;
   background: none;
   color: #666;
+  transition: color 0.2s ease;
+  white-space: nowrap;
 }
+
 .password-toggle:hover {
   color: #333;
 }
 
-/* ------------------
-   RESPONSIVE QUERIES
-   ------------------ */
-
-/* Tablet & smaller laptops */
-@media (max-width: 1330px) {
-  .profile-form {
-    margin-left: 0;        /* ✅ Reset forced margin */
-    max-width: 100%;       /* ✅ Use full width */
-  }
+/* Fix for single form group (username field) */
+.form-group.single-field {
+  margin-bottom: 1.2rem;
 }
 
+/* Fix for password row alignment */
+.form-row.password-row {
+  align-items: flex-end;
+}
+
+/* === RESPONSIVE DESIGN === */
+
+/* Tablet Responsive */
 @media (max-width: 1024px) {
-  .settings-layout {
-    flex-direction: column;
-    padding: 1rem;
+  body {
+    margin-left: 200px;
+    padding-top: 70px;
   }
+  
   .profile-form {
+    padding: 2rem;
     max-width: 100%;
   }
+  
+  .profile-form-title {
+    font-size: 2rem;
+  }
+  
+  .profile-img-box {
+    width: 200px;
+    height: 200px;
+  }
 }
 
-/* Mobile (portrait) */
-@media (max-width: 768px) {
-  .form-row {
-    flex-direction: column;
-    gap: 0.5rem;
+/* Mobile Landscape */
+@media (max-width: 800px) {
+  body {
+    margin-left: 0;
+    padding-top: 60px;
   }
+  
+  .profile-settings-container {
+    padding-top: 40px;
+    min-height: 100vh;
+  }
+  
+  .profile-form {
+    padding: 1.5rem;
+    min-height: auto;
+    margin: 0 1rem;
+  }
+  
+  .profile-form-title {
+    font-size: 1.8rem;
+  }
+  
   .profile-img-box {
     width: 180px;
     height: 180px;
   }
-  .profile-form {
-    padding: 1.5rem;   /* ✅ Reduce padding for smaller screens */
+  
+  .form-row {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  
+  .password-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+  
+  .password-toggle {
+    align-self: flex-start;
+    margin-top: 0.5rem;
   }
 }
 
-/* Small phones */
+/* Mobile Portrait */
+@media (max-width: 600px) {
+  body {
+    padding-top: 50px;
+  }
+  
+  .profile-settings-container {
+    padding-top: 30px;
+    padding: 0.5rem;
+  }
+  
+  .profile-form {
+    padding: 1.2rem;
+    border-radius: 12px;
+    margin: 0 0.5rem;
+  }
+  
+  .profile-form-title {
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
+  }
+  
+  .profile-img-box {
+    width: 160px;
+    height: 160px;
+  }
+  
+  .change-picture-btn {
+    width: 100%;
+    padding: 0.8em 1em;
+    font-size: 0.9em;
+  }
+  
+  .form-group input {
+    height: 40px;
+    font-size: 16px;
+  }
+  
+  .save-btn {
+    padding: 0.8em;
+    font-size: 1em;
+  }
+  
+  .password-container {
+    gap: 0.3rem;
+  }
+  
+  .password-toggle {
+    font-size: 0.8em;
+    padding: 0.2rem 0.5rem;
+  }
+}
+
+/* Small Mobile Devices */
 @media (max-width: 480px) {
+  body {
+    padding-top: 45px;
+  }
+  
+  .profile-settings-container {
+    padding: 0.3rem;
+  }
+  
+  .profile-form {
+    padding: 1rem;
+    margin: 0 0.3rem;
+  }
+  
+  .profile-form-title {
+    font-size: 1.4rem;
+  }
+  
   .profile-img-box {
     width: 140px;
     height: 140px;
   }
-  .profile-form-title {
-    font-size: 1.6rem;
+  
+  .form-group label {
+    font-size: 0.9em;
   }
+  
+  .form-group input {
+    height: 38px;
+    font-size: 16px;
+  }
+  
+  .change-picture-btn {
+    padding: 0.7em 0.8em;
+    font-size: 0.85em;
+  }
+  
   .save-btn {
-    font-size: 1rem;
     padding: 0.7em;
+    font-size: 0.95em;
+  }
+  
+  .password-toggle {
+    font-size: 0.75em;
+    padding: 0.15rem 0.4rem;
   }
 }
