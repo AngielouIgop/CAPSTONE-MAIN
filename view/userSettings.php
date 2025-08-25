@@ -10,7 +10,6 @@
   <title>User Settings</title>
   <link rel="stylesheet" href="css/userSettings.css">
 
-
   <script type="text/javascript">
     function imagePreview(event) {
       if (event.target.files.length > 0) {
@@ -43,10 +42,12 @@
         ?>
         <img src="<?php echo $src; ?>" alt="Profile Picture" class="profile-img" id="previewImage">
       </div>
-      <label class="change-picture-btn">
-        Change picture
-        <input type="file" name="profilePicture" accept="image/*" style="display:none;" onchange="imagePreview(event)">
-      </label>
+      <div class="profile-img-actions">
+        <label class="change-picture-btn">
+          Change picture
+          <input type="file" name="profilePicture" accept="image/*" style="display:none;" onchange="imagePreview(event)">
+        </label>
+      </div>
     </div>
 
     <div class="profile-form-fields">
@@ -56,20 +57,19 @@
           <input type="text" name="fullname" value="<?php echo htmlspecialchars($users['fullName'] ?? ''); ?>">
         </div>
         <div class="form-group">
-          <label>Zone</label>
-          <input type="text" name="zone" value="<?php echo htmlspecialchars($users['zone'] ?? ''); ?>">
+          <label>Email</label>
+          <input type="email" name="email" value="<?php echo htmlspecialchars($users['email'] ?? ''); ?>">
         </div>
       </div>
 
       <div class="form-row">
         <div class="form-group">
-          <label>Email</label>
-          <input type="email" name="email" value="<?php echo htmlspecialchars($users['email'] ?? ''); ?>">
+          <label>Contact Number</label>
+          <input type="text" name="contactNumber" value="<?php echo htmlspecialchars($users['contactNumber'] ?? ''); ?>">
         </div>
         <div class="form-group">
-          <label>Contact Number</label>
-          <input type="text" name="contactNumber"
-            value="<?php echo htmlspecialchars($users['contactNumber'] ?? ''); ?>">
+          <label>Username</label>
+          <input type="text" name="username" value="<?php echo htmlspecialchars($users['username'] ?? ''); ?>">
         </div>
       </div>
 
@@ -82,13 +82,6 @@
           </div>
         </div>
         <div class="form-group">
-          <label>Username</label>
-          <input type="text" name="username" value="<?php echo htmlspecialchars($users['username'] ?? ''); ?>">
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
           <label>Confirm password</label>
           <div class="password-container">
             <input type="password" id="confirmPassword" name="confirmPassword">
@@ -96,7 +89,6 @@
               onclick="togglePassword('confirmPassword', this)">Show</button>
           </div>
         </div>
-        <div class="form-group"><!-- Empty for alignment --></div>
       </div>
     </div>
 
