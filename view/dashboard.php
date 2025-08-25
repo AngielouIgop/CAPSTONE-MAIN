@@ -60,8 +60,23 @@
       <div class="card waste-card">
         <h3>Most Contributed Waste</h3>
         <?php if ($mostContributedWaste): ?>
-          <img src="data:image/png;base64,<?= base64_encode($mostContributedWaste['materialImg']) ?>"
-            alt="<?= htmlspecialchars($mostContributedWaste['materialName']) ?>" class="waste-img">
+          <?php
+          // Map waste types to image files
+          $wasteImages = [
+            'plastic bottles' => 'images/plasticBottle.png',
+            'plastic bottle' => 'images/plasticBottle.png',
+            'glass bottles' => 'images/glassBottle.png',
+            'glass bottle' => 'images/glassBottle.png',
+            'tin cans' => 'images/tinCan.png',
+            'tin can' => 'images/tinCan.png',
+          ];
+          
+          $wasteName = strtolower($mostContributedWaste['materialName']);
+          $imagePath = $wasteImages[$wasteName] ?? 'images/default-waste.png';
+          ?>
+          <img src="<?= $imagePath ?>" 
+               alt="<?= htmlspecialchars($mostContributedWaste['materialName']) ?>" 
+               class="waste-img">
           <p><?= htmlspecialchars($mostContributedWaste['materialName']) ?></p>
           <small>Total: <?= $mostContributedWaste['totalQuantity'] ?></small>
         <?php else: ?>
@@ -71,8 +86,6 @@
     </div> <!-- ✅ CLOSE .dashboard-grid properly -->
   </div> <!-- ✅ CLOSE .dashboard properly -->
 
-  <!-- Scripts should be OUTSIDE the grid -->
-  <script src="js/toggle.js"></script>
   <script>
     // Calendar Rendering
     const calendar = document.getElementById('calendar');

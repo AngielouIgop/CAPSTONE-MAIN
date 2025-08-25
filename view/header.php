@@ -50,9 +50,8 @@
     </nav>
   <?php endif; ?>
 </header>
-
-<script src="js/toggle.js"></script>
-
 </body>
 </html>
+
+<script src="js/toggle.js"></script>
 
