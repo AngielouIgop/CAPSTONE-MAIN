@@ -106,12 +106,9 @@ class Controller
 
                 $userID = $_SESSION['user']['userID'];
                 $user = $this->model->getUserByID($userID);
-                // $userTotalPlastic = $this->model->getUserTotalPlastic($userID);
-                // $userTotalGlass = $this->model->getUserTotalGlassBottles($userID);
-                // $userTotalCans = $this->model->getUserTotalCans($userID);
-                $topContributors = $this->model->getTopContributors();
+                $wasteHistory = $this->model->getUserWasteHistory($userID);
                 $mostContributedWaste = $this->model->getMostContributedWaste();
-
+                $topContributors = $this->model->getTopContributors();
 
                 include_once('view/dashboard.php');
                 break;
