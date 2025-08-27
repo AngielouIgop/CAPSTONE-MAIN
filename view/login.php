@@ -42,12 +42,29 @@
     </div>
   </div>
 
+
   <script>
-    function toggleLoginType() {
-      const role = document.getElementById('loginRole').value;
+    function setLoginType(role) {
       const loginType = document.getElementById('loginType');
-      loginType.textContent = role === 'user' ? "Official User Login" : "Official Admin Login";
+      loginType.textContent = role === 'user' ? 'Official User Login' : 'Official Admin Login';
     }
+
+    function toggleLoginType() {
+      const select = document.getElementById('loginRole');
+      const role = select.value;
+      localStorage.setItem('loginRole', role);
+      setLoginType(role);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const select = document.getElementById('loginRole');
+      const role = localStorage.getItem('loginRole');
+
+        if (role && ['user', 'admin', 'super admin'].includes(role)) {
+        select.value = role;
+      }
+      setLoginType(select.value);
+    });
 
     function togglePassword() {
       const passwordInput = document.getElementById('password');
@@ -63,8 +80,6 @@
         passwordToggle.title = 'Show password';
       }
     }
-
-    document.addEventListener('DOMContentLoaded', toggleLoginType);
   </script>
 </body>
 

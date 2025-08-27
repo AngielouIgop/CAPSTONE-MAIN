@@ -51,7 +51,7 @@
     </div>
 
     <div class="section-header">
-        Admins
+        Admin
     </div>
     <div class="table-container">
         <table class="custom-table">
