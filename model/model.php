@@ -148,6 +148,7 @@ public function getMostContributedWaste()
 }
 
 
+
     // ----- REWARD DATA -----
     public function getAllRewards()
     {
@@ -320,6 +321,22 @@ public function getMostContributedWaste()
         return $row ? (int) $row['totalCans'] : 0;
     }
 
+    public function getUserWasteHistory($userID){
+        $stmt = $this->db->prepare("\n            SELECT\n                w.entryID,\n                w.dateDeposited,\n                w.timeDeposited,\n                w.quantity,\n                w.materialWeight,\n                w.pointsEarned,\n                m.materialName\n            FROM wasteentry w\n            INNER JOIN materialType m ON m.materialID = w.materialID\n            WHERE w.userID = ?\n            ORDER BY w.dateDeposited DESC, w.timeDeposited DESC, w.entryID DESC\n            LIMIT 10\n        ");
+        if (!$stmt) {
+            return [];
+        }
+        $stmt->bind_param('i', $userID);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $rows = [];
+        while ($row = $result->fetch_assoc()) {
+            $rows[] = $row;
+        }
+        $stmt->close();
+        return $rows;
+    }
+    
     // ========================================================
     // ===================== ADD FUNCTIONS ===================
     // ========================================================
