@@ -23,10 +23,39 @@
 
     <!-- GRID CONTAINER -->
     <div class="dashboard-grid">
-      <!-- Top Left: Leading Zone Contributors -->
-      <div class="card chart-card">
-        <h3>Leading Zone Contributors</h3>
-        <canvas id="zoneChart"></canvas>
+      <!-- Top Left: Waste Contribution History (current user) -->
+      <div class="card history-card">
+        <h3>Your Recent Waste Contributions</h3>
+        <?php if (!empty($wasteHistory)): ?>
+          <div class="history-table-wrap">
+            <table class="history-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Time</th>
+                  <th>Material</th>
+                  <th>Qty</th>
+                  <th>Weight (g)</th>
+                  <th>Points</th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php foreach ($wasteHistory as $row): ?>
+                  <tr>
+                    <td><?= htmlspecialchars($row['dateDeposited']) ?></td>
+                    <td><?= htmlspecialchars($row['timeDeposited'] ?? '') ?></td>
+                    <td><?= htmlspecialchars($row['materialName']) ?></td>
+                    <td><?= htmlspecialchars($row['quantity']) ?></td>
+                    <td><?= htmlspecialchars($row['materialWeight']) ?></td>
+                    <td><?= htmlspecialchars($row['pointsEarned']) ?></td>
+                  </tr>
+                <?php endforeach; ?>
+              </tbody>
+            </table>
+          </div>
+        <?php else: ?>
+          <p>No recent contributions.</p>
+        <?php endif; ?>
       </div>
 
       <!-- Top Right: Calendar -->
@@ -40,9 +69,11 @@
         <h3>Top Contributors Per Zone</h3>
         <div class="contributors-grid">
           <?php
+          
           $zones = ['Zone 1', 'Zone 2', 'Zone 3', 'Zone 4', 'Zone 5', 'Zone 6', 'Zone 7'];
           foreach ($zones as $zone): ?>
             <div class="contributor">
+            <div class="contributor-icon"> <img src="images/cont-icon.png" alt="cont-img"></div>
               <?php if (isset($topContributors[$zone])): ?>
                 <?= htmlspecialchars($topContributors[$zone]['fullName']) ?><br>
                 Points: <?= htmlspecialchars($topContributors[$zone]['totalQuantity']) ?><br>
