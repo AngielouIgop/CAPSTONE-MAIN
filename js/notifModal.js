@@ -24,7 +24,7 @@ notificationList.addEventListener('click', (e) => {
 
   if (target.classList.contains('done-single-btn')) {
     const notifId = target.dataset.id;
-    fetch('updateNotification.php', {
+    fetch('endpoints/updateNotification.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: `id=${notifId}`
@@ -48,7 +48,7 @@ notificationList.addEventListener('click', (e) => {
 
 // Open modal and fetch unread notifications
 function openNotificationModal() {
-  fetch('getUnreadNotifications.php')
+  fetch('endpoints/getUnreadNotifications.php')
     .then(res => res.json())
     .then(data => {
       populateNotificationList(data);
