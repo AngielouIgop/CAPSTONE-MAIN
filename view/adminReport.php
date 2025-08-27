@@ -44,18 +44,47 @@
       </div>
 
       <!-- Leading Zones -->
-    <div class="leading-zones">
-    <h3>Total Contributions per Zone</h3>
-    <ul>
-        <li><strong>Zone 1</strong> <span><?= htmlspecialchars($getContZone1) ?> total contributions</span></li>
-        <li><strong>Zone 2</strong> <span><?= htmlspecialchars($getContZone2) ?> total contributions</span></li>
-        <li><strong>Zone 3</strong> <span><?= htmlspecialchars($getContZone3) ?> total contributions</span></li>
-        <li><strong>Zone 4</strong> <span><?= htmlspecialchars($getContZone4) ?> total contributions</span></li>
-        <li><strong>Zone 5</strong> <span><?= htmlspecialchars($getContZone5) ?> total contributions</span></li>
-        <li><strong>Zone 6</strong> <span><?= htmlspecialchars($getContZone6) ?> total contributions</span></li>
-        <li><strong>Zone 7</strong> <span><?= htmlspecialchars($getContZone7) ?> total contributions</span></li>
-    </ul>
-</div>
+      <div class="leading-zones">
+        <h3>Total Contributions per Zone</h3>
+        <table class="zones-table">
+          <thead>
+            <tr>
+              <th>Zone</th>
+              <th>Total Contributions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Zone 1</td>
+              <td><?= htmlspecialchars($getContZone1) ?></td>
+            </tr>
+            <tr>
+              <td>Zone 2</td>
+              <td><?= htmlspecialchars($getContZone2) ?></td>
+            </tr>
+            <tr>
+              <td>Zone 3</td>
+              <td><?= htmlspecialchars($getContZone3) ?></td>
+            </tr>
+            <tr>
+              <td>Zone 4</td>
+              <td><?= htmlspecialchars($getContZone4) ?></td>
+            </tr>
+            <tr>
+              <td>Zone 5</td>
+              <td><?= htmlspecialchars($getContZone5) ?></td>
+            </tr>
+            <tr>
+              <td>Zone 6</td>
+              <td><?= htmlspecialchars($getContZone6) ?></td>
+            </tr>
+            <tr>
+              <td>Zone 7</td>
+              <td><?= htmlspecialchars($getContZone7) ?></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
 
       <!-- Top Contributors Table -->
