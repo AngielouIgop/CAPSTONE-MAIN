@@ -7,7 +7,8 @@
 // WiFi credentials
 const char* ssid = "iPhone";
 const char* password = "gelo12345";
-const char* serverName = "http://172.20.10.2/CAPSTONE-MAIN/endpoint.php";
+const char* serverName = "http://172.20.10.2/CAPSTONE-MAIN/endpoints/endpoint.php";
+const char* statusCheckUrl = "http://172.20.10.2/CAPSTONE-MAIN/endpoints/checkContributionStatus.php";
 
 // HX711 weight sensors (Plastic, Glass, Can)
 #define DOUT_PLASTIC 33
@@ -35,29 +36,30 @@ const int SERVO_PIN3 = 21; // Can
 const int BUZZER_PIN = 5;
 
 // Ultrasonic sensor
+
+//Plastic Bin
 #define TRIG_PIN 18
 #define ECHO_PIN 19
-const int BIN_FULL_DISTANCE = 10; // cm
+// Glass Bin
+#define TRIG_PIN 16
+#define ECHO_PIN 17
+//Can Bin
+#define TRIG_PIN 15
+#define ECHO_PIN 2
+const int BIN_FULL_DISTANCE = 10;
+
+
 
 // Global flag for bin full notification
-bool binFullNotified = false;
-
-long getDistance() {
-  digitalWrite(TRIG_PIN, LOW);
-  delayMicroseconds(2);
-  digitalWrite(TRIG_PIN, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(TRIG_PIN, LOW);
-
-  long duration = pulseIn(ECHO_PIN, HIGH);
-  long distance = duration * 0.034 / 2; // cm
-  return distance;
-}
+bool plasticBinFullNotified = false;
+bool glassBinFullNotified = false;
+bool canBinFullNotified = false;
 
 // User info
 int userID = 0;
 bool userIDSet = false;
 String username = "";
+bool contributionStarted = false;
 
 // Sensor pins
 const int SENSOR_PIN_1 = 34; // plastic bottle
@@ -82,10 +84,25 @@ const int CAN_CONFIDENCE_THRESHOLD = 5;
 // Timing
 unsigned long previousMillis = 0;
 const long interval = 5000; // 5 seconds
+unsigned long lastStatusCheck = 0;
+const long statusCheckInterval = 2000; // Check status every 2 seconds
+
+long getDistance() {
+  digitalWrite(TRIG_PIN, LOW);
+  delayMicroseconds(2);
+  digitalWrite(TRIG_PIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN, LOW);
+
+  long duration = pulseIn(ECHO_PIN, HIGH);
+  long distance = duration * 0.034 / 2; // cm
+  return distance;
+}
+
 
 bool fetchCurrentUser() {
     HTTPClient http;
-    http.begin("http://172.20.10.2/CAPSTONE-MAIN/get_current_user.php");
+    http.begin("http://172.20.10.2/CAPSTONE-MAIN/endpoints/get_current_user.php");
     int httpResponseCode = http.GET();
     if (httpResponseCode > 0) {
         String response = http.getString();
@@ -105,6 +122,42 @@ bool fetchCurrentUser() {
         }
     } else {
         Serial.print("Error fetching user: "); Serial.println(httpResponseCode);
+    }
+    http.end();
+    return false;
+}
+
+bool checkContributionStatus() {
+    HTTPClient http;
+    http.begin(statusCheckUrl);
+    int httpResponseCode = http.GET();
+    if (httpResponseCode > 0) {
+        String response = http.getString();
+        Serial.println("Status check response: " + response);
+        DynamicJsonDocument doc(1024);
+        DeserializationError error = deserializeJson(doc, response);
+        if (!error && doc.containsKey("contribution_started")) {
+            bool newStatus = doc["contribution_started"];
+            if (newStatus != contributionStarted) {
+                contributionStarted = newStatus;
+                if (contributionStarted) {
+                    Serial.println("Contribution STARTED - Ready to accept waste materials!");
+                    // Activate buzzer to indicate ready
+                    digitalWrite(BUZZER_PIN, HIGH);
+                    delay(200);
+                    digitalWrite(BUZZER_PIN, LOW);
+                    delay(200);
+                    digitalWrite(BUZZER_PIN, HIGH);
+                    delay(200);
+                    digitalWrite(BUZZER_PIN, LOW);
+                } else {
+                    Serial.println("Contribution STOPPED - Waiting for user to start...");
+                }
+            }
+            return true;
+        }
+    } else {
+        Serial.print("Error checking status: "); Serial.println(httpResponseCode);
     }
     http.end();
     return false;
@@ -198,6 +251,7 @@ void setup() {
     pinMode(ECHO_PIN, INPUT);
 
     Serial.println("Setup complete");
+    Serial.println("Waiting for user to start contributing...");
 }
 
 void loop() {
@@ -214,7 +268,14 @@ void loop() {
         return;
     }
 
-    if (currentMillis - previousMillis >= interval) {
+    // Check contribution status every 2 seconds
+    if (currentMillis - lastStatusCheck >= statusCheckInterval) {
+        lastStatusCheck = currentMillis;
+        checkContributionStatus();
+    }
+
+    // Only process waste materials if contribution has started
+    if (contributionStarted && currentMillis - previousMillis >= interval) {
         previousMillis = currentMillis;
 
         String materialType = determineMaterial();
@@ -242,7 +303,6 @@ void loop() {
             delay(1000);  // ✅ Fastest
             servoCan.write(0);
             }
-
 
             Serial.print("Weight: "); Serial.print(weight); Serial.println(" grams");
 
@@ -272,46 +332,114 @@ void loop() {
         } else {
             Serial.println("Material not detected. Servo will not move. Buzzer will remain silent.");
         }
+    } else if (!contributionStarted) {
+        // Optional: Add a small delay when waiting to reduce CPU usage
+        delay(100);
     }
 
-    // ✅ Bin full detection
-long distance = getDistance();
-Serial.print("Plastic bin distance: ");
-Serial.println(distance);
+    // ✅ Bin full detection for Plastic Bin
+    long distance = getDistance();
+    Serial.print("Plastic bin distance: ");
+    Serial.println(distance);
 
-if (distance <= BIN_FULL_DISTANCE && !binFullNotified) {
-    Serial.println("Plastic bin is nearly full!");
+    if (distance <= BIN_FULL_DISTANCE && !plasticBinFullNotified) {
+        Serial.println("Plastic bin is nearly full!");
 
-    if (WiFi.status() == WL_CONNECTED) {
-        HTTPClient http;
-        http.begin("http://172.20.10.2/CAPSTONE-MAIN/notifEndpoint.php");   
-        http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+        if (WiFi.status() == WL_CONNECTED) {
+            HTTPClient http;
+            http.begin("http://172.20.10.2/CAPSTONE-MAIN/endpoints/notifEndpoint.php");   
+            http.addHeader("Content-Type", "application/x-www-form-urlencoded");
 
-        // ✅ Required fields for your endpoint
-        String postData = "sensor_name=Plastic Bin"
-                          "&message=Plastic bin is nearly full!"
-                          "&status=unread";
+            String postData = "sensor_name=Plastic Bin&message=Plastic bin is nearly full!&status=unread";
+            int httpResponseCode = http.POST(postData);
 
-        int httpResponseCode = http.POST(postData);
-
-        Serial.print("Bin full notify response code: ");
-        Serial.println(httpResponseCode);
-
-        if (httpResponseCode > 0) {
-            String response = http.getString();
-            Serial.println(response);
-            if (httpResponseCode == 200) {
-                binFullNotified = true; // ✅ avoid spamming
-            }
-        } else {
-            Serial.print("Error in sending bin full request: ");
+            Serial.print("Plastic bin full notify response code: ");
             Serial.println(httpResponseCode);
-        }
-        http.end();
-    }
-}
-else if (distance > BIN_FULL_DISTANCE) {
-    binFullNotified = false; // ✅ reset once bin is emptied
-}
 
+            if (httpResponseCode > 0) {
+                String response = http.getString();
+                Serial.println(response);
+                if (httpResponseCode == 200) {
+                    plasticBinFullNotified = true; // ✅ avoid spamming
+                }
+            } else {
+                Serial.print("Error in sending plastic bin full request: ");
+                Serial.println(httpResponseCode);
+            }
+            http.end();
+        }
+    }
+    else if (distance > BIN_FULL_DISTANCE) {
+        plasticBinFullNotified = false; // ✅ reset once bin is emptied
+    }
+
+    // ✅ Bin full detection for Glass Bin
+    Serial.print("Glass bin distance: ");
+    Serial.println(distance);
+
+    if (distance <= BIN_FULL_DISTANCE && !glassBinFullNotified) {
+        Serial.println("Glass bin is nearly full!");
+
+        if (WiFi.status() == WL_CONNECTED) {
+            HTTPClient http;
+            http.begin("http://172.20.10.2/CAPSTONE-MAIN/endpoints/notifEndpoint.php");   
+            http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+
+            String postData = "sensor_name=Glass Bin&message=Glass bin is nearly full!&status=unread";
+            int httpResponseCode = http.POST(postData);
+
+            Serial.print("Glass bin full notify response code: ");
+            Serial.println(httpResponseCode);
+
+            if (httpResponseCode > 0) {
+                String response = http.getString();
+                Serial.println(response);
+                if (httpResponseCode == 200) {
+                    glassBinFullNotified = true; // ✅ avoid spamming
+                }
+            } else {
+                Serial.print("Error in sending glass bin full request: ");
+                Serial.println(httpResponseCode);
+            }
+            http.end();
+        }
+    }
+    else if (distance > BIN_FULL_DISTANCE) {
+        glassBinFullNotified = false; // ✅ reset once bin is emptied
+    }
+
+    // ✅ Bin full detection for Can Bin
+    Serial.print("Can bin distance: ");
+    Serial.println(distance);
+
+    if (distance <= BIN_FULL_DISTANCE && !canBinFullNotified) {
+        Serial.println("Can bin is nearly full!");
+
+        if (WiFi.status() == WL_CONNECTED) {
+            HTTPClient http;
+            http.begin("http://172.20.10.2/CAPSTONE-MAIN/endpoints/notifEndpoint.php");   
+            http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+
+            String postData = "sensor_name=Can Bin&message=Can bin is nearly full!&status=unread";
+            int httpResponseCode = http.POST(postData);
+
+            Serial.print("Can bin full notify response code: ");
+            Serial.println(httpResponseCode);
+
+            if (httpResponseCode > 0) {
+                String response = http.getString();
+                Serial.println(response);
+                if (httpResponseCode == 200) {
+                    canBinFullNotified = true; // ✅ avoid spamming
+                }
+            } else {
+                Serial.print("Error in sending can bin full request: ");
+                Serial.println(httpResponseCode);
+            }
+            http.end();
+        }
+    }
+    else if (distance > BIN_FULL_DISTANCE) {
+        canBinFullNotified = false; // ✅ reset once bin is emptied
+    }
 }
