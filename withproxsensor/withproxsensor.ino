@@ -180,22 +180,22 @@ String determineMaterial() {
         Serial.print("Can="); Serial.println(canReading);
 
         if (plasticReading >= PLASTIC_THRESHOLD_MIN && plasticReading <= PLASTIC_THRESHOLD_MAX &&
-            !(bottleReading >= BOTTLE_THRESHOLD_MIN && bottleReading <= BOTTLE_THRESHOLD_MAX) &&
-            !(canReading >= CAN_THRESHOLD_MIN && canReading <= CAN_THRESHOLD_MAX)) {
+            !(bottleReading >= PLASTIC_THRESHOLD_MIN && bottleReading <= PLASTIC_THRESHOLD_MAX) &&
+            !(canReading >= PLASTIC_THRESHOLD_MIN && canReading <= PLASTIC_THRESHOLD_MAX)) {
             plasticCount++;
         }
         else if (bottleReading >= BOTTLE_THRESHOLD_MIN && bottleReading <= BOTTLE_THRESHOLD_MAX &&
-                 !(plasticReading >= PLASTIC_THRESHOLD_MIN && plasticReading <= PLASTIC_THRESHOLD_MAX) &&
-                 !(canReading >= CAN_THRESHOLD_MIN && canReading <= CAN_THRESHOLD_MAX)) {
+                 !(plasticReading >= BOTTLE_THRESHOLD_MIN && plasticReading <= BOTTLE_THRESHOLD_MAX) &&
+                 !(canReading >= BOTTLE_THRESHOLD_MIN && canReading <= BOTTLE_THRESHOLD_MAX)) {
             bottleCount++;
         }
         else if (canReading >= CAN_THRESHOLD_MIN && canReading <= CAN_THRESHOLD_MAX &&
-                 !(plasticReading >= PLASTIC_THRESHOLD_MIN && plasticReading <= PLASTIC_THRESHOLD_MAX) &&
-                 !(bottleReading >= BOTTLE_THRESHOLD_MIN && bottleReading <= BOTTLE_THRESHOLD_MAX)) {
+                 !(plasticReading >= CAN_THRESHOLD_MIN && plasticReading <= CAN_THRESHOLD_MAX) &&
+                 !(bottleReading >= CAN_THRESHOLD_MIN && bottleReading <= CAN_THRESHOLD_MAX)) {
             canCount++;
         }
-        delay(READING_DELAY);
-    }
+        delay(READING_DELAY);        
+    }    
 
     Serial.print("Plastic count: "); Serial.println(plasticCount);
     Serial.print("Glass count: "); Serial.println(bottleCount);
