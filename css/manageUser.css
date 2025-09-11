@@ -1,20 +1,193 @@
-body {
-  background: #f5f0fa;
-  font-family: 'Segoe UI', Arial, sans-serif;
+body, html {
   margin: 0;
   padding: 0;
-  padding-top: 80px;
-  margin-left: 240px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f8f9fa;
+  height: auto;
+  padding-top: 30px; /* spacing under header */
+  color: #222;
+}
+
+/* Desktop-only sidebar margin */
+@media (min-width: 901px) {
+  body, html {
+    margin-left: 125px ;/* matches your sidebar width */
+  }
+}
+
+/* Pending Registrations Modal Styles */
+#pendingRegistrationsModal .modal-content {
+  width: 90%;
+  max-width: 800px;
+  margin: 5% auto;
+  padding: 0;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+#pendingRegistrationsModal .modal-header {
+  background: #2d316b;
+  color: white;
+  padding: 20px 25px;
+  border-radius: 12px 12px 0 0;
+  margin: 0;
+  position: relative;
+}
+
+#pendingRegistrationsModal .modal-header h2 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+#pendingRegistrationsModal .close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  color: white;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+#pendingRegistrationsModal .close:hover {
+  color: #ffcccb;
+}
+
+#pendingRegistrationsModal .modal-body {
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: 25px;
+  background: #f8f9fa;
+}
+
+#pendingRegistrationsModal .modal-footer {
+  background: white;
+  padding: 20px 25px;
+  border-top: 1px solid #e0e0e0;
+  border-radius: 0 0 12px 12px;
+  text-align: center;
+}
+
+#pendingRegistrationsModal .modal-footer .btn-cancel {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.3s;
+  box-shadow: 0 2px 4px rgba(108, 117, 125, 0.3);
+}
+
+#pendingRegistrationsModal .modal-footer .btn-cancel:hover {
+  background: #5a6268;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(108, 117, 125, 0.4);
+}
+
+.pending-registration-item {
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  background: #f9f9f9;
+}
+
+.registration-info h4 {
+  margin: 0 0 10px 0;
+  color: #2d316b;
+  font-size: 1.2rem;
+}
+
+.registration-info p {
+  margin: 5px 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.registration-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+  justify-content: flex-end;
+}
+
+.btn-approve {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.3s;
+}
+
+.btn-approve:hover {
+  background: #218838;
+}
+
+.btn-reject {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.3s;
+}
+
+.btn-reject:hover {
+  background: #c82333;
+}
+
+/* Empty state styling */
+#pendingRegistrationsList p {
+  text-align: center;
+  color: #666;
+  font-size: 1rem;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+/* Responsive design for pending registrations */
+@media (max-width: 768px) {
+  .pending-registration-item {
+    padding: 15px;
+  }
+  
+  .registration-actions {
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .btn-approve,
+  .btn-reject {
+    flex: 1;
+    margin: 0 5px;
+  }
+  
+  #pendingRegistrationsModal .modal-content {
+    width: 95%;
+    margin: 2% auto;
+  }
+  
+  #pendingRegistrationsModal .modal-body {
+    padding: 15px;
+  }
 }
 
 .section-header {
   font-size: 2rem;
   font-weight: bold;
   margin: 24px 0 8px 16px;
-  background: #fbeeee;
   padding: 8px 16px;
   border-radius: 8px 8px 0 0;
-  margin-left: 7rem;
 }
 
 .table-container {
@@ -208,12 +381,12 @@ body {
 }
 
 .btn-confirm {
-    background: #4CAF50;
+    background: #2d316b;
     color: white;
 }
 
 .btn-confirm:hover {
-    background: #388e3c;
+    background: #313895;
     transform: translateY(-1px);
 }
 
@@ -355,10 +528,6 @@ body {
 }
 
 @media (max-width: 1024px) {
-  body {
-    margin-left: 200px;
-    padding-top: 70px;
-  }
   
   .section-header {
     margin-left: 5rem;
@@ -372,10 +541,7 @@ body {
 }
 
 @media (max-width: 800px) {
-  body {
-    margin-left: 0;
-    padding-top: 60px;
-  }
+  body, html { margin-left: 0; }
   
   .section-header {
     margin-left: 1rem;
@@ -423,9 +589,6 @@ body {
 }
 
 @media (max-width: 600px) {
-  body {
-    padding-top: 50px;
-  }
   
   .section-header {
     font-size: 1.3rem;

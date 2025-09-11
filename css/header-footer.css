@@ -81,9 +81,9 @@
   border: none;
   color: white;
   cursor: pointer;
-  margin-left: auto;
-  margin-right: 20px;
-  z-index: 1001;
+  margin-left: 15px;
+  margin-right: auto;
+  z-index: 3000;
 }
 
 /* Hide Menu button on desktop */
@@ -159,8 +159,8 @@
 @media (max-width: 768px) {
   .menu-toggle {
     display: block;
-    margin-left: auto;
-    margin-right: 20px;
+    margin-left: 15px;
+    margin-right: auto;
   }
 
   .header-nav {

@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -140,7 +142,6 @@
     </div>
   </div>
 
-  <!-- Chart.js Script -->
   <script>
     document.addEventListener("DOMContentLoaded", function() {
         const wastePerMaterial = <?= json_encode($wastePerMaterial) ?>;
@@ -153,7 +154,6 @@
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Quantity',
                     data: dataValues,
                     backgroundColor: ['#4cafef', '#81c784', '#ffb74d'],
                     borderColor: ['#1e88e5', '#388e3c', '#f57c00'],
@@ -162,6 +162,29 @@
             },
             options: {
                 responsive: true,
+                plugins: {
+                    legend: {
+                        labels: {
+                            generateLabels: function(chart) {
+                                const data = chart.data;
+                                if (data.labels.length && data.datasets.length) {
+                                    return data.labels.map((label, i) => {
+                                        const value = data.datasets[0].data[i];
+                                        return {
+                                            text: `${label}: ${value}`, 
+                                            fillStyle: data.datasets[0].backgroundColor[i],
+                                            strokeStyle: data.datasets[0].borderColor[i],
+                                            lineWidth: 1,
+                                            hidden: false,
+                                            index: i
+                                        };
+                                    });
+                                }
+                                return [];
+                            }
+                        }
+                    }
+                },
                 scales: {
                     y: {
                         beginAtZero: true,
@@ -171,6 +194,6 @@
             }
         });
     });
-  </script>
+</script>
 </body>
 </html>

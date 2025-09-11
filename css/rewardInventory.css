@@ -1,24 +1,31 @@
-body {
-  background: #f5f0fa;
-  font-family: 'Segoe UI', Arial, sans-serif;
+body, html {
   margin: 0;
   padding: 0;
-  padding-top: 80px;
-  margin-left: 240px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f8f9fa;
+  height: 100%;
+  padding-top: 30px; /* spacing under header */
+  color: #222;
+}
+
+/* Desktop-only sidebar margin */
+@media (min-width: 901px) {
+  body, html {
+    margin-left: 125px ;/* matches your sidebar width */
+  }
 }
 
 .reward-section-header {
   font-size: 2rem;
   font-weight: bold;
   margin: 24px 0 8px 16px;
-  background: #fbeeee;
+
   padding: 8px 16px;
   border-radius: 8px 8px 0 0;
-  margin-left: 8rem;
 }
 
 .reward-table-container {
-  background: #fff;
+
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   margin: 0 auto 32px auto;

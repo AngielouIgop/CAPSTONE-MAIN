@@ -1,13 +1,12 @@
 <?php
-session_start();
-require_once('../model/model.php');
 
 class NotifyEndpoint
 {
-    private $model;
+    public $model = null;
 
     function __construct()
     {
+        // require_once('../model/model.php');
         $this->model = new Model();
     }
 
@@ -59,6 +58,7 @@ class NotifyEndpoint
     }
 }
 
+require_once('../model/model.php');
 $endpoint = new NotifyEndpoint();
 $endpoint->processRequest();
 ?>

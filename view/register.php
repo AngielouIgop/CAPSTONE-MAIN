@@ -29,6 +29,8 @@
         <input type="email" name="email" id="email" required>
         <label for="zone">Zone</label>
         <input type="text" name="zone" id="zone" required>
+        <label for="brgyID">Brgy ID</label>
+        <input type="text" name="brgyID" id="brgyID" required>
         <label for="contactNumber">Contact Number</label>
         <input type="text" name="contactNumber" id="contactNumber" required>
         <label for="username">Username</label>

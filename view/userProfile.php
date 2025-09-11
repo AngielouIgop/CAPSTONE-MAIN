@@ -1,4 +1,4 @@
-<?php include 'header.php'; ?>
+
 <?php include 'contribute.php'; ?>
 
 <!DOCTYPE html>

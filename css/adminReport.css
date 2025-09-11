@@ -1,10 +1,26 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f8f9fa;
+  height: 100%;
+  padding-top: 30px; /* spacing under header */
+  color: #222;
+}
+
+/* Desktop-only sidebar margin */
+@media (min-width: 901px) {
+  body, html {
+    margin-left: 125px ;/* matches your sidebar width */
+  }
+}
+
+
 .report-container {
   padding: 14px;
   font-family: 'Segoe UI', sans-serif;
   background: #fdf5f5;
   color: #222;
-  margin-left: 250px; /* shifted a bit more to the right */
-  margin-top: 65px;   /* slight spacing from the header */
 }
 
 .report-title {

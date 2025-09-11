@@ -1,11 +1,19 @@
-body {
-  background-color: #fdeeee;
-  font-family: 'Segoe UI', Arial, sans-serif;
+body, html {
   margin: 0;
-  padding: 100px 40px 40px 220px; /* Desktop default */
-  box-sizing: border-box;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f8f9fa;
+  height: 100%;
+  padding-top: 40px; /* spacing under header */
+  color: #222;
 }
 
+/* Desktop-only sidebar margin */
+@media (min-width: 901px) {
+  body, html {
+    margin-left: 125px ;/* matches your sidebar width */
+  }
+}
 /* Header Section */
 .rewards-header {
   display: flex;
@@ -115,9 +123,6 @@ body {
 
 /* Tablets */
 @media (max-width: 1024px) {
-  body {
-    padding: 90px 30px 30px 200px;
-  }
 
   .reward-card {
     width: 160px;
@@ -126,9 +131,6 @@ body {
 
 /* Mobile (Portrait & Landscape) */
 @media (max-width: 768px) {
-  body {
-    padding: 80px 20px 20px 20px; /* Remove sidebar padding */
-  }
 
   .rewards-header {
     flex-direction: column;
@@ -156,9 +158,6 @@ body {
 
 /* Extra Small Mobile */
 @media (max-width: 480px) {
-  body {
-    padding: 70px 15px 15px 15px;
-  }
 
   .rewards-header span {
     font-size: 13px;

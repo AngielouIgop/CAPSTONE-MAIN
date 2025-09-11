@@ -32,20 +32,21 @@ class Controller
                 $password = $_POST['password'] ?? '';
                 $confirm = $_POST['confirm'] ?? '';
                 $zone = $_POST['zone'] ?? '';
+                $brgyID = $_POST['brgyID'] ?? '';
                 $error = '';
 
                 // Validate if the necessary fields are filled
-                if (empty($fullname) || empty($email) || empty($username) || empty($password) || empty($confirm) || empty($contactNumber) || empty($zone)) {
+                if (empty($fullname) || empty($email) || empty($username) || empty($password) || empty($confirm) || empty($contactNumber) || empty($zone) || empty($brgyID)) {
                     $error = "Please fill out all the required fields.";
                 } elseif ($password !== $confirm) {
                     $error = "Passwords do not match.";
-                } elseif ($this->model->userExists($username)) {
+                } elseif ($this->model->userExists($username) || $this->model->pendingUserExists($username)) {
                     $error = "Username already exists.";
                 } else {
-                    $success = $this->model->registerUser($fullname, $email, $zone, $contactNumber, $username, $password, 'user');
+                    $success = $this->model->registerUser($fullname, $email, $zone, $brgyID, $contactNumber, $username, $password);
 
                     if (isset($success) && $success) {
-                        echo "<script>alert('Succesfully registered.'); window.location.href='?command=login';</script>";
+                        echo "<script>alert('Registration submitted for approval. You will be notified once approved.'); window.location.href='?command=login';</script>";
                     } else {
                         $error = "Registration failed. Please try again.";
                     }

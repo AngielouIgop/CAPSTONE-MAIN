@@ -1,43 +1,68 @@
-body {
-  background: #ffffff;
-  font-family: 'Segoe UI', Arial, sans-serif;
+body, html {
   margin: 0;
   padding: 0;
-  padding-top: 80px;
-  margin-left: 240px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f8f9fa;
+  height: 100%;
+  padding-top: 30px; /* spacing under header */
+  color: #222;
+}
+
+/* Desktop-only sidebar margin */
+@media (min-width: 901px) {
+  body, html {
+    margin-left: 125px; /* matches your sidebar width */
+  }
+}
+
+.settings-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #888;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.close-btn:hover {
+  color: #000;
 }
 
 .profile-settings-container {
+  padding-top: 50px;
   flex: 1;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  padding: 1rem;
-  min-height: 100vh;
+  align-items: center;
+  min-height: 110vh;
   background: #fbeeee;
 }
 
-/* Profile form */
 .profile-form {
   background: #bfc8e6;
   border-radius: 16px;
-  padding: 2.5rem;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.1);
-  max-width: 1300px;
-  width: 100%;
-  min-height: 600px;
+  padding: 3.5rem 2.5rem 3.5rem 2.5rem;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+  max-width: 100%;
+  width: auto;
   margin-left: 0;
+  min-height: 600px;
 }
 
 .profile-form-title {
   text-align: center;
-  font-size: 2.2rem;
+  font-size: 2rem;
   font-weight: bold;
   margin-bottom: 1.5rem;
   color: #07008a;
 }
 
-/* Profile image */
 .profile-form-top {
   display: flex;
   flex-direction: column;
@@ -47,8 +72,8 @@ body {
 }
 
 .profile-img-box {
-  width: 220px;
-  height: 220px;
+  width: 300px;
+  height: 300px;
   background: #fff;
   border-radius: 16px;
   display: flex;
@@ -59,10 +84,16 @@ body {
 }
 
 .profile-img {
-  width: 100%;
-  height: 100%;
+  width: 280px;
+  height: 280px;
   object-fit: cover;
   border-radius: 5%;
+}
+
+.profile-img-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .change-picture-btn {
@@ -73,8 +104,10 @@ body {
   padding: 0.5em 1.2em;
   font-size: 1em;
   cursor: pointer;
+  text-align: center;
   font-weight: 600;
   transition: all 0.2s ease;
+  margin-bottom: 0.2rem;
   display: inline-block;
 }
 
@@ -83,7 +116,23 @@ body {
   transform: translateY(-1px);
 }
 
-/* Form fields */
+.delete-picture-btn {
+  background: #ffe6e6;
+  color: #2336b6;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5em 1.2em;
+  font-size: 1em;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.delete-picture-btn:hover {
+  background: #ffcccc;
+  transform: translateY(-1px);
+}
+
 .profile-form-fields {
   margin-top: 1.5rem;
 }
@@ -124,19 +173,25 @@ body {
   outline: none;
 }
 
-/* Save button */
+.form-group-email {
+  flex: 2;
+}
+
 .save-btn {
-  width: 100%;
+  width: 20%;
   background: #2336b6;
   color: #fff;
   border: none;
   border-radius: 8px;
-  padding: 1em;
+  padding: 0.7em 0;
   font-size: 1.1em;
   font-weight: bold;
   margin-top: 2rem;
+  margin-left: auto;
+  margin-right: auto;
   cursor: pointer;
   transition: all 0.2s ease;
+  display: block;
 }
 
 .save-btn:hover {
@@ -144,11 +199,9 @@ body {
   transform: translateY(-1px);
 }
 
-/* Password toggle */
 .password-container {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
 }
 
 .password-container input {
@@ -156,6 +209,7 @@ body {
 }
 
 .password-toggle {
+  margin-left: 0.5rem;
   padding: 0.3rem 0.6rem;
   font-size: 0.85rem;
   cursor: pointer;
@@ -163,26 +217,26 @@ body {
   background: none;
   color: #666;
   transition: color 0.2s ease;
-  white-space: nowrap;
 }
 
 .password-toggle:hover {
   color: #333;
 }
 
-/* Fix for single form group (username field) */
-.form-group.single-field {
-  margin-bottom: 1.2rem;
+.form-columns {
+  display: flex;
+  gap: 2rem;
 }
 
-/* Fix for password row alignment */
-.form-row.password-row {
-  align-items: flex-end;
+.form-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 /* === RESPONSIVE DESIGN === */
 
-/* Tablet Responsive */
 @media (max-width: 1024px) {
   body {
     margin-left: 200px;
@@ -190,21 +244,25 @@ body {
   }
   
   .profile-form {
-    padding: 2rem;
-    max-width: 100%;
+    padding: 3rem 2rem;
   }
   
-  .profile-form-title {
-    font-size: 2rem;
+  .save-btn {
+    margin-left: 20rem;
+    width: 25%;
   }
   
   .profile-img-box {
-    width: 200px;
-    height: 200px;
+    width: 280px;
+    height: 280px;
+  }
+  
+  .profile-img {
+    width: 260px;
+    height: 260px;
   }
 }
 
-/* Mobile Landscape */
 @media (max-width: 800px) {
   body {
     margin-left: 0;
@@ -217,38 +275,30 @@ body {
   }
   
   .profile-form {
-    padding: 1.5rem;
+    padding: 2rem 1.5rem;
     min-height: auto;
-    margin: 0 1rem;
   }
   
-  .profile-form-title {
-    font-size: 1.8rem;
+  .save-btn {
+    margin-left: 10rem;
+    width: 40%;
   }
   
   .profile-img-box {
-    width: 180px;
-    height: 180px;
+    width: 250px;
+    height: 250px;
   }
   
-  .form-row {
-    flex-direction: column;
-    gap: 0.8rem;
+  .profile-img {
+    width: 230px;
+    height: 230px;
   }
   
-  .password-container {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.5rem;
-  }
-  
-  .password-toggle {
-    align-self: flex-start;
-    margin-top: 0.5rem;
+  .profile-form-title {
+    font-size: 1.6rem;
   }
 }
 
-/* Mobile Portrait */
 @media (max-width: 600px) {
   body {
     padding-top: 50px;
@@ -256,26 +306,31 @@ body {
   
   .profile-settings-container {
     padding-top: 30px;
-    padding: 0.5rem;
+    padding: 1rem;
   }
   
   .profile-form {
-    padding: 1.2rem;
+    padding: 1.5rem 1rem;
     border-radius: 12px;
-    margin: 0 0.5rem;
   }
   
   .profile-form-title {
-    font-size: 1.6rem;
+    font-size: 1.4rem;
     margin-bottom: 1rem;
   }
   
   .profile-img-box {
-    width: 160px;
-    height: 160px;
+    width: 200px;
+    height: 200px;
   }
   
-  .change-picture-btn {
+  .profile-img {
+    width: 180px;
+    height: 180px;
+  }
+  
+  .change-picture-btn,
+  .delete-picture-btn {
     width: 100%;
     padding: 0.8em 1em;
     font-size: 0.9em;
@@ -287,42 +342,44 @@ body {
   }
   
   .save-btn {
-    padding: 0.8em;
+    margin-left: 5rem;
+    margin-top: 1.5rem;
+    width: 60%;
+    padding: 0.8em 0;
     font-size: 1em;
   }
   
-  .password-container {
-    gap: 0.3rem;
-  }
-  
-  .password-toggle {
-    font-size: 0.8em;
-    padding: 0.2rem 0.5rem;
+  .notification-container {
+    width: 100%;
+    margin: 0 1rem;
   }
 }
 
-/* Small Mobile Devices */
 @media (max-width: 480px) {
   body {
     padding-top: 45px;
   }
   
   .profile-settings-container {
-    padding: 0.3rem;
+    padding: 0.5rem;
   }
   
   .profile-form {
-    padding: 1rem;
-    margin: 0 0.3rem;
+    padding: 1rem 0.8rem;
   }
   
   .profile-form-title {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
   }
   
   .profile-img-box {
-    width: 140px;
-    height: 140px;
+    width: 180px;
+    height: 180px;
+  }
+  
+  .profile-img {
+    width: 160px;
+    height: 160px;
   }
   
   .form-group label {
@@ -334,18 +391,14 @@ body {
     font-size: 16px;
   }
   
-  .change-picture-btn {
+  .change-picture-btn,
+  .delete-picture-btn {
     padding: 0.7em 0.8em;
     font-size: 0.85em;
   }
   
   .save-btn {
-    padding: 0.7em;
-    font-size: 0.95em;
-  }
-  
-  .password-toggle {
-    font-size: 0.75em;
-    padding: 0.15rem 0.4rem;
+    margin-left: 2rem;
+    width: 80%;
   }
 }

@@ -14,7 +14,7 @@ body, html {
 /* Desktop-only sidebar margin */
 @media (min-width: 901px) {
   body, html {
-    margin-left: 150px ;/* matches your sidebar width */
+    margin-left: 125px ;/* matches your sidebar width */
   }
 }
 

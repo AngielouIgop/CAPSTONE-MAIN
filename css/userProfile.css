@@ -1,15 +1,22 @@
-html, body {
-  height: 100%;
+body, html {
   margin: 0;
   padding: 0;
-  background: #f7f7f7;
-  font-family: 'Segoe UI', Arial, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f8f9fa;
+  height: 100%;
+  padding-top: 30px; /* spacing under header */
+  color: #222;
 }
 
+/* Desktop-only sidebar margin */
+@media (min-width: 901px) {
+  body, html {
+    margin-left: 125px ;/* matches your sidebar width */
+  }
+}
 
 /* --------- MAIN CONTENT --------- */
 .main-content {
-  margin-left: 250px;
   min-height: 100vh;
   padding: 2rem 1rem;
   padding-top: 100px;

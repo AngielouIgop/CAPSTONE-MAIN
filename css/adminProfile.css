@@ -1,11 +1,19 @@
-body {
-    background: #ffffff;
-    font-family: 'Segoe UI', Arial, sans-serif;
+body, html {
     margin: 0;
     padding: 0;
-    padding-top: 80px;
-    margin-left: 240px;
-}
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f8f9fa;
+    height: 100%;
+    padding-top: 30px; /* spacing under header */
+    color: #222;
+  }
+  
+  /* Desktop-only sidebar margin */
+  @media (min-width: 901px) {
+    body, html {
+      margin-left: 125px ;/* matches your sidebar width */
+    }
+  }
   
 .settings-layout {
     display: flex;
@@ -13,52 +21,7 @@ body {
     gap: 0;
 }
 
-.sidebar {
-    width: 250px;
-    flex-shrink: 0;
-}
 
-.notification-container {
-    width: 300px;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    overflow: hidden;
-    font-family: Arial, sans-serif;
-}
-
-.notification-header {
-    background: #f1f1f1;
-    padding: 8px 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-weight: bold;
-}
-
-.clear-btn {
-    background: none;
-    border: none;
-    color: #007BFF;
-    cursor: pointer;
-}
-
-.notification-item {
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    border-top: 1px solid #ddd;
-    position: relative;
-}
-
-.icon {
-    color: red;
-    margin-right: 8px;
-}
-
-.message {
-    flex: 1;
-}
 
 .close-btn {
     background: none;
@@ -225,11 +188,13 @@ body {
     padding: 0.7em 0;
     font-size: 1.1em;
     font-weight: bold;
-    margin-top: 9rem;
-    margin-left: 25rem;
+    margin-top: 2rem;
+    margin-left: auto;
+    margin-right: auto;
     cursor: pointer;
     transition: all 0.2s ease;
-}
+    display: block;
+  }
   
 .save-btn:hover {
     background: #1a237e;

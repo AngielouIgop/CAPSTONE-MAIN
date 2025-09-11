@@ -1,13 +1,12 @@
 <?php
-session_start();
-require_once('../model/model.php');
 
 class Endpoint
 {
-    private $model;
+    public $model = null;
 
     function __construct()
     {
+        // require_once('model/model.php');
         $this->model = new Model();
     }
 
@@ -36,6 +35,10 @@ class Endpoint
         // ✅ Handle waste entry only
         $material = $_POST['material'] ?? '';
         $weight = isset($_POST['weight']) ? floatval($_POST['weight']) : 0.0;
+        
+        // Set timezone to Philippines (or your preferred timezone)
+        date_default_timezone_set('Asia/Manila');
+        
         $dateDeposited = date('Y-m-d');
         $timeDeposited = date('H:i:s');
         $userID = $_POST['userID'] ?? '';
@@ -100,6 +103,7 @@ class Endpoint
     }
 }
 
+require_once('../model/model.php');
 $endpoint = new Endpoint();
 $endpoint->processRequest();
 ?>

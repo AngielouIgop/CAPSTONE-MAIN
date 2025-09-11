@@ -322,10 +322,21 @@ public function getMostContributedWaste()
     }
 
     public function getUserWasteHistory($userID){
-        $stmt = $this->db->prepare("\n            SELECT\n                w.entryID,\n                w.dateDeposited,\n                w.timeDeposited,\n                w.quantity,\n                w.materialWeight,\n                w.pointsEarned,\n                m.materialName\n            FROM wasteentry w\n            INNER JOIN materialType m ON m.materialID = w.materialID\n            WHERE w.userID = ?\n            ORDER BY w.dateDeposited DESC, w.timeDeposited DESC, w.entryID DESC\n            LIMIT 10\n        ");
-        if (!$stmt) {
-            return [];
-        }
+        $stmt = $this->db->prepare("
+            SELECT
+                w.entryID,
+                w.dateDeposited,
+                w.timeDeposited,
+                w.quantity,
+                w.materialWeight,
+                w.pointsEarned,
+                m.materialName
+            FROM wasteentry w
+            INNER JOIN materialType m ON m.materialID = w.materialID
+            WHERE w.userID = ?
+            ORDER BY w.dateDeposited DESC, w.timeDeposited DESC, w.entryID DESC
+            LIMIT 10
+        ");
         $stmt->bind_param('i', $userID);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -340,15 +351,70 @@ public function getMostContributedWaste()
     // ========================================================
     // ===================== ADD FUNCTIONS ===================
     // ========================================================
-    public function registerUser($fullname, $email, $zone, $contactNumber, $username, $password)
+    public function registerUser($fullname, $email, $zone, $brgyID, $contactNumber, $username, $password)
     {
-        if ($this->userExists($username)) {
+        if ($this->userExists($username) || $this->pendingUserExists($username)) {
             return false;
         }
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-        $query = "INSERT INTO user (fullname, email, zone, contactNumber, username, password, role) VALUES (?,?,?,?,?,?,'user')";
+        $query = "INSERT INTO pending_registrations (fullName, email, zone, brgyID, contactNumber, username, password) VALUES (?,?,?,?,?,?,?)";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("ssssss", $fullname, $email, $zone, $contactNumber, $username, $hashedPassword);
+        $stmt->bind_param("sssssss", $fullname, $email, $zone, $brgyID, $contactNumber, $username, $hashedPassword);
+        return $stmt->execute();
+    }
+
+    public function pendingUserExists($username)
+    {
+        $query = "SELECT COUNT(*) FROM pending_registrations WHERE username = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $count = $result->fetch_row()[0];
+        return $count > 0;
+    }
+
+    public function getPendingRegistrations()
+    {
+        $query = "SELECT * FROM pending_registrations WHERE status = 'pending' ORDER BY submittedAt DESC";
+        $result = $this->db->query($query);
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function approveRegistration($registrationId)
+    {
+        // Get pending registration data
+        $query = "SELECT * FROM pending_registrations WHERE id = ? AND status = 'pending'";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $registrationId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $pendingUser = $result->fetch_assoc();
+
+        if (!$pendingUser) {
+            return false;
+        }
+
+        // Insert into users table
+        $insertQuery = "INSERT INTO user (fullname, email, zone, contactNumber, username, password, role, totalCurrentPoints) VALUES (?,?,?,?,?,?,'user', 0.00)";
+        $insertStmt = $this->db->prepare($insertQuery);
+        $insertStmt->bind_param("ssssss", $pendingUser['fullName'], $pendingUser['email'], $pendingUser['zone'], $pendingUser['contactNumber'], $pendingUser['username'], $pendingUser['password']);
+
+        if ($insertStmt->execute()) {
+            // Update pending registration status
+            $updateQuery = "UPDATE pending_registrations SET status = 'approved' WHERE id = ?";
+            $updateStmt = $this->db->prepare($updateQuery);
+            $updateStmt->bind_param("i", $registrationId);
+            return $updateStmt->execute();
+        }
+        return false;
+    }
+
+    public function rejectRegistration($registrationId)
+    {
+        $query = "UPDATE pending_registrations SET status = 'rejected' WHERE id = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $registrationId);
         return $stmt->execute();
     }
 

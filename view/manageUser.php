@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,7 +11,9 @@
 </head>
 
 <body>
-     <button class="pill-btn add-admin-btn" style="float:right;">Add an Admin</button>    
+     <button class="pill-btn add-admin-btn" style="float:right;">Add an Admin</button>
+     <button class="pill-btn pending-registrations-btn" style="float:right;" onclick="openPendingModal()">Pending Registrations</button>  
+       
     <div class="section-header">
         Manage Users
         <!-- <button class="pill-btn" style="float:right;">Pending Registrations</button> -->
@@ -26,7 +30,7 @@
                     <th>Actions</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody>     
                 <?php foreach ($users as $user): ?>
                     <tr>
                         <td><span class="profile-icon">👤</span></td>
@@ -82,11 +86,29 @@
 </body>
 
 
+<!-- Pending Registrations Modal -->
+<div id="pendingRegistrationsModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Pending Registrations</h2>
+        </div>
+        <div class="modal-body">
+            <div id="pendingRegistrationsList">
+                <!-- Pending registrations will be loaded here -->
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="closePendingModal()">Close</button>
+        </div>
+    </div>
+</div>
+
 <!-- Edit User Details Modal -->
 <div id="editUserModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
             <h2>Edit User Details</h2>
+            <span class="close" onclick="closeEditModal()">&times;</span>
         </div>
         <form id="editUserForm" action="index.php?command=updateUserProfile" method="POST">
             <input type="hidden" id="edit-userID" name="userID">
@@ -173,6 +195,7 @@
     </div>
 </div>
 
+
 <script>
 function togglePassword(inputId, toggleBtn) {
     const passwordInput = document.getElementById(inputId);
@@ -185,6 +208,104 @@ function togglePassword(inputId, toggleBtn) {
         passwordInput.type = 'password';
         toggleBtn.textContent = 'Show';
         toggleBtn.title = 'Show password';
+    }
+}
+
+// Pending Registrations Functions
+function openPendingModal() {
+    document.getElementById('pendingRegistrationsModal').style.display = 'block';
+    loadPendingRegistrations();
+}
+
+function closePendingModal() {
+    document.getElementById('pendingRegistrationsModal').style.display = 'none';
+}
+
+function closeEditModal() {
+    document.getElementById('editUserModal').style.display = 'none';
+}
+
+function loadPendingRegistrations() {
+    fetch('endpoints/getPendingRegistrations.php')
+        .then(response => response.json())
+        .then(data => {
+            const container = document.getElementById('pendingRegistrationsList');
+            if (data.length === 0) {
+                container.innerHTML = '<p>No pending registrations found.</p>';
+                return;
+            }
+            
+            container.innerHTML = data.map(registration => `
+                <div class="pending-registration-item">
+                    <div class="registration-info">
+                        <h4>${registration.fullName}</h4>
+                        <p><strong>Username:</strong> ${registration.username}</p>
+                        <p><strong>Email:</strong> ${registration.email}</p>
+                        <p><strong>Zone:</strong> ${registration.zone}</p>
+                        <p><strong>Brgy ID:</strong> ${registration.brgyID}</p>
+                        <p><strong>Contact:</strong> ${registration.contactNumber}</p>
+                        <p><strong>Submitted:</strong> ${new Date(registration.submittedAt).toLocaleDateString()}</p>
+                    </div>
+                    <div class="registration-actions">
+                        <button class="btn-approve" onclick="approveRegistration(${registration.id})">Approve</button>
+                        <button class="btn-reject" onclick="rejectRegistration(${registration.id})">Reject</button>
+                    </div>
+                </div>
+            `).join('');
+        })
+        .catch(error => {
+            console.error('Error loading pending registrations:', error);
+            document.getElementById('pendingRegistrationsList').innerHTML = '<p>Error loading pending registrations.</p>';
+        });
+}
+
+function approveRegistration(registrationId) {
+    if (confirm('Are you sure you want to approve this registration?')) {
+        fetch('endpoints/approveRegistration.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `registrationId=${registrationId}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Registration approved successfully!');
+                loadPendingRegistrations();
+            } else {
+                alert('Error approving registration: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error approving registration.');
+        });
+    }
+}
+
+function rejectRegistration(registrationId) {
+    if (confirm('Are you sure you want to reject this registration?')) {
+        fetch('endpoints/rejectRegistration.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `registrationId=${registrationId}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Registration rejected successfully!');
+                loadPendingRegistrations();
+            } else {
+                alert('Error rejecting registration: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error rejecting registration.');
+        });
     }
 }
 </script>
@@ -247,6 +368,32 @@ function togglePassword(inputId, toggleBtn) {
         window.addEventListener('click', function (event) {
             if (event.target == addAdminModal) {
                 addAdminModal.style.display = 'none';
+            }
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const pendingRegistrationsModal = document.getElementById('pendingRegistrationsModal');
+        const pendingRegistrationsBtn = document.querySelector('.pending-registrations-btn'); // or use '#addAdminBtn' if you used id
+        const pendingRegistrationsCancelBtn = pendingRegistrationsModal.querySelector('.btn-cancel');
+
+        // Open modal on button click
+        pendingRegistrationsBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            pendingRegistrationsModal.style.display = 'block';
+        });
+
+        // Close modal on cancel
+        pendingRegistrationsCancelBtn.addEventListener('click', function () {
+            pendingRegistrationsModal.style.display = 'none';
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function (event) {
+            if (event.target == pendingRegistrationsModal) {
+                pendingRegistrationsModal.style.display = 'none';
             }
         });
     });

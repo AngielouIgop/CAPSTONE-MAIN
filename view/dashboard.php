@@ -1,4 +1,3 @@
-<?php include 'header.php'; ?>
 <?php include 'contribute.php'; ?>
 
 <!DOCTYPE html>
@@ -114,8 +113,8 @@
           <p>No data yet</p>
         <?php endif; ?>
       </div>
-    </div> <!-- ✅ CLOSE .dashboard-grid properly -->
-  </div> <!-- ✅ CLOSE .dashboard properly -->
+    </div> 
+  </div> 
 
   <script>
     // Calendar Rendering
@@ -158,5 +157,6 @@
 
     renderCalendar();
   </script>
+  <script src="js/contributeModal.js"></script>
 </body>
 </html>
