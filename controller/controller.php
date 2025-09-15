@@ -2,12 +2,24 @@
 
 class Controller
 {
-    public $model = null;
+    public $userModel = null;
+    public $adminModel = null;
 
     function __construct()
     {
-        require_once('model/model.php');
-        $this->model = new Model();
+        require_once('model/UserModel.php');
+        require_once('model/AdminModel.php');
+        $this->userModel = new UserModel();
+        $this->adminModel = new AdminModel();
+    }
+
+    // Helper method to get the appropriate model based on user role
+    private function getModel($role = null)
+    {
+        if ($role === 'admin' || $role === 'super admin') {
+            return $this->adminModel;
+        }
+        return $this->userModel;
     }
 
     public function getWeb()
@@ -32,18 +44,18 @@ class Controller
                 $password = $_POST['password'] ?? '';
                 $confirm = $_POST['confirm'] ?? '';
                 $zone = $_POST['zone'] ?? '';
-                $brgyID = $_POST['brgyID'] ?? '';
+                $brgyIDNum = $_POST['brgyIDNum'] ?? '';
                 $error = '';
 
                 // Validate if the necessary fields are filled
-                if (empty($fullname) || empty($email) || empty($username) || empty($password) || empty($confirm) || empty($contactNumber) || empty($zone) || empty($brgyID)) {
+                if (empty($fullname) || empty($email) || empty($username) || empty($password) || empty($confirm) || empty($contactNumber) || empty($zone) || empty($brgyIDNum)) {
                     $error = "Please fill out all the required fields.";
                 } elseif ($password !== $confirm) {
                     $error = "Passwords do not match.";
-                } elseif ($this->model->userExists($username) || $this->model->pendingUserExists($username)) {
+                } elseif ($this->userModel->userExists($username) || $this->userModel->pendingUserExists($username)) {
                     $error = "Username already exists.";
                 } else {
-                    $success = $this->model->registerUser($fullname, $email, $zone, $brgyID, $contactNumber, $username, $password);
+                    $success = $this->userModel->registerUser($fullname, $email, $zone, $brgyIDNum, $contactNumber, $username, $password);
 
                     if (isset($success) && $success) {
                         echo "<script>alert('Registration submitted for approval. You will be notified once approved.'); window.location.href='?command=login';</script>";
@@ -66,9 +78,9 @@ class Controller
                     $error = '';
 
                     // Check if user exists
-                    if ($this->model->userExists($username)) {
+                    if ($this->userModel->userExists($username)) {
                         // If user exists, attempt login with the loginRole
-                        $user = $this->model->loginUser($username, $password, $loginRole);
+                        $user = $this->userModel->loginUser($username, $password, $loginRole);
                         if ($user) {
                             // Check if the role matches
                             if ($user['role'] === $loginRole) {
@@ -76,7 +88,7 @@ class Controller
                                 $_SESSION['userID'] = $user['userID'];
                                 $_SESSION['username'] = $user['username'];
 
-                                $this->model->setCurrentUser($user['userID'], $user['username']);
+                                $this->userModel->setCurrentUser($user['userID'], $user['username']);
 
                                 if ($loginRole === 'admin') {
                                     header('Location: ?command=adminDashboard');
@@ -106,10 +118,10 @@ class Controller
                 }
 
                 $userID = $_SESSION['user']['userID'];
-                $user = $this->model->getUserByID($userID);
-                $wasteHistory = $this->model->getUserWasteHistory($userID);
-                $mostContributedWaste = $this->model->getMostContributedWaste();
-                $topContributors = $this->model->getTopContributors();
+                $user = $this->userModel->getUserById($userID);
+                $wasteHistory = $this->userModel->getUserWasteHistory($userID);
+                $mostContributedWaste = $this->userModel->getMostContributedWaste();
+                $topContributors = $this->userModel->getTopContributors();
 
                 include_once('view/dashboard.php');
                 break;
@@ -121,9 +133,9 @@ class Controller
                     exit();
                 }
                 $userID = $_SESSION['user']['userID'];
-                $users = $this->model->getUserData($userID);
-                $totalCurrentPoints = (float)$this->model->getUserPoints($userID);
-                $rewards = $this->model->getAllRewards();
+                $users = $this->userModel->getUserData($userID);
+                $totalCurrentPoints = (float)$this->userModel->getUserPoints($userID);
+                $rewards = $this->userModel->getAllRewards();
 
                 // Debug line - remove after testing
                 error_log("User ID: " . $userID . ", Points: " . $totalCurrentPoints);
@@ -136,9 +148,9 @@ class Controller
                     header('Location: ?command=Login');
                 }
                 $userID = $_SESSION['user']['userID'];
-                $users = $this->model->getUserPoints($userID);
-                $totalCurrentPoints = $this->model->getUserPoints($userID);
-                $rewards = $this->model->getAllRewards();
+                $users = $this->userModel->getUserPoints($userID);
+                $totalCurrentPoints = $this->userModel->getUserPoints($userID);
+                $rewards = $this->userModel->getAllRewards();
                 include_once('view/claim.php');
                 break;
 
@@ -148,7 +160,7 @@ class Controller
                     exit();
                 }
                 $userID = $_SESSION['user']['userID'];
-                $users = $this->model->getUserData($userID);
+                $users = $this->userModel->getUserData($userID);
 
                 include_once('view/userSettings.php');
                 break;
@@ -166,7 +178,7 @@ class Controller
                 $role = $_SESSION[$sessionType]['role'];
 
                 // Get current user data to preserve unchanged fields
-                $currentUser = $this->model->getUserById($userID);
+                $currentUser = $this->userModel->getUserById($userID);
 
                 // Collect form data and only update if provided (not empty)
                 $fullName = !empty($_REQUEST['fullname']) ? $_REQUEST['fullname'] : $currentUser['fullName'];
@@ -249,7 +261,7 @@ class Controller
                 $hashedPassword = $password ? password_hash($password, PASSWORD_DEFAULT) : null;
 
                 // Update user in the database
-                $result = $this->model->updateProfileSettings(
+                $result = $this->userModel->updateProfileSettings(
                     $userID,
                     $fullName,
                     $zone,
@@ -275,16 +287,33 @@ class Controller
                 break;
 
             case 'adminDashboard':
-                $totalPlastic = $this->model->getTotalPlastic();
-                $totalCans = $this->model->getTotalCans();
-                $totalGlassBottles = $this->model->getTotalBottles();
-                $notification = $this->model->getNotifications();
+                $totalPlastic = $this->adminModel->getTotalPlastic();
+                $totalCans = $this->adminModel->getTotalCans();
+                $totalGlassBottles = $this->adminModel->getTotalBottles();
+                $notification = $this->adminModel->getNotifications();
+                
+                // Additional data for enhanced dashboard
+                $totalUsers = count($this->adminModel->getAllUsers());
+                $totalRewards = count($this->adminModel->getAllRewards());
+                $todayContributions = $this->adminModel->getTotalPlasticByDate(date('Y-m-d')) + 
+                                    $this->adminModel->getTotalCansByDate(date('Y-m-d')) + 
+                                    $this->adminModel->getTotalBottlesByDate(date('Y-m-d'));
+                
+                // Zone data for charts
+                $getContZone1 = $this->adminModel->getContZone1();
+                $getContZone2 = $this->adminModel->getContZone2();
+                $getContZone3 = $this->adminModel->getContZone3();
+                $getContZone4 = $this->adminModel->getContZone4();
+                $getContZone5 = $this->adminModel->getContZone5();
+                $getContZone6 = $this->adminModel->getContZone6();
+                $getContZone7 = $this->adminModel->getContZone7();
+                
                 include_once('view/adminDashboard.php');
                 break;
 
             case 'manageUser':
-                $users = $this->model->getAllUsers();
-                $admins = $this->model->getAllAdmins();
+                $users = $this->adminModel->getAllUsers();
+                $admins = $this->adminModel->getAllAdmins();
                 include_once('view/manageUser.php');
                 break;
 
@@ -305,7 +334,7 @@ class Controller
 
                 $hashedPassword = !empty($password) ? password_hash($password, PASSWORD_DEFAULT) : null;
 
-                $result = $this->model->updateUserProfile(
+                $result = $this->adminModel->updateUserProfile(
                     $userID,
                     $fullName,
                     $zone,
@@ -324,7 +353,7 @@ class Controller
 
             case 'deleteUser':
                 $userID = $_REQUEST['userID'];
-                $result = $this->model->deleteUser($userID);
+                $result = $this->adminModel->deleteUser($userID);
 
                 echo "<script>
                     alert('" . $result . "');
@@ -354,11 +383,11 @@ class Controller
                     $error = "Please fill out all the required fields.";
                 } elseif ($password !== $confirm) {
                     $error = "Passwords do not match.";
-                } elseif ($this->model->userExists($username)) {
+                } elseif ($this->adminModel->userExists($username)) {
                     $error = "Username already exists.";
                 } else {
                     // Register admin (position is passed as the 'zone' parameter)
-                    $success = $this->model->addAdministrator($fullname, $email, $position, $contactNumber, $username, $password, 'admin');
+                    $success = $this->adminModel->addAdministrator($fullname, $email, $position, $contactNumber, $username, $password, 'admin');
                     if ($success) {
                         echo "<script>alert('Administrator added successfully.'); window.location.href='?command=manageUser';</script>";
                         exit();
@@ -379,7 +408,7 @@ class Controller
                 }
 
                 $userID = $_SESSION['user']['userID'];
-                $admin = $this->model->getUserData($userID);
+                $admin = $this->adminModel->getUserData($userID);
                 
 
                 include_once('view/adminProfile.php');
@@ -390,7 +419,7 @@ class Controller
                     header('Location: ?command=Login');
                 }
                 $userID = $_SESSION['user']['userID'];
-                $rewards = $this->model->getAllRewards();
+                $rewards = $this->adminModel->getAllRewards();
                 include_once('view/rewardinventory.php');
                 break;
 
@@ -406,7 +435,7 @@ class Controller
                 // Check if a new image was uploaded
                 if (!empty($_FILES['rewardImg']['name'])) {
                     // Delete old image
-                    $current = $this->model->getRewardByID($rewardID);
+                    $current = $this->adminModel->getRewardByID($rewardID);
                     if ($current && !empty($current['rewardImg']) && file_exists($current['rewardImg'])) {
                         unlink($current['rewardImg']);
                     }
@@ -440,7 +469,7 @@ class Controller
                 }
 
                 // Update reward
-                $result = $this->model->updateReward($rewardName, $pointsRequired, $slotNum, $availableStock, $rewardID, $imagePath, $availability);
+                $result = $this->adminModel->updateReward($rewardName, $pointsRequired, $slotNum, $availableStock, $rewardID, $imagePath, $availability);
 
                 echo "<script>alert('" . ($result ? "Reward updated successfully." : "Failed to update reward.") . "'); window.location.href='?command=rewardInventory';</script>";
                 break;
@@ -490,7 +519,7 @@ class Controller
                 }
 
                 // Save to DB
-                $result = $this->model->addReward($rewardName, $pointsRequired, $slotNum, $availableStock, $imagePath, $availability);
+                $result = $this->adminModel->addReward($rewardName, $pointsRequired, $slotNum, $availableStock, $imagePath, $availability);
 
                 echo "<script>alert('" . ($result ? "Reward added successfully." : "Failed to add reward.") . "'); window.location.href='?command=rewardInventory';</script>";
                 break;
@@ -498,7 +527,7 @@ class Controller
 
             case 'deleteReward':
                 $rewardID = $_REQUEST['rewardID'];
-                $result = $this->model->deleteReward($rewardID);
+                $result = $this->adminModel->deleteReward($rewardID);
                 echo "<script>
                     alert('" . $result . "');
                     window.location.href='index.php?command=rewardInventory';
@@ -507,26 +536,45 @@ class Controller
 
 
             case 'adminReport':
-
+                // Get date filter if provided
+                $selectedDate = isset($_GET['date']) ? $_GET['date'] : date('Y-m-d');
+                
                 $userID = $_SESSION['userID'];
-                $totalCans = $this->model->getTotalCans();
-                $totalBottles = $this->model->getTotalBottles();
-                $totalPlastic = $this->model->getTotalPlastic();
-
-                // Get per material contributions for current month
-                $wastePerMaterial = $this->model->getWasteContributionsPerMaterialThisMonth();
-
-                // Get leading zones & users
-                $getContZone1 = $this->model->getContZone1();
-                $getContZone2 = $this->model->getContZone2();
-                $getContZone3 = $this->model->getContZone3();
-                $getContZone4 = $this->model->getContZone4();
-                $getContZone5 = $this->model->getContZone5();
-                $getContZone6 = $this->model->getContZone6();
-                $getContZone7 = $this->model->getContZone7();
-                // $contPerZone = $this->model->getContributionsPerZone();
-                $users = $this->model->getAllUsers();
-                $wasteHistory = $this->model->getWasteHistory();
+                
+                // Use date-filtered functions if date is provided, otherwise use current data
+                if ($selectedDate && $selectedDate !== date('Y-m-d')) {
+                    $totalCans = $this->adminModel->getTotalCansByDate($selectedDate);
+                    $totalBottles = $this->adminModel->getTotalBottlesByDate($selectedDate);
+                    $totalPlastic = $this->adminModel->getTotalPlasticByDate($selectedDate);
+                    $wastePerMaterial = $this->adminModel->getWasteContributionsPerMaterialByDate($selectedDate);
+                    $wasteHistory = $this->adminModel->getWasteHistoryByDate($selectedDate);
+                    
+                    // Get zone contributions by date
+                    $getContZone1 = $this->adminModel->getZoneContributionByDate('Zone 1', $selectedDate);
+                    $getContZone2 = $this->adminModel->getZoneContributionByDate('Zone 2', $selectedDate);
+                    $getContZone3 = $this->adminModel->getZoneContributionByDate('Zone 3', $selectedDate);
+                    $getContZone4 = $this->adminModel->getZoneContributionByDate('Zone 4', $selectedDate);
+                    $getContZone5 = $this->adminModel->getZoneContributionByDate('Zone 5', $selectedDate);
+                    $getContZone6 = $this->adminModel->getZoneContributionByDate('Zone 6', $selectedDate);
+                    $getContZone7 = $this->adminModel->getZoneContributionByDate('Zone 7', $selectedDate);
+                } else {
+                    $totalCans = $this->adminModel->getTotalCans();
+                    $totalBottles = $this->adminModel->getTotalBottles();
+                    $totalPlastic = $this->adminModel->getTotalPlastic();
+                    $wastePerMaterial = $this->adminModel->getWasteContributionsPerMaterialThisMonth();
+                    $wasteHistory = $this->adminModel->getWasteHistory();
+                    
+                    // Get leading zones & users
+                    $getContZone1 = $this->adminModel->getContZone1();
+                    $getContZone2 = $this->adminModel->getContZone2();
+                    $getContZone3 = $this->adminModel->getContZone3();
+                    $getContZone4 = $this->adminModel->getContZone4();
+                    $getContZone5 = $this->adminModel->getContZone5();
+                    $getContZone6 = $this->adminModel->getContZone6();
+                    $getContZone7 = $this->adminModel->getContZone7();
+                }
+                
+                $users = $this->adminModel->getTopUsers(7);
 
                 include_once('view/adminReport.php');
                 break;
