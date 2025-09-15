@@ -11,7 +11,7 @@ body, html {
 /* Desktop-only sidebar margin */
 @media (min-width: 901px) {
   body, html {
-    margin-left: 125px ;/* matches your sidebar width */
+    margin-left: 125px; /* matches your sidebar width */
   }
 }
 
@@ -92,6 +92,24 @@ body, html {
   color: #003060;
   font-size: 1.1rem;
   font-weight: 600;
+}
+
+/* No data styling */
+.no-data {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+.no-data p {
+  margin: 0 0 8px 0;
+  font-size: 1rem;
+  color: #888;
+}
+
+.no-data small {
+  color: #aaa;
+  font-style: italic;
 }
 
 /* Contributors grid inside card */
@@ -187,10 +205,10 @@ body, html {
 
 /* === RESPONSIVE DESIGN === */
 
-/* Tablet Responsive */
-@media (max-width: 1024px) {
+/* Large Tablet Responsive */
+@media (max-width: 1024px) and (min-width: 901px) {
   body, html {
-    margin-left: 200px;
+    margin-left: 125px; /* Keep sidebar margin for large tablets */
     padding-top: 70px;
   }
   
@@ -215,8 +233,41 @@ body, html {
   }
 }
 
-/* Mobile Landscape */
-@media (max-width: 800px) {
+/* Medium Tablet - Sidebar may be collapsed */
+@media (max-width: 900px) and (min-width: 769px) {
+  body, html {
+    margin-left: 0; /* Sidebar collapsed on medium tablets */
+    padding-top: 70px;
+  }
+  
+  .dashboard {
+    padding: 16px;
+  }
+  
+  .dashboard h2 {
+    font-size: 1.7rem;
+  }
+  
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .card {
+    padding: 13px;
+  }
+  
+  .contributors-grid {
+    grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
+  }
+}
+
+/* Mobile Landscape - Sidebar hidden */
+@media (max-width: 768px) {
+  body, html {
+    margin-left: 0; /* Remove sidebar margin on mobile */
+    padding-top: 70px;
+  }
   
   .dashboard-grid {
     grid-template-columns: 1fr;
@@ -261,10 +312,32 @@ body, html {
     width: 26px;
     height: 26px;
   }
+  
+  /* Mobile-specific optimizations */
+  .dashboard-top {
+    margin-bottom: 10px;
+  }
+  
+  .card {
+    margin-bottom: 10px;
+  }
+  
+  /* Ensure touch-friendly elements */
+  .contributor {
+    min-height: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
 }
+
 
 /* Mobile Portrait */
 @media (max-width: 600px) {
+  body, html {
+    margin-left: 0; /* No sidebar margin on mobile */
+    padding-top: 70px;
+  }
   
   .dashboard {
     padding: 10px;
@@ -288,6 +361,7 @@ body, html {
     font-size: 0.85rem;
     padding: 6px;
   }
+  
   /* Hide Time column on small tablets/large phones */
   .history-table th:nth-child(2),
   .history-table td:nth-child(2) {
@@ -329,13 +403,32 @@ body, html {
   }
   
   #calendar th, #calendar td {
-    padding: 2px;
+    padding: 8px 4px;
     font-size: 0.75em;
+  }
+  
+  /* Mobile portrait optimizations */
+  .dashboard-top {
+    margin-bottom: 8px;
+  }
+  
+  .card h3 {
+    line-height: 1.2;
+  }
+  
+  /* Improve touch targets */
+  .contributor {
+    min-height: 70px;
+    padding: 12px 8px;
   }
 }
 
 /* Small Mobile Devices */
 @media (max-width: 480px) {
+  body, html {
+    margin-left: 0; /* No sidebar margin on small mobile */
+    padding-top: 65px;
+  }
   
   .dashboard {
     padding: 8px;
@@ -360,6 +453,7 @@ body, html {
     font-size: 0.8rem;
     padding: 5px;
   }
+  
   /* Hide less critical columns on very small screens: Time, Weight, Points */
   .history-table th:nth-child(2),
   .history-table td:nth-child(2),
@@ -384,6 +478,17 @@ body, html {
     padding: 6px;
     font-size: 0.9em;
   }
+
+  .contributor .contributor-icon {
+    width: 36px;
+    height: 36px;
+    margin-bottom: 4px;
+  }
+
+  .contributor .contributor-icon img {
+    width: 20px;
+    height: 20px;
+  }
   
   .waste-img {
     width: 60px;
@@ -395,8 +500,108 @@ body, html {
   }
   
   #calendar th, #calendar td {
-    padding: px;
+    padding: 6px 2px;
     font-size: 0.7em;
+  }
+  
+  /* Small mobile optimizations */
+  .dashboard-top {
+    margin-bottom: 6px;
+  }
+  
+  .card {
+    margin-bottom: 8px;
+  }
+  
+  .contributor {
+    min-height: 80px;
+    padding: 10px 6px;
+    font-size: 0.85em;
+  }
+  
+  .contributor .contributor-icon {
+    margin-bottom: 6px;
+  }
+}
+
+/* Extra Small Mobile Devices */
+@media (max-width: 360px) {
+  .dashboard {
+    padding: 6px;
+  }
+  
+  .dashboard h2 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
+  
+  .dashboard-grid {
+    gap: 8px;
+  }
+  
+  .card {
+    padding: 6px;
+  }
+
+  .history-table th,
+  .history-table td {
+    font-size: 0.75rem;
+    padding: 4px;
+  }
+  
+  .card h3 {
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+  }
+  
+  .contributor {
+    padding: 4px;
+    font-size: 0.85em;
+  }
+
+  .contributor .contributor-icon {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 3px;
+  }
+
+  .contributor .contributor-icon img {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .waste-img {
+    width: 50px;
+    height: 60px;
+  }
+  
+  #calendar th, #calendar td {
+    padding: 4px 1px;
+    font-size: 0.65em;
+  }
+  
+  /* Extra small mobile optimizations */
+  .dashboard-top {
+    margin-bottom: 4px;
+  }
+  
+  .card {
+    margin-bottom: 6px;
+  }
+  
+  .contributor {
+    min-height: 90px;
+    padding: 8px 4px;
+    font-size: 0.8em;
+  }
+  
+  .contributor .contributor-icon {
+    margin-bottom: 8px;
+  }
+  
+  .card h3 {
+    font-size: 0.85rem;
+    margin-bottom: 6px;
   }
 }
 

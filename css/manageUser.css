@@ -58,7 +58,7 @@ body, html {
 #pendingRegistrationsModal .modal-body {
   max-height: 60vh;
   overflow-y: auto;
-  padding: 25px;
+  padding: 20px;
   background: #f8f9fa;
 }
 
@@ -90,29 +90,30 @@ body, html {
 }
 
 .pending-registration-item {
-  padding: 20px;
+  padding: 15px;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
-  margin-bottom: 15px;
+  margin-bottom: 12px;
   background: #f9f9f9;
 }
 
 .registration-info h4 {
-  margin: 0 0 10px 0;
+  margin: 0 0 8px 0;
   color: #2d316b;
   font-size: 1.2rem;
 }
 
 .registration-info p {
-  margin: 5px 0;
+  margin: 2px 0;
   color: #666;
   font-size: 0.9rem;
+  line-height: 1.3;
 }
 
 .registration-actions {
   display: flex;
   gap: 10px;
-  margin-top: 15px;
+  margin-top: 10px;
   justify-content: flex-end;
 }
 
@@ -158,12 +159,12 @@ body, html {
 /* Responsive design for pending registrations */
 @media (max-width: 768px) {
   .pending-registration-item {
-    padding: 15px;
+    padding: 12px;
   }
   
   .registration-actions {
     justify-content: center;
-    margin-top: 20px;
+    margin-top: 12px;
   }
   
   .btn-approve,
