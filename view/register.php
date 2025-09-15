@@ -24,25 +24,25 @@
           <div class="alert"><?php echo $error; ?></div>
         <?php endif; ?>
         <label for="fullname">Full Name</label>
-        <input type="text" name="fullname" id="fullname" required>
+        <input type="text" name="fullname" id="fullname" placeholder="Enter your full name" required>
         <label for="email">Email</label>
-        <input type="email" name="email" id="email" required>
+        <input type="email" name="email" id="email" placeholder="Enter your email address" required>
         <label for="zone">Zone</label>
-        <input type="text" name="zone" id="zone" required>
-        <label for="brgyID">Brgy ID</label>
-        <input type="text" name="brgyID" id="brgyID" required>
+        <input type="text" name="zone" id="zone" placeholder="e.g., Zone 1, Zone 2, etc." required>
+        <label for="brgyIDNum">Brgy ID</label>
+        <input type="text" name="brgyIDNum" id="brgyIDNum" placeholder="Enter your barangay ID number" required>
         <label for="contactNumber">Contact Number</label>
-        <input type="text" name="contactNumber" id="contactNumber" required>
+        <input type="text" name="contactNumber" id="contactNumber" placeholder="e.g., 09123456789" required>
         <label for="username">Username</label>
-        <input type="text" name="username" id="username" required>
+        <input type="text" name="username" id="username" placeholder="Choose a unique username" required>
         <label for="password">Password</label>
         <div class="password-container">
-          <input type="password" name="password" id="password" required>
+          <input type="password" name="password" id="password" placeholder="Create a strong password" required>
           <button type="button" class="password-toggle" onclick="togglePassword()" id="passwordToggle">Show</button>
         </div>
         <label for="confirm">Confirm Password</label>
         <div class="password-container">
-          <input type="password" name="confirm" id="confirm" required>
+          <input type="password" name="confirm" id="confirm" placeholder="Re-enter your password" required>
           <button type="button" class="password-toggle" onclick="togglePassword1()" id="confirmPasswordToggle">Show</button>
         </div>
         <button type="submit" class="btn-primary">Register</button>

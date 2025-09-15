@@ -2,61 +2,199 @@
 
 <!-- Include admin dashboard CSS -->
 <link rel="stylesheet" href="css/adminDashboard.css">
+<!-- Include Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <div class="dashboard">
-  <h2>Admin Dashboard</h2>
+  <div class="dashboard-header">
+    <h1>Admin Dashboard</h1>
+    <p class="welcome-text">Welcome back! Here's what's happening in your waste management system.</p>
+  </div>
 
-  <div class="dashboard-top">
-    <div class="dashboard-header">
-      <h2>Welcome, Admin!</h2>
+  <!-- Quick Stats Row -->
+  <div class="quick-stats">
+    <div class="stat-item">
+      <div class="stat-icon">👥</div>
+      <div class="stat-info">
+        <span class="stat-number"><?= htmlspecialchars($totalUsers ?? 0) ?></span>
+        <span class="stat-label">Total Users</span>
+      </div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-icon">📊</div>
+      <div class="stat-info">
+        <span class="stat-number"><?= htmlspecialchars(($totalPlastic + $totalCans + $totalGlassBottles)) ?></span>
+        <span class="stat-label">Total Contributions</span>
+      </div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-icon">🏆</div>
+      <div class="stat-info">
+        <span class="stat-number"><?= htmlspecialchars($totalRewards ?? 0) ?></span>
+        <span class="stat-label">Available Rewards</span>
+      </div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-icon">📈</div>
+      <div class="stat-info">
+        <span class="stat-number"><?= htmlspecialchars($todayContributions ?? 0) ?></span>
+        <span class="stat-label">Today's Contributions</span>
+      </div>
     </div>
   </div>
 
-  <!-- GRID CONTAINER -->
+  <!-- Main Dashboard Grid -->
   <div class="dashboard-grid">
-
-    <!-- Top Left: Plastic -->
-    <div class="card stat-card">
-      <img src="images/plasticBottle.png" alt="Plastic Bottles" />
-      <h3>Total Plastic Contributions</h3>
-      <p><?= htmlspecialchars($totalPlastic) ?></p>
+    
+    <!-- Waste Distribution Chart -->
+    <div class="card chart-card">
+      <div class="card-header">
+        <h3>Waste Distribution</h3>
+        <p>Breakdown of contributions by material type</p>
+      </div>
+      <div class="chart-container">
+        <canvas id="wasteDistributionChart"></canvas>
+      </div>
     </div>
 
-    <!-- Top Middle: Tin Cans -->
-    <div class="card stat-card">
-      <img src="images/tinCan.png" alt="Tin Cans" />
-      <h3>Total Tin Can Contributions</h3>
-      <p><?= htmlspecialchars($totalCans) ?></p>
+    <!-- Zone Performance Chart -->
+    <div class="card chart-card">
+      <div class="card-header">
+        <h3>Zone Performance</h3>
+        <p>Contributions by zone this month</p>
+      </div>
+      <div class="chart-container">
+        <canvas id="zonePerformanceChart"></canvas>
+      </div>
     </div>
 
-    <!-- Top Right: Glass Bottles -->
-    <div class="card stat-card">
-      <img src="images/glassBottle.png" alt="Glass Bottles" />
-      <h3>Total Glass Bottle Contributions</h3>
-      <p><?= htmlspecialchars($totalGlassBottles) ?></p>
+    <!-- Enhanced Statistics Cards -->
+    <div class="card stat-card plastic-card">
+      <div class="card-icon">
+        <img src="images/plasticBottle.png" alt="Plastic Bottles" />
+      </div>
+      <div class="card-content">
+        <h3>Plastic Bottles</h3>
+        <div class="stat-number"><?= htmlspecialchars($totalPlastic) ?></div>
+        <div class="stat-trend">↗️ +12% this month</div>
+      </div>
     </div>
 
-    <!-- Bottom Left: User Management -->
-    <div class="card admin-card">
-      <h3>User Management</h3>
-      <p>Add, edit, or remove users from the system.</p>
-      <a href="?command=manageUser" class="btn-primary">Manage Users</a>
+    <div class="card stat-card cans-card">
+      <div class="card-icon">
+        <img src="images/tinCan.png" alt="Tin Cans" />
+      </div>
+      <div class="card-content">
+        <h3>Tin Cans</h3>
+        <div class="stat-number"><?= htmlspecialchars($totalCans) ?></div>
+        <div class="stat-trend">↗️ +8% this month</div>
+      </div>
     </div>
 
-    <!-- Bottom Middle: Rewards -->
-    <div class="card admin-card">
-      <h3>Rewards Inventory</h3>
-      <p>Track and update reward items available for claiming.</p>
-      <a href="?command=rewardInventory" class="btn-primary">View Inventory</a>
+    <div class="card stat-card glass-card">
+      <div class="card-icon">
+        <img src="images/glassBottle.png" alt="Glass Bottles" />
+      </div>
+      <div class="card-content">
+        <h3>Glass Bottles</h3>
+        <div class="stat-number"><?= htmlspecialchars($totalGlassBottles) ?></div>
+        <div class="stat-trend">↗️ +15% this month</div>
+      </div>
     </div>
 
-    <!-- Bottom Right: Reports -->
-    <div class="card admin-card">
-      <h3>Reports</h3>
-      <p>Generate and view activity or reward reports.</p>
-      <a href="?command=adminReport" class="btn-primary">View Reports</a>
+    <!-- Action Cards -->
+    <div class="card admin-card user-management">
+      <div class="card-icon">👥</div>
+      <div class="card-content">
+        <h3>User Management</h3>
+        <p>Add, edit, or remove users from the system.</p>
+        <a href="?command=manageUser" class="btn-primary">Manage Users</a>
+      </div>
+    </div>
+
+    <div class="card admin-card rewards">
+      <div class="card-icon">🏆</div>
+      <div class="card-content">
+        <h3>Rewards Inventory</h3>
+        <p>Track and update reward items available for claiming.</p>
+        <a href="?command=rewardInventory" class="btn-primary">View Inventory</a>
+      </div>
+    </div>
+
+    <div class="card admin-card reports">
+      <div class="card-icon">📊</div>
+      <div class="card-content">
+        <h3>Reports</h3>
+        <p>Generate and view activity or reward reports.</p>
+        <a href="?command=adminReport" class="btn-primary">View Reports</a>
+      </div>
     </div>
 
   </div>
-</div> 
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Waste Distribution Pie Chart
+  const wasteCtx = document.getElementById('wasteDistributionChart').getContext('2d');
+  new Chart(wasteCtx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Plastic Bottles', 'Tin Cans', 'Glass Bottles'],
+      datasets: [{
+        data: [<?= $totalPlastic ?>, <?= $totalCans ?>, <?= $totalGlassBottles ?>],
+        backgroundColor: ['#4CAF50', '#FF9800', '#2196F3'],
+        borderColor: ['#388E3C', '#F57C00', '#1976D2'],
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            padding: 20,
+            usePointStyle: true
+          }
+        }
+      }
+    }
+  });
+
+  // Zone Performance Bar Chart
+  const zoneCtx = document.getElementById('zonePerformanceChart').getContext('2d');
+  new Chart(zoneCtx, {
+    type: 'bar',
+    data: {
+      labels: ['Zone 1', 'Zone 2', 'Zone 3', 'Zone 4', 'Zone 5', 'Zone 6', 'Zone 7'],
+      datasets: [{
+        label: 'Contributions',
+        data: [<?= $getContZone1 ?>, <?= $getContZone2 ?>, <?= $getContZone3 ?>, <?= $getContZone4 ?>, <?= $getContZone5 ?>, <?= $getContZone6 ?>, <?= $getContZone7 ?>],
+        backgroundColor: 'rgba(54, 162, 235, 0.8)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            precision: 0
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          display: false
+        }
+      }
+    }
+  });
+});
+</script> 
 

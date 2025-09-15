@@ -1,7 +1,6 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,6 +8,7 @@
   <link rel="stylesheet" href="css/adminReport.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
   <div class="report-container">
     <h1 class="report-title">Reports</h1>
@@ -32,7 +32,7 @@
       </div>
       <div class="date-picker">
         <span>📅 Filter by date:</span>
-        <input type="date" id="date-filter" value="<?= date('Y-m-d') ?>">
+        <input type="date" id="date-filter" value="<?= $selectedDate ?>">
         <button id="apply-filter">Apply</button>
       </div>
     </div>
@@ -92,7 +92,7 @@
       <!-- Top Contributors Table -->
       <div class="top-contributors">
         <h3>Top Contributed Waste and Contributor</h3>
-        <span class="mini-date">📅 <?= date('F d, Y') ?></span>
+        <span class="mini-date">📅 <?= date('F d, Y', strtotime($selectedDate)) ?></span>
         <table>
           <thead>
             <tr>
@@ -103,8 +103,44 @@
             </tr>
           </thead>
           <tbody>
-            <?php foreach ($users as $user): ?>
-              <?php
+            <?php
+            // Group users by zone and calculate their total contributions
+            $usersByZone = [];
+            foreach ($users as $user) {
+              $zone = $user['zone'];
+              if (!isset($usersByZone[$zone])) {
+                $usersByZone[$zone] = [];
+              }
+
+              // Calculate total contribution for this user
+              $totalContribution = 0;
+              foreach ($wasteHistory as $entry) {
+                if ($entry['fullName'] === $user['fullName']) {
+                  $totalContribution += $entry['quantity'];
+                }
+              }
+
+              $usersByZone[$zone][] = [
+                'user' => $user,
+                'totalContribution' => $totalContribution
+              ];
+            }
+
+            // Sort each zone by total contribution (highest first) and take top 7
+            $topContributorsPerZone = [];
+            foreach ($usersByZone as $zone => $zoneUsers) {
+              // Sort by total contribution descending
+              usort($zoneUsers, function ($a, $b) {
+                return $b['totalContribution'] - $a['totalContribution'];
+              });
+
+              // Take only top 7 from this zone
+              $topContributorsPerZone = array_merge($topContributorsPerZone, array_slice($zoneUsers, 0, 7));
+            }
+
+            // Now display the top contributors
+            foreach ($topContributorsPerZone as $contributor):
+              $user = $contributor['user'];
               $nameMap = [
                 'Plastic' => 'Plastic Bottles',
                 'Plastic Bottles' => 'Plastic Bottles',
@@ -137,63 +173,82 @@
               </tr>
             <?php endforeach; ?>
           </tbody>
-        </table>
       </div>
-    </div>
-  </div>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const wastePerMaterial = <?= json_encode($wastePerMaterial) ?>;
-        const labels = wastePerMaterial.map(item => item.materialType);
-        const dataValues = wastePerMaterial.map(item => item.totalQuantity);
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          const wastePerMaterial = <?= json_encode($wastePerMaterial) ?>;
+          const labels = wastePerMaterial.map(item => item.materialType);
+          const dataValues = wastePerMaterial.map(item => item.totalQuantity);
 
-        const ctx = document.getElementById('contributionChart').getContext('2d');
-        new Chart(ctx, {
+          const ctx = document.getElementById('contributionChart').getContext('2d');
+          new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: labels,
-                datasets: [{
-                    data: dataValues,
-                    backgroundColor: ['#4cafef', '#81c784', '#ffb74d'],
-                    borderColor: ['#1e88e5', '#388e3c', '#f57c00'],
-                    borderWidth: 1
-                }]
+              labels: labels,
+              datasets: [{
+                data: dataValues,
+                backgroundColor: ['#4cafef', '#81c784', '#ffb74d'],
+                borderColor: ['#1e88e5', '#388e3c', '#f57c00'],
+                borderWidth: 1
+              }]
             },
             options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        labels: {
-                            generateLabels: function(chart) {
-                                const data = chart.data;
-                                if (data.labels.length && data.datasets.length) {
-                                    return data.labels.map((label, i) => {
-                                        const value = data.datasets[0].data[i];
-                                        return {
-                                            text: `${label}: ${value}`, 
-                                            fillStyle: data.datasets[0].backgroundColor[i],
-                                            strokeStyle: data.datasets[0].borderColor[i],
-                                            lineWidth: 1,
-                                            hidden: false,
-                                            index: i
-                                        };
-                                    });
-                                }
-                                return [];
-                            }
-                        }
+              responsive: true,
+              plugins: {
+                legend: {
+                  labels: {
+                    generateLabels: function (chart) {
+                      const data = chart.data;
+                      if (data.labels.length && data.datasets.length) {
+                        return data.labels.map((label, i) => {
+                          const value = data.datasets[0].data[i];
+                          return {
+                            text: `${label}: ${value}`,
+                            fillStyle: data.datasets[0].backgroundColor[i],
+                            strokeStyle: data.datasets[0].borderColor[i],
+                            lineWidth: 1,
+                            hidden: false,
+                            index: i
+                          };
+                        });
+                      }
+                      return [];
                     }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: { precision: 0 }
-                    }
+                  }
                 }
+              },
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  ticks: { precision: 0 }
+                }
+              }
             }
+          });
+
+          // Date Filter Functionality
+          const dateFilter = document.getElementById('date-filter');
+          const applyFilterBtn = document.getElementById('apply-filter');
+
+          applyFilterBtn.addEventListener('click', function () {
+            const selectedDate = dateFilter.value;
+            if (selectedDate) {
+              // Redirect to the same page with date parameter
+              const url = new URL(window.location);
+              url.searchParams.set('date', selectedDate);
+              window.location.href = url.toString();
+            }
+          });
+
+          // Also apply filter when Enter key is pressed in date input
+          dateFilter.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+              applyFilterBtn.click();
+            }
+          });
         });
-    });
-</script>
+      </script>
 </body>
+
 </html>

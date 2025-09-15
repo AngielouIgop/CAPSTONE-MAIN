@@ -18,13 +18,31 @@
 <h2><img src="images/about-text.png" class="about-text"></h2>
     <div class="about-us-blocks-container">
         <div class="about-us-block">
-    <img src="images/about-can.png" alt="can">   
-    </div>
-        <div class="about-us-block">
-            <img src="images/about-bottle.png" alt="bottle">
+            <div class="block-content">
+                <img src="images/about-can.png" alt="can" class="block-image">
+                <div class="block-text">
+                    <h3>Metal Cans</h3>
+                    <p>Recycle your aluminum and tin cans to earn points. Our system automatically detects and sorts metal containers for proper recycling.</p>
+                </div>
+            </div>
         </div>
         <div class="about-us-block">
-            <img src="images/about-glassbottle.png" alt="glassbottle">
+            <div class="block-content">
+                <img src="images/about-bottle.png" alt="bottle" class="block-image">
+                <div class="block-text">
+                    <h3>Plastic Bottles</h3>
+                    <p>Deposit your plastic bottles and containers. Help reduce plastic waste while earning rewards for your environmental contribution.</p>
+                </div>
+            </div>
+        </div>
+        <div class="about-us-block">
+            <div class="block-content">
+                <img src="images/about-glassbottle.png" alt="glassbottle" class="block-image">
+                <div class="block-text">
+                    <h3>Glass Bottles</h3>
+                    <p>Contribute glass bottles and jars to our recycling system. Glass recycling helps conserve natural resources and energy.</p>
+                </div>
+            </div>
         </div>
     </div>
 </section>

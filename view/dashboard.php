@@ -53,7 +53,10 @@
             </table>
           </div>
         <?php else: ?>
-          <p>No recent contributions.</p>
+          <div class="no-data">
+            <p>No recent contributions.</p>
+            <small>Start contributing to see your history here!</small>
+          </div>
         <?php endif; ?>
       </div>
 
