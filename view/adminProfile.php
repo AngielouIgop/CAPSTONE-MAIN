@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -42,16 +41,7 @@
     <div class="profile-form-top">
       <div class="profile-img-box">
         <?php
-        if (!empty($admin['profilePicture'])) {
-          if (file_exists($admin['profilePicture'])) {
-            $src = $admin['profilePicture'];
-          } else {
-            $imgData = base64_encode($admin['profilePicture']);
-            $src = 'data:image/jpeg;base64,' . $imgData;
-          }
-        } else {
-          $src = 'images/default-profile.jpg';
-        }
+        $src = !empty($admin['profilePicture']) && file_exists($admin['profilePicture']) ? $admin['profilePicture'] : 'images/default-profile.jpg';
         ?>
         <img src="<?php echo $src; ?>" alt="Profile Picture" class="profile-img" id="previewImage">
       </div>
