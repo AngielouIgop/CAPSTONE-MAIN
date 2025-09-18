@@ -8,7 +8,7 @@
 <div class="dashboard">
   <div class="dashboard-header">
     <h1>Admin Dashboard</h1>
-    <p class="welcome-text">Welcome back! Here's what's happening in your waste management system.</p>
+  <p class="welcome-text">Welcome back, Admin!</p>
   </div>
 
   <!-- Quick Stats Row -->
@@ -76,7 +76,6 @@
       <div class="card-content">
         <h3>Plastic Bottles</h3>
         <div class="stat-number"><?= htmlspecialchars($totalPlastic) ?></div>
-        <div class="stat-trend">↗️ +12% this month</div>
       </div>
     </div>
 
@@ -87,7 +86,6 @@
       <div class="card-content">
         <h3>Tin Cans</h3>
         <div class="stat-number"><?= htmlspecialchars($totalCans) ?></div>
-        <div class="stat-trend">↗️ +8% this month</div>
       </div>
     </div>
 
@@ -98,7 +96,6 @@
       <div class="card-content">
         <h3>Glass Bottles</h3>
         <div class="stat-number"><?= htmlspecialchars($totalGlassBottles) ?></div>
-        <div class="stat-trend">↗️ +15% this month</div>
       </div>
     </div>
 
@@ -143,8 +140,8 @@ document.addEventListener('DOMContentLoaded', function() {
       labels: ['Plastic Bottles', 'Tin Cans', 'Glass Bottles'],
       datasets: [{
         data: [<?= $totalPlastic ?>, <?= $totalCans ?>, <?= $totalGlassBottles ?>],
-        backgroundColor: ['#4CAF50', '#FF9800', '#2196F3'],
-        borderColor: ['#388E3C', '#F57C00', '#1976D2'],
+        backgroundColor: ['#31326F', '#4FB7B3', '#A8FBD3'],
+        borderColor: ['#31326F', '#4FB7B3', '#A8FBD3'],
         borderWidth: 2
       }]
     },
@@ -172,8 +169,8 @@ document.addEventListener('DOMContentLoaded', function() {
       datasets: [{
         label: 'Contributions',
         data: [<?= $getContZone1 ?>, <?= $getContZone2 ?>, <?= $getContZone3 ?>, <?= $getContZone4 ?>, <?= $getContZone5 ?>, <?= $getContZone6 ?>, <?= $getContZone7 ?>],
-        backgroundColor: 'rgba(54, 162, 235, 0.8)',
-        borderColor: 'rgba(54, 162, 235, 1)',
+        backgroundColor: 'rgba(81, 0, 255, 0.8)',
+        borderColor: 'rgb(255, 255, 255)',
         borderWidth: 1
       }]
     },
