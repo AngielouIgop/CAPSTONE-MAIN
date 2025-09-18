@@ -64,6 +64,7 @@
                     <th>Phone</th>
                     <th>Position</th>
                     <th>Date Added</th>
+                    <th>Actions</th>
                     <!-- Actions column removed -->
                 </tr>
             </thead>
@@ -75,7 +76,8 @@
                         <td><?= htmlspecialchars($admin['contactNumber']) ?></td>
                         <td><?= htmlspecialchars($admin['position']) ?></td>
                         <td><?= htmlspecialchars($admin['registrationDate']) ?></td>
-                        <!-- Actions column removed -->
+                        <td><a href="index.php?command=deleteUser&userID=<?= $admin['userID']; ?>" class="action-btn"
+                        onclick="return confirm('Are you sure you want to delete <?= htmlspecialchars($admin['username'] ?? $admin['contactNumber'] ?? 'this admin'); ?>?')">Delete</a></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
