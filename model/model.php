@@ -662,5 +662,174 @@ public function updateNotifStatus($id, $status = 'read') {
         $stmt->close();
         return $exists;
     }
+
+    // ----- ADDITIONAL ADMIN METHODS -----
+    public function getTopUsers($limit = 7)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM user WHERE role = 'user' LIMIT ?");
+        $stmt->bind_param("i", $limit);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $users = [];
+        while ($row = $result->fetch_assoc()) {
+            $users[] = $row;
+        }
+        $stmt->close();
+        return $users;
+    }
+
+    public function getRewardImagePathById($rewardID)
+    {
+        $stmt = $this->db->prepare("SELECT rewardImg FROM reward WHERE rewardID = ?");
+        $stmt->bind_param("i", $rewardID);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        return $row ? $row['rewardImg'] : null;
+    }
+
+    public function validateAndUploadImage($file, $targetDir)
+    {
+        $result = ['success' => false, 'error' => '', 'path' => ''];
+
+        // Check if file was uploaded
+        if (!isset($file) || $file['error'] !== UPLOAD_ERR_OK) {
+            $result['error'] = "No file uploaded or upload error occurred.";
+            return $result;
+        }
+
+        // Check file size (max 5MB)
+        if ($file['size'] > 5 * 1024 * 1024) {
+            $result['error'] = "File size too large. Maximum size is 5MB.";
+            return $result;
+        }
+
+        // Check file type
+        $imageFileType = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        $allowedTypes = ['jpg', 'jpeg', 'png', 'gif'];
+        if (!in_array($imageFileType, $allowedTypes)) {
+            $result['error'] = "Invalid file type. Only JPG, JPEG, PNG, and GIF files are allowed.";
+            return $result;
+        }
+
+        // Verify it's actually an image
+        $check = getimagesize($file['tmp_name']);
+        if ($check === false) {
+            $result['error'] = "File is not a valid image.";
+            return $result;
+        }
+
+        // Create target directory if it doesn't exist
+        if (!is_dir($targetDir)) {
+            if (!mkdir($targetDir, 0755, true)) {
+                $result['error'] = "Failed to create target directory.";
+                return $result;
+            }
+        }
+
+        // Generate unique filename
+        $fileName = uniqid() . '_' . basename($file['name']);
+        $targetPath = $targetDir . $fileName;
+
+        // Move uploaded file
+        if (move_uploaded_file($file['tmp_name'], $targetPath)) {
+            $result['success'] = true;
+            $result['path'] = $targetPath;
+        } else {
+            $result['error'] = "Failed to upload file.";
+        }
+
+        return $result;
+    }
+
+    public function getTotalPlasticByDate($date)
+    {
+        $stmt = $this->db->prepare("SELECT SUM(quantity) as totalPlastic FROM wasteentry WHERE materialID = 1 AND DATE(dateDeposited) = ?");
+        $stmt->bind_param("s", $date);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        return $row ? $row['totalPlastic'] : 0;
+    }
+
+    public function getTotalBottlesByDate($date)
+    {
+        $stmt = $this->db->prepare("SELECT SUM(quantity) as totalBottles FROM wasteentry WHERE materialID = 2 AND DATE(dateDeposited) = ?");
+        $stmt->bind_param("s", $date);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        return $row ? $row['totalBottles'] : 0;
+    }
+
+    public function getTotalCansByDate($date)
+    {
+        $stmt = $this->db->prepare("SELECT SUM(quantity) as totalCans FROM wasteentry WHERE materialID = 3 AND DATE(dateDeposited) = ?");
+        $stmt->bind_param("s", $date);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        return $row ? $row['totalCans'] : 0;
+    }
+
+    public function getWasteContributionsPerMaterialByDate($date)
+    {
+        $stmt = $this->db->prepare("
+            SELECT m.materialName, SUM(w.quantity) AS totalQuantity
+            FROM wasteentry w
+            JOIN materialtype m ON w.materialID = m.materialID
+            WHERE DATE(w.dateDeposited) = ?
+            GROUP BY m.materialName
+        ");
+        $stmt->bind_param("s", $date);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $data = [];
+        while ($row = $result->fetch_assoc()) {
+            $data[] = $row;
+        }
+        $stmt->close();
+        return $data;
+    }
+
+    public function getZoneContributionByDate($zone, $date)
+    {
+        $stmt = $this->db->prepare("
+            SELECT u.zone, SUM(w.quantity) AS totalQuantity
+            FROM user u
+            LEFT JOIN wasteentry w ON u.userID = w.userID AND DATE(w.dateDeposited) = ?
+            WHERE u.zone = ?
+            GROUP BY u.zone
+        ");
+        $stmt->bind_param("ss", $date, $zone);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        return $row ? $row['totalQuantity'] : 0;
+    }
+
+    public function getWasteHistoryByDate($date)
+    {
+        $stmt = $this->db->prepare("
+            SELECT w.entryID, w.dateDeposited, w.timeDeposited, w.quantity, w.materialWeight, w.pointsEarned,
+                   m.materialName, u.fullName, u.zone
+            FROM wasteentry w
+            INNER JOIN materialtype m ON w.materialID = m.materialID
+            INNER JOIN user u ON w.userID = u.userID
+            WHERE DATE(w.dateDeposited) = ?
+            ORDER BY w.dateDeposited DESC, w.timeDeposited DESC
+        ");
+        $stmt->bind_param("s", $date);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $data = [];
+        while ($row = $result->fetch_assoc()) {
+            $data[] = $row;
+        }
+        $stmt->close();
+        return $data;
+    }
 }
 ?>
