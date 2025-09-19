@@ -287,6 +287,14 @@ class Controller
                                     $this->model->getTotalCansByDate(date('Y-m-d')) + 
                                     $this->model->getTotalBottlesByDate(date('Y-m-d'));
                 
+                // Pending registration notifications
+                $pendingRegistrations = $this->model->getPendingRegistrationNotifications();
+                $pendingRegistrationCount = count($pendingRegistrations);
+                
+                // Calculate total notification count for header
+                $sensorNotificationCount = count($this->model->getNotifications());
+                $notificationCount = $sensorNotificationCount + $pendingRegistrationCount;
+                
                 // Zone data for charts
                 $getContZone1 = $this->model->getContZone1();
                 $getContZone2 = $this->model->getContZone2();
@@ -302,6 +310,10 @@ class Controller
             case 'manageUser':
                 $users = $this->model->getAllUsers();
                 $admins = $this->model->getAllAdmins();
+                
+                // Calculate total notification count for header (sensor notifications only)
+                $notificationCount = count($this->model->getNotifications());
+                
                 include_once('view/manageUser.php');
                 break;
 
@@ -398,6 +410,8 @@ class Controller
                 $userID = $_SESSION['user']['userID'];
                 $admin = $this->model->getUserData($userID);
                 
+                // Calculate total notification count for header (sensor notifications only)
+                $notificationCount = count($this->model->getNotifications());
 
                 include_once('view/adminProfile.php');
                 break;
@@ -506,6 +520,9 @@ class Controller
                 $selectedDate = isset($_GET['date']) ? $_GET['date'] : date('Y-m-d');
                 
                 $userID = $_SESSION['userID'];
+                
+                // Calculate total notification count for header (sensor notifications only)
+                $notificationCount = count($this->model->getNotifications());
                 
                 // Use date-filtered functions if date is provided, otherwise use current data
                 if ($selectedDate && $selectedDate !== date('Y-m-d')) {
