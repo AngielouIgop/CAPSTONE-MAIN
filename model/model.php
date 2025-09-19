@@ -35,6 +35,18 @@ class Model
         $result = $this->db->query("SELECT * FROM sensor_notifications WHERE status = 'unread'");
         return $result->fetch_all(MYSQLI_ASSOC);
     }
+
+    public function getPendingRegistrationNotifications()
+    {
+        $result = $this->db->query("SELECT * FROM pending_registrations WHERE status = 'pending' ORDER BY submittedAt DESC");
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getAllNotifications()
+    {
+        // Get only sensor notifications
+        return $this->getNotifications();
+    }
     public function getUserData($userID)
     {
         $stmt = $this->db->prepare("SELECT fullName, username, password, email, contactNumber, zone, profilePicture FROM user WHERE userID = ?");
@@ -351,15 +363,15 @@ public function getMostContributedWaste()
     // ========================================================
     // ===================== ADD FUNCTIONS ===================
     // ========================================================
-    public function registerUser($fullname, $email, $zone, $brgyID, $contactNumber, $username, $password)
+    public function registerUser($fullname, $email, $zone, $brgyIDNum, $contactNumber, $username, $password)
     {
         if ($this->userExists($username) || $this->pendingUserExists($username)) {
             return false;
         }
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-        $query = "INSERT INTO pending_registrations (fullName, email, zone, brgyID, contactNumber, username, password) VALUES (?,?,?,?,?,?,?)";
+        $query = "INSERT INTO pending_registrations (fullName, email, zone, brgyIDNum, contactNumber, username, password) VALUES (?,?,?,?,?,?,?)";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("sssssss", $fullname, $email, $zone, $brgyID, $contactNumber, $username, $hashedPassword);
+        $stmt->bind_param("sssssss", $fullname, $email, $zone, $brgyIDNum, $contactNumber, $username, $hashedPassword);
         return $stmt->execute();
     }
 
