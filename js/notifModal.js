@@ -8,17 +8,24 @@ function populateNotificationList(notifications) {
   notifications.forEach(n => {
     const li = document.createElement('li');
     li.classList.add('notification-item');
+    
     li.innerHTML = `
-      <h5>${n.sensor_name}</h5>
+      <div class="notification-header">
+        <h5>${n.sensor_name}</h5>
+        <span class="notification-type">Sensor</span>
+      </div>
       <p>${n.message}</p>
-      <button class="done-single-btn" data-id="${n.id}">Done</button>
-      <button class="notif-close-btn">&times;</button>
+      <div class="notification-actions">
+        <button class="done-single-btn" data-id="${n.id}">Done</button>
+        <button class="notif-close-btn">&times;</button>
+      </div>
     `;
+    
     notificationList.appendChild(li);
   });
 }
 
-// Event delegation for "Done" and close buttons
+// Event delegation for "Done", "View Registration", and close buttons
 notificationList.addEventListener('click', (e) => {
   const target = e.target;
 
@@ -33,7 +40,11 @@ notificationList.addEventListener('click', (e) => {
     .then(data => {
       if (data.success) {
         target.parentElement.style.opacity = 0.5;
-        setTimeout(() => target.parentElement.remove(), 400);
+        setTimeout(() => {
+          target.parentElement.remove();
+          // Update counter after removing notification
+          updateNotificationCounter();
+        }, 400);
       } else {
         alert('Error: ' + data.message);
       }
@@ -41,10 +52,32 @@ notificationList.addEventListener('click', (e) => {
     .catch(err => console.error('Error:', err));
   }
 
+
   if (target.classList.contains('notif-close-btn')) {
     target.parentElement.remove();
   }
 });
+
+// Update notification counter
+function updateNotificationCounter() {
+  fetch('endpoints/getUnreadNotifications.php')
+    .then(res => res.json())
+    .then(data => {
+      const counter = document.getElementById('notification-counter');
+      if (counter) {
+        const count = data.length;
+        counter.textContent = count;
+        
+        // Hide badge if no notifications
+        if (count === 0) {
+          counter.classList.add('hidden');
+        } else {
+          counter.classList.remove('hidden');
+        }
+      }
+    })
+    .catch(err => console.error('Error updating counter:', err));
+}
 
 // Open modal and fetch unread notifications
 function openNotificationModal() {
@@ -53,6 +86,8 @@ function openNotificationModal() {
     .then(data => {
       populateNotificationList(data);
       modal.style.display = 'block';
+      // Update counter after opening modal
+      updateNotificationCounter();
     })
     .catch(err => console.error('Error:', err));
 }
@@ -72,4 +107,12 @@ window.addEventListener('click', e => {
 // Clear all notifications (just clears UI)
 document.querySelector('.clear-btn').addEventListener('click', () => {
   notificationList.innerHTML = '';
+  // Update counter after clearing
+  updateNotificationCounter();
+});
+
+
+// Update counter on page load
+document.addEventListener('DOMContentLoaded', function() {
+  updateNotificationCounter();
 });

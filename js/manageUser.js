@@ -12,6 +12,29 @@ function togglePassword(inputId, toggleBtn) {
   }
 }
 
+// Update pending registration counter
+function updatePendingCounter() {
+  fetch("endpoints/getPendingRegistrations.php")
+    .then((response) => response.json())
+    .then((data) => {
+      const counter = document.getElementById('pending-counter');
+      if (counter) {
+        const count = data.length;
+        counter.textContent = count;
+        
+        // Hide badge if no pending registrations
+        if (count === 0) {
+          counter.classList.add('hidden');
+        } else {
+          counter.classList.remove('hidden');
+        }
+      }
+    })
+    .catch((error) => {
+      console.error("Error updating pending counter:", error);
+    });
+}
+
 // Pending Registrations Functions
 function openPendingModal() {
   document.getElementById("pendingRegistrationsModal").style.display = "block";
@@ -47,7 +70,7 @@ function loadPendingRegistrations() {
                         }</p>
                         <p><strong>Email:</strong> ${registration.email}</p>
                         <p><strong>Zone:</strong> ${registration.zone}</p>
-                        <p><strong>Brgy ID:</strong> ${registration.brgyID}</p>
+                        <p><strong>Brgy ID:</strong> ${registration.brgyIDNum}</p>
                         <p><strong>Contact:</strong> ${
                           registration.contactNumber
                         }</p>
@@ -89,6 +112,7 @@ function approveRegistration(registrationId) {
         if (data.success) {
           alert("Registration approved successfully!");
           loadPendingRegistrations();
+          updatePendingCounter(); // Update counter after approval
         } else {
           alert("Error approving registration: " + data.message);
         }
@@ -114,6 +138,7 @@ function rejectRegistration(registrationId) {
         if (data.success) {
           alert("Registration rejected successfully!");
           loadPendingRegistrations();
+          updatePendingCounter(); // Update counter after rejection
         } else {
           alert("Error rejecting registration: " + data.message);
         }
@@ -185,6 +210,9 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
+  // Update pending counter on page load
+  updatePendingCounter();
+  
   const pendingRegistrationsModal = document.getElementById(
     "pendingRegistrationsModal"
   );
