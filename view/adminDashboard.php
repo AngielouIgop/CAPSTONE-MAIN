@@ -41,6 +41,13 @@
         <span class="stat-label">Today's Contributions</span>
       </div>
     </div>
+    <div class="stat-item">
+      <div class="stat-icon">⏳</div>
+      <div class="stat-info">
+        <span class="stat-number"><?= htmlspecialchars($pendingRegistrationCount ?? 0) ?></span>
+        <span class="stat-label">Pending Registrations</span>
+      </div>
+    </div>
   </div>
 
   <!-- Main Dashboard Grid -->
@@ -132,66 +139,66 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  // Waste Distribution Pie Chart
-  const wasteCtx = document.getElementById('wasteDistributionChart').getContext('2d');
-  new Chart(wasteCtx, {
-    type: 'doughnut',
-    data: {
-      labels: ['Plastic Bottles', 'Tin Cans', 'Glass Bottles'],
-      datasets: [{
-        data: [<?= $totalPlastic ?>, <?= $totalCans ?>, <?= $totalGlassBottles ?>],
-        backgroundColor: ['#31326F', '#4FB7B3', '#A8FBD3'],
-        borderColor: ['#31326F', '#4FB7B3', '#A8FBD3'],
-        borderWidth: 2
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          position: 'bottom',
-          labels: {
-            padding: 20,
-            usePointStyle: true
-          }
-        }
-      }
-    }
-  });
-
-  // Zone Performance Bar Chart
-  const zoneCtx = document.getElementById('zonePerformanceChart').getContext('2d');
-  new Chart(zoneCtx, {
-    type: 'bar',
-    data: {
-      labels: ['Zone 1', 'Zone 2', 'Zone 3', 'Zone 4', 'Zone 5', 'Zone 6', 'Zone 7'],
-      datasets: [{
-        label: 'Contributions',
-        data: [<?= $getContZone1 ?>, <?= $getContZone2 ?>, <?= $getContZone3 ?>, <?= $getContZone4 ?>, <?= $getContZone5 ?>, <?= $getContZone6 ?>, <?= $getContZone7 ?>],
-        backgroundColor: 'rgba(81, 0, 255, 0.8)',
-        borderColor: 'rgb(255, 255, 255)',
-        borderWidth: 1
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        y: {
-          beginAtZero: true,
-          ticks: {
-            precision: 0
-          }
-        }
+    // Waste Distribution Pie Chart
+    const wasteCtx = document.getElementById('wasteDistributionChart').getContext('2d');
+    new Chart(wasteCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Plastic Bottles', 'Tin Cans', 'Glass Bottles'],
+        datasets: [{
+          data: [<?= $totalPlastic ?>, <?= $totalCans ?>, <?= $totalGlassBottles ?>],
+          backgroundColor: ['#31326F', '#4FB7B3', '#A8FBD3'],
+          borderColor: ['#31326F', '#4FB7B3', '#A8FBD3'],
+          borderWidth: 2
+        }]
       },
-      plugins: {
-        legend: {
-          display: false
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              padding: 20,
+              usePointStyle: true
+            }
+          }
         }
       }
-    }
+    });
+  
+    // Zone Performance Bar Chart
+    const zoneCtx = document.getElementById('zonePerformanceChart').getContext('2d');
+    new Chart(zoneCtx, {
+      type: 'bar',
+      data: {
+        labels: ['Zone 1', 'Zone 2', 'Zone 3', 'Zone 4', 'Zone 5', 'Zone 6', 'Zone 7'],
+        datasets: [{
+          label: 'Contributions',
+          data: [<?= $getContZone1 ?>, <?= $getContZone2 ?>, <?= $getContZone3 ?>, <?= $getContZone4 ?>, <?= $getContZone5 ?>, <?= $getContZone6 ?>, <?= $getContZone7 ?>],
+          backgroundColor: 'rgba(81, 0, 255, 0.8)',
+          borderColor: 'rgb(255, 255, 255)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              precision: 0
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            display: false
+          }
+        }
+      }
+    });
   });
-});
 </script> 
 

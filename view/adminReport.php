@@ -1,3 +1,5 @@
+<?php include 'notification.php'; ?>
+
 <!DOCTYPE html>
 <html lang="en">
 

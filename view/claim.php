@@ -12,8 +12,8 @@
 <body>
 
   <div class="rewards-header">
-    <span>Available Rewards:</span>
-    <span>Current Points: <b><?php echo htmlspecialchars($totalCurrentPoints); ?> pts</b></span>
+    <span>Available Rewards</span>
+    <span><b><?php echo htmlspecialchars($totalCurrentPoints); ?> pts</b></span>
   </div>
 
   <div class="rewards-list">
@@ -39,7 +39,7 @@
         <div class="reward-name"><?php echo htmlspecialchars($reward['rewardName']); ?></div>
         <div class="reward-points"><?php echo htmlspecialchars($reward['pointsRequired']); ?> pts</div>
         <button class="claim-btn <?php echo ($totalCurrentPoints >= $reward['pointsRequired']) ? 'available' : 'insufficient'; ?>"
-          <?php echo ($totalCurrentPoints >= $reward['pointsRequired']) ? '' : 'disabled'; ?>>
+          <?php echo ($totalCurrentPoints >= $reward['pointsRequired']) ? 'onclick="openClaimModal(\'' . htmlspecialchars($src) . '\', \'' . htmlspecialchars($reward['rewardName']) . '\', ' . $reward['pointsRequired'] . ', ' . $reward['rewardID'] . ')"' : 'disabled'; ?>>
           <?php echo ($totalCurrentPoints >= $reward['pointsRequired']) ? 'Claim' : 'Insufficient points'; ?>
         </button>
       </div>
@@ -55,5 +55,32 @@
     <?php } ?>
   </div>
 
+  <!-- Claim Confirmation Modal -->
+  <div id="claimModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <img src="images/basura logo.png" alt="Basura Logo" class="modal-logo" />
+        <span class="modal-title">B.A.S.U.R.A. Rewards</span>
+      </div>
+      <div class="modal-body">
+        <p class="modal-instruction">Are you sure you want to claim this reward?</p>
+        <div class="reward-preview">
+          <img id="modalRewardImage" src="" alt="Reward Image">
+          <div class="reward-details">
+            <div class="current-points">
+              <span class="points-label">CURRENT POINTS:</span>
+              <span class="points-value"><?php echo htmlspecialchars($totalCurrentPoints); ?> PTS</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="modal-btn btn-confirm" id="confirmClaim">Yes</button>
+          <button class="modal-btn btn-cancel" id="cancelClaim">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/claimModal.js"></script>
 </body>
 </html>

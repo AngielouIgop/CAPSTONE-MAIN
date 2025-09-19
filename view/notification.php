@@ -22,6 +22,7 @@
     </div>
   </div>
 
+
   <!-- Include JS -->
   <script src="js/notifModal.js"></script>
 

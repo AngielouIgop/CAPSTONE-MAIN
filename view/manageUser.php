@@ -1,3 +1,5 @@
+<?php include 'notification.php'; ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,7 +12,11 @@
 
 <body>
      <button class="pill-btn add-admin-btn" style="float:right;">Add an Admin</button>
-     <button class="pill-btn pending-registrations-btn" style="float:right;" onclick="openPendingModal()">Pending Registrations</button>  
+     <button class="pill-btn pending-registrations-btn" style="float:right;" onclick="openPendingModal()">
+       <span class="pending-icon">⏳</span>
+       <span class="pending-text">Pending Registrations</span>
+       <span class="pending-badge" id="pending-counter"><?= isset($pendingRegistrationCount) ? $pendingRegistrationCount : 0 ?></span>
+     </button>  
        
     <div class="section-header">
         Manage Users

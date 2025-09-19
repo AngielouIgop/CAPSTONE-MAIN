@@ -45,7 +45,13 @@
     <!-- Admin -->
     <nav class="header-nav" id="header-nav">
       <ul>
-        <li><a href="#" class="notifications-btn" onclick="openNotificationModal(); return false;">Notifications</a></li>
+        <li>
+          <a href="#" class="notifications-btn" onclick="openNotificationModal(); return false;">
+            <span class="notification-icon">🔔</span>
+            <span class="notification-text">Notifications</span>
+            <span class="notification-badge" id="notification-counter"><?= isset($notificationCount) ? $notificationCount : 0 ?></span>
+          </a>
+        </li>
       </ul>
     </nav>
   <?php endif; ?>
