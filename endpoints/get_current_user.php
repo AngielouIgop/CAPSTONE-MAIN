@@ -6,7 +6,6 @@ class GetCurrentUser
 
     function __construct()
     {
-        // require_once('model/model.php');
         $this->model = new Model();
     }
 

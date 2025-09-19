@@ -6,7 +6,6 @@ class NotifyEndpoint
 
     function __construct()
     {
-        // require_once('../model/model.php');
         $this->model = new Model();
     }
 
@@ -57,7 +56,6 @@ class NotifyEndpoint
         }
     }
 }
-
 require_once('../model/model.php');
 $endpoint = new NotifyEndpoint();
 $endpoint->processRequest();

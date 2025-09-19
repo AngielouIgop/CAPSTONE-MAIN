@@ -6,7 +6,6 @@ class Endpoint
 
     function __construct()
     {
-        // require_once('model/model.php');
         $this->model = new Model();
     }
 
@@ -16,21 +15,19 @@ class Endpoint
 
         // Handle GET requests (fetch user)
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-            if (!isset($_SESSION['userID'])) {
+            if (!isset($_SESSION['user']['userID'])) {
                 http_response_code(401);
                 echo json_encode(['error' => 'User not logged in']);
                 exit;
             }
 
             echo json_encode([
-                'userID' => $_SESSION['userID'],
-                'username' => $_SESSION['username'] ?? 'Unknown'
+                'userID' => $_SESSION['user']['userID'],
+                'username' => $_SESSION['user']['username'] ?? 'Unknown'
             ]);
             exit;
         }
 
-        // Debugging POST
-        error_log("POST data: " . print_r($_POST, true));
 
         // ✅ Handle waste entry only
         $material = $_POST['material'] ?? '';
@@ -44,7 +41,6 @@ class Endpoint
         $userID = $_POST['userID'] ?? '';
 
         if (empty($material) || !isset($_POST['weight']) || empty($userID)) {
-            error_log("Missing required fields for waste entry");
             http_response_code(400);
             echo json_encode(["error" => "Missing required fields"]);
             return;
@@ -58,8 +54,12 @@ class Endpoint
             }
 
             // Get material info
-            $materialQuery = "SELECT materialID FROM materialType WHERE materialName = ?";
+            $materialQuery = "SELECT materialID FROM materialtype WHERE materialName = ?";
             $stmt = $this->model->db->prepare($materialQuery);
+            if (!$stmt) {
+                throw new Exception("Material query prepare failed: " . $this->model->db->error);
+            }
+            
             $stmt->bind_param("s", $material);
             $stmt->execute();
             $result = $stmt->get_result();
@@ -76,12 +76,15 @@ class Endpoint
 
             // Calculate points
             $pointsEarned = $this->model->calcPoints($userID, $materialID, $quantity, $weight);
-            error_log("Points earned: $pointsEarned");
 
             // Insert waste entry
-            $sql = "INSERT INTO wasteEntry (userID, materialID, quantity, pointsEarned, dateDeposited, timeDeposited, materialWeight)
+            $sql = "INSERT INTO wasteentry (userID, materialID, quantity, pointsEarned, dateDeposited, timeDeposited, materialWeight)
                     VALUES (?, ?, ?, ?, ?, ?, ?)";
             $stmt = $this->model->db->prepare($sql);
+            if (!$stmt) {
+                throw new Exception("Insert query prepare failed: " . $this->model->db->error);
+            }
+            
             $stmt->bind_param("iiidssd", $userID, $materialID, $quantity, $pointsEarned, $dateDeposited, $timeDeposited, $weight);
 
             if ($stmt->execute()) {
@@ -89,14 +92,12 @@ class Endpoint
                     "success" => true,
                     "message" => "Material inserted. Points: $pointsEarned"
                 ]);
-                error_log("Insert success: Material $material for user $userID, points: $pointsEarned");
             } else {
                 throw new Exception("Insert failed: " . $stmt->error);
             }
 
             $stmt->close();
         } catch (Exception $e) {
-            error_log("Error: " . $e->getMessage());
             http_response_code(500);
             echo json_encode(["error" => $e->getMessage()]);
         }

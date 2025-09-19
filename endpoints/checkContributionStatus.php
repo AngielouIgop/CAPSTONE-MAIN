@@ -6,7 +6,7 @@ class CheckContributionStatus
 
     function __construct()
     {
-        // require_once('model/model.php');
+        
         $this->model = new Model();
     }
 
@@ -53,7 +53,6 @@ class CheckContributionStatus
         ]);
     }
 }
-
 require_once('../model/model.php');
 $checkStatus = new CheckContributionStatus();
 $checkStatus->processRequest();

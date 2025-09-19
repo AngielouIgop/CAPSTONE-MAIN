@@ -6,7 +6,7 @@ class SetContributionStatus
 
     function __construct()
     {
-        // require_once('model/model.php');
+        require_once('../model/model.php');
         $this->model = new Model();
     }
 
@@ -81,7 +81,6 @@ class SetContributionStatus
         }
     }
 }
-
 require_once('../model/model.php');
 $setContributionStatus = new SetContributionStatus();
 $setContributionStatus->processRequest();

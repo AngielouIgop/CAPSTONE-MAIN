@@ -6,7 +6,7 @@ class GetUnreadNotifications
 
     function __construct()
     {
-        // require_once('model/model.php');
+        require_once('../model/model.php');
         $this->model = new Model();
     }
 
@@ -14,11 +14,10 @@ class GetUnreadNotifications
     {
         header('Content-Type: application/json');
 
-        $notifications = $this->model->getNotifications(); // only unread
+        $notifications = $this->model->getAllNotifications(); // includes both sensor and pending registration notifications
         echo json_encode($notifications);
     }
 }
-
 require_once('../model/model.php');
 $getUnreadNotifications = new GetUnreadNotifications();
 $getUnreadNotifications->processRequest();

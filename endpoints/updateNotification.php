@@ -6,7 +6,7 @@ class UpdateNotification
 
     function __construct()
     {
-        // require_once('../model/model.php');
+        require_once('../model/model.php');
         $this->model = new Model();
     }
 
@@ -38,7 +38,6 @@ class UpdateNotification
         }
     }
 }
-
 require_once('../model/model.php');
 $updateNotification = new UpdateNotification();
 $updateNotification->processRequest();
