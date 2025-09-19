@@ -80,6 +80,58 @@ body, html {
   margin-right: 8px;
 }
 
+.reward-image {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 2px solid #e0e0e0;
+  transition: transform 0.2s ease;
+}
+
+.reward-image:hover {
+  transform: scale(1.1);
+  cursor: pointer;
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-badge.available {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.status-badge.unavailable {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.image-preview-container {
+  margin: 10px 0;
+  text-align: center;
+}
+
+.image-preview-container img {
+  border: 2px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.reward-delete-btn {
+  background: #dc3545;
+}
+
+.reward-delete-btn:hover {
+  background: #c82333;
+}
+
 .reward-action-btn {
   background: #2d316b;
   color: #fff;
@@ -181,7 +233,8 @@ body, html {
 
 .reward-modal input[type="text"],
 .reward-modal input[type="number"],
-.reward-modal input[type="file"] {
+.reward-modal input[type="file"],
+.reward-modal select {
     width: 100%;
     padding: 9px 12px;
     border: 1px solid #bfc9d1;
@@ -190,10 +243,17 @@ body, html {
     margin-bottom: 8px;
     background: #f8fafc;
     transition: border-color 0.2s ease;
+    box-sizing: border-box;
+}
+
+.reward-modal select {
+    background: #fff;
+    cursor: pointer;
 }
 
 .reward-modal input[type="text"]:focus,
-.reward-modal input[type="number"]:focus {
+.reward-modal input[type="number"]:focus,
+.reward-modal select:focus {
     border-color: #4a90e2;
     outline: none;
     background: #fff;
