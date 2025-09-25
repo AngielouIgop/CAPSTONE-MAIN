@@ -439,11 +439,9 @@ class Controller
                     exit();
                 }
 
-                // Get current image path and keep it unchanged
-                $currentImagePath = $this->model->getRewardImagePathById($rewardID);
-
                 // Update reward in database without changing the image
-                $result = $this->model->updateReward($rewardName, $pointsRequired, $slotNum, $availableStock, $rewardID, $currentImagePath, $availability);
+                // Pass empty string for imagePath since we're not updating the image
+                $result = $this->model->updateReward($rewardName, $pointsRequired, $slotNum, $availableStock, $rewardID, "", $availability);
                 
                 if ($result) {
                     echo "<script>alert('Reward updated successfully.'); window.location.href='?command=rewardInventory';</script>";
