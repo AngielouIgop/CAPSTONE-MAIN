@@ -516,19 +516,12 @@ public function getMostContributedWaste()
 
     public function updateReward($rewardName, $pointsRequired, $slotNum, $availableStock, $rewardID, $imagePath, $availability)
     {
-        if (!empty($imagePath)) {
-            $query = "UPDATE reward 
-                      SET rewardName = ?, pointsRequired = ?, slotNum = ?, availableStock = ?, availability = ?, rewardImg = ? 
-                      WHERE rewardID = ?";
-            $stmt = $this->db->prepare($query);
-            $stmt->bind_param("siiisii", $rewardName, $pointsRequired, $slotNum, $availableStock, $availability, $imagePath, $rewardID);
-        } else {
-            $query = "UPDATE reward 
-                      SET rewardName = ?, pointsRequired = ?, slotNum = ?, availableStock = ?, availability = ? 
-                      WHERE rewardID = ?";
-            $stmt = $this->db->prepare($query);
-            $stmt->bind_param("siiiii", $rewardName, $pointsRequired, $slotNum, $availableStock, $availability, $rewardID);
-        }
+        // Always update without changing the image - keep existing image
+        $query = "UPDATE reward 
+                  SET rewardName = ?, pointsRequired = ?, slotNum = ?, availableStock = ?, availability = ? 
+                  WHERE rewardID = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("siiiii", $rewardName, $pointsRequired, $slotNum, $availableStock, $availability, $rewardID);
         return $stmt->execute();
     }
 
@@ -799,7 +792,10 @@ public function updateNotifStatus($id, $status = 'read') {
 
         $data = [];
         while ($row = $result->fetch_assoc()) {
-            $data[] = $row;
+            $data[] = [
+                'materialType' => $row['materialName'],
+                'totalQuantity' => (int) $row['totalQuantity']
+            ];
         }
         $stmt->close();
         return $data;
