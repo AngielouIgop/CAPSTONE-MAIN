@@ -49,7 +49,7 @@
             $hasAvailable = false;
             if (isset($rewards) && !empty($rewards)):
               foreach ($rewards as $reward):
-                if (isset($reward['availability']) && $reward['availability'] == 1): // Only show available rewards
+                if (isset($reward['availability']) && $reward['availability'] == 1 && in_array($reward['slotNum'], [1, 2, 3])): // Show available rewards from all slots
                   $hasAvailable = true;
                   // Image logic: use file path if exists, else base64 if binary, else default
                   if (!empty($reward['rewardImg'])) {
@@ -68,7 +68,7 @@
               <div class="reward-name"><?php echo htmlspecialchars($reward['rewardName']); ?></div>
               <div class="reward-points"><?php echo htmlspecialchars($reward['pointsRequired']); ?> points</div>
               <button class="claim-btn <?php echo ($totalCurrentPoints >= $reward['pointsRequired']) ? 'available' : 'insufficient'; ?>"
-                      <?php echo ($totalCurrentPoints >= $reward['pointsRequired']) ? 'onclick="openClaimModal(\'' . htmlspecialchars($src) . '\', \'' . htmlspecialchars($reward['rewardName']) . '\', ' . $reward['pointsRequired'] . ', ' . $reward['rewardID'] . ')"' : 'disabled'; ?>>
+                      <?php echo ($totalCurrentPoints >= $reward['pointsRequired']) ? 'onclick="openClaimModal(\'' . htmlspecialchars($src) . '\', \'' . htmlspecialchars($reward['rewardName']) . '\', ' . $reward['pointsRequired'] . ', ' . $reward['rewardID'] . ', ' . $reward['slotNum'] . ')"' : 'disabled'; ?>>
                 <?php echo ($totalCurrentPoints >= $reward['pointsRequired']) ? 'Claim' : 'Insufficient Points'; ?>
               </button>
             </div>

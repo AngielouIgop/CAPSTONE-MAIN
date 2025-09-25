@@ -22,28 +22,32 @@
       $rewardCount = 0;
       if (!empty($rewards)) {
         foreach ($rewards as $reward) {
-          $rewardCount++;
-          if (!empty($reward['rewardImg'])) {
-            if (file_exists($reward['rewardImg'])) {
-              $src = $reward['rewardImg'];
+          // Show rewards from all slots (1, 2, 3) that are available
+          if ($reward['availability'] == 1 && in_array($reward['slotNum'], [1, 2, 3])) {
+            $rewardCount++;
+            if (!empty($reward['rewardImg'])) {
+              if (file_exists($reward['rewardImg'])) {
+                $src = $reward['rewardImg'];
+              } else {
+                $imgData = base64_encode($reward['rewardImg']);
+                $src = 'data:image/jpeg;base64,' . $imgData;
+              }
             } else {
-              $imgData = base64_encode($reward['rewardImg']);
-              $src = 'data:image/jpeg;base64,' . $imgData;
+              $src = 'images/default-reward.png';
             }
-          } else {
-            $src = 'images/default-reward.png';
-          }
     ?>
       <div class="reward-card">
         <img src="<?php echo htmlspecialchars($src); ?>" alt="<?php echo htmlspecialchars($reward['rewardName']); ?>">
         <div class="reward-name"><?php echo htmlspecialchars($reward['rewardName']); ?></div>
         <div class="reward-points"><?php echo htmlspecialchars($reward['pointsRequired']); ?> pts</div>
+        <div class="reward-slot">Slot <?php echo htmlspecialchars($reward['slotNum']); ?></div>
         <button class="claim-btn <?php echo ($totalCurrentPoints >= $reward['pointsRequired']) ? 'available' : 'insufficient'; ?>"
-          <?php echo ($totalCurrentPoints >= $reward['pointsRequired']) ? 'onclick="openClaimModal(\'' . htmlspecialchars($src) . '\', \'' . htmlspecialchars($reward['rewardName']) . '\', ' . $reward['pointsRequired'] . ', ' . $reward['rewardID'] . ')"' : 'disabled'; ?>>
+          <?php echo ($totalCurrentPoints >= $reward['pointsRequired']) ? 'onclick="openClaimModal(\'' . htmlspecialchars($src) . '\', \'' . htmlspecialchars($reward['rewardName']) . '\', ' . $reward['pointsRequired'] . ', ' . $reward['rewardID'] . ', ' . $reward['slotNum'] . ')"' : 'disabled'; ?>>
           <?php echo ($totalCurrentPoints >= $reward['pointsRequired']) ? 'Claim' : 'Insufficient points'; ?>
         </button>
       </div>
     <?php
+          }
         }
       }
       for ($i = $rewardCount; $i < $maxCards; $i++) {
