@@ -1,7 +1,8 @@
 // Claim Modal Functionality
 let currentRewardId = null;
+let currentSlotNum = null;
 
-function openClaimModal(rewardImage, rewardName, pointsRequired, rewardId) {
+function openClaimModal(rewardImage, rewardName, pointsRequired, rewardId, slotNum) {
   const modal = document.getElementById('claimModal');
   const modalImage = document.getElementById('modalRewardImage');
   
@@ -19,8 +20,9 @@ function openClaimModal(rewardImage, rewardName, pointsRequired, rewardId) {
   modalImage.src = rewardImage;
   modalImage.alt = rewardName;
   
-  // Store the reward ID for claiming
+  // Store the reward ID and slot number for claiming
   currentRewardId = rewardId;
+  currentSlotNum = slotNum;
   
   // Show the modal
   modal.classList.add('show');
@@ -37,6 +39,7 @@ function closeClaimModal() {
   const modal = document.getElementById('claimModal');
   modal.classList.remove('show');
   currentRewardId = null;
+  currentSlotNum = null;
 }
 
 // Event listeners
@@ -71,7 +74,7 @@ function claimReward(rewardId) {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
     },
-    body: `rewardId=${rewardId}`
+    body: `rewardId=${rewardId}&slotNum=${currentSlotNum}`
   })
   .then(response => response.json())
   .then(data => {
@@ -96,9 +99,3 @@ function claimReward(rewardId) {
   });
 }
 
-// Close modal with Escape key
-document.addEventListener('keydown', function(event) {
-  if (event.key === 'Escape') {
-    closeClaimModal();
-  }
-});
