@@ -16,13 +16,31 @@ body, html {
 }
 
 /* Pending Registrations Modal Styles */
+#pendingRegistrationsModal {
+  display: none;
+  position: fixed;
+  z-index: 3000;
+  inset: 0;
+  background-color: rgba(0,0,0,0.6);
+  backdrop-filter: blur(3px);
+}
+
+#pendingRegistrationsModal.show {
+  display: block !important;
+}
+
 #pendingRegistrationsModal .modal-content {
   width: 90%;
   max-width: 800px;
-  margin: 5% auto;
+  margin: 0;
   padding: 0;
   border-radius: 12px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3001;
 }
 
 #pendingRegistrationsModal .modal-header {
@@ -175,11 +193,33 @@ body, html {
   
   #pendingRegistrationsModal .modal-content {
     width: 95%;
-    margin: 2% auto;
+    margin: 0;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
   
   #pendingRegistrationsModal .modal-body {
     padding: 15px;
+  }
+}
+
+/* RESPONSIVE CENTERING FOR PENDING REGISTRATIONS MODAL */
+@media (max-width: 600px) {
+  #pendingRegistrationsModal .modal-content {
+    width: 98%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+@media (max-width: 480px) {
+  #pendingRegistrationsModal .modal-content {
+    width: 95%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 }
 
@@ -355,10 +395,22 @@ body, html {
   transform: translateY(0);
 }
 
-.modal {
+/* ========================================
+   GENERAL MODAL STYLES (Base/Default)
+   ======================================== */
+/* Note: General modal styles removed to prevent conflicts with notification.css */
+
+/* ========================================
+   PENDING REGISTRATIONS MODAL
+   ======================================== */
+
+/* ========================================
+   EDIT USER MODAL
+   ======================================== */
+#editUserModal {
     display: none;
     position: fixed;
-    z-index: 1000;
+    z-index: 1600;
     left: 0;
     top: 0;
     width: 100%;
@@ -367,111 +419,44 @@ body, html {
     background-color: rgba(0,0,0,0.6);
 }
 
-.modal-content {
-    background-color: #fefefe;
-    margin: 10% auto;
-    padding: 20px;
+#editUserModal.show {
+    display: block !important;
+}
+
+/* ========================================
+   ADD ADMINISTRATOR MODAL
+   ======================================== */
+#addAdministratorModal {
+    display: none;
+    position: fixed;
+    z-index: 1600;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.6);
+}
+
+#addAdministratorModal.show {
+    display: block !important;
+}
+
+/* EDIT USER MODAL CONTENT */
+#editUserModal .modal-content {
+    background-color: #fff;
+    margin: 7% auto;
+    padding: 25px 30px 20px 30px;
     border: 1px solid #888;
-    width: 80%;
+    width: 90%;
     max-width: 500px;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+    position: relative;
+    z-index: 1601;
 }
 
-.modal-header {
-    padding: 10px 15px;
-    border-bottom: 1px solid #ddd;
-    text-align: center;
-    font-size: 1.5em;
-    color: #333;
-}
-
-#editUserForm {
-    padding: 15px;
-}
-
-#editUserForm label {
-    display: block;
-    margin-bottom: 5px;
-    color: #555;
-    font-weight: bold;
-}
-
-#editUserForm input[type="text"],
-#editUserForm input[type="email"],
-#editUserForm input[type="password"] {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
-    font-size: 16px;
-    transition: border-color 0.2s ease;
-}
-
-#editUserForm input[type="text"]:focus,
-#editUserForm input[type="email"]:focus,
-#editUserForm input[type="password"]:focus {
-    border-color: #4a90e2;
-    outline: none;
-}
-
-#editUserForm small {
-    display: block;
-    margin-top: -10px;
-    margin-bottom: 10px;
-    font-size: 0.8em;
-    color: #777;
-}
-
-.modal-buttons {
-    text-align: right;
-    margin-top: 20px;
-}
-
-.btn-confirm, .btn-cancel {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: all 0.2s ease;
-    margin-left: 10px;
-}
-
-.btn-confirm {
-    background: #2d316b;
-    color: white;
-}
-
-.btn-confirm:hover {
-    background: #313895;
-    transform: translateY(-1px);
-}
-
-.btn-cancel {
-    background: #f44336;
-    color: white;
-}
-
-.btn-cancel:hover {
-    background: #d32f2f;
-    transform: translateY(-1px);
-}
-
-#addAdministratorModal.modal {
-    display: none;
-    position: fixed;
-    z-index: 1001;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.6);
-}
-
+/* ADD ADMINISTRATOR MODAL CONTENT */
 #addAdministratorModal .modal-content {
     background-color: #fff;
     margin: 7% auto;
@@ -482,8 +467,36 @@ body, html {
     border-radius: 12px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.25);
     position: relative;
+    z-index: 1601;
 }
 
+/* EDIT USER MODAL HEADER */
+#editUserModal .modal-header {
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e0e0e0;
+    text-align: center;
+    font-size: 1.6em;
+    color: #2c3e50;
+    margin-bottom: 18px;
+    position: relative;
+}
+
+#editUserModal .close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+#editUserModal .close:hover {
+    color: #000;
+}
+
+/* ADD ADMINISTRATOR MODAL HEADER */
 #addAdministratorModal .modal-header {
     padding-bottom: 10px;
     border-bottom: 1px solid #e0e0e0;
@@ -493,6 +506,20 @@ body, html {
     margin-bottom: 18px;
 }
 
+/* EDIT USER FORM */
+#editUserForm {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#editUserForm label {
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 3px;
+}
+
+/* ADD ADMINISTRATOR FORM */
 #addAdministratorForm {
     display: flex;
     flex-direction: column;
@@ -505,6 +532,30 @@ body, html {
     margin-bottom: 3px;
 }
 
+/* EDIT USER FORM INPUTS */
+#editUserForm input[type="text"],
+#editUserForm input[type="email"],
+#editUserForm input[type="password"] {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid #bfc9d1;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-bottom: 8px;
+    background: #f8fafc;
+    transition: border-color 0.2s ease;
+    box-sizing: border-box;
+}
+
+#editUserForm input[type="text"]:focus,
+#editUserForm input[type="email"]:focus,
+#editUserForm input[type="password"]:focus {
+    border-color: #4a90e2;
+    outline: none;
+    background: #fff;
+}
+
+/* ADD ADMINISTRATOR FORM INPUTS */
 #addAdministratorForm input[type="text"],
 #addAdministratorForm input[type="email"],
 #addAdministratorForm input[type="password"],
@@ -517,6 +568,7 @@ body, html {
     margin-bottom: 8px;
     background: #f8fafc;
     transition: border-color 0.2s ease;
+    box-sizing: border-box;
 }
 
 #addAdministratorForm input[type="text"]:focus,
@@ -533,6 +585,7 @@ body, html {
     margin-bottom: 8px;
 }
 
+/* ADD ADMINISTRATOR MODAL BUTTONS */
 #addAdministratorModal .modal-buttons {
     display: flex;
     justify-content: flex-end;
@@ -572,6 +625,60 @@ body, html {
     transform: translateY(-1px);
 }
 
+/* EDIT USER MODAL BUTTONS */
+#editUserModal .modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+#editUserModal .btn-confirm {
+    background: #2d316b;
+    color: #fff;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#editUserModal .btn-confirm:hover {
+    background: #1a1d4d;
+    transform: translateY(-1px);
+}
+
+#editUserModal .btn-cancel {
+    background: #f44336;
+    color: #fff;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#editUserModal .btn-cancel:hover {
+    background: #d32f2f;
+    transform: translateY(-1px);
+}
+
+/* EDIT USER PASSWORD CONTAINER */
+#editUserForm .password-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+#editUserForm .password-container input {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+/* PASSWORD TOGGLE BUTTON */
 .password-toggle {
   margin-left: auto;
   background: none;
@@ -585,6 +692,16 @@ body, html {
 
 .password-toggle:hover {
   color: #333;
+}
+
+/* ========================================
+   MODAL DISPLAY RULES
+   ======================================== */
+#editUserModal.show .modal-content,
+#addAdministratorModal.show .modal-content {
+  display: block !important;
+  position: relative;
+  z-index: 1601;
 }
 
 @media (max-width: 1024px) {
@@ -635,17 +752,7 @@ body, html {
     margin-bottom: 4px;
   }
   
-  .modal-content {
-    width: 95%;
-    margin: 5% auto;
-    padding: 15px;
-  }
-  
-  #addAdministratorModal .modal-content {
-    width: 95%;
-    margin: 5% auto;
-    padding: 20px;
-  }
+  /* Modal content responsive styles removed to prevent conflicts */
 }
 
 @media (max-width: 600px) {
@@ -695,18 +802,36 @@ body, html {
     margin-right: 10px;
   }
   
-  .modal-content {
+  /* General modal responsive styles removed to prevent conflicts */
+  
+  /* EDIT USER MODAL RESPONSIVE STYLES */
+  #editUserModal .modal-content {
     width: 98%;
     margin: 2% auto;
     padding: 12px;
     border-radius: 8px;
   }
   
-  .modal-header {
+  #editUserModal .modal-header {
     font-size: 1.3em;
     padding: 8px 12px;
   }
   
+  #editUserModal .modal-buttons {
+    text-align: center;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  #editUserModal .btn-confirm,
+  #editUserModal .btn-cancel {
+    width: 100%;
+    padding: 12px;
+    margin: 0;
+    font-size: 1rem;
+  }
+  
+  /* ADD ADMINISTRATOR MODAL RESPONSIVE STYLES */
   #addAdministratorModal .modal-content {
     width: 98%;
     margin: 2% auto;
@@ -717,19 +842,11 @@ body, html {
     font-size: 1.4em;
   }
   
-  .modal-buttons {
-    text-align: center;
-    flex-direction: column;
-    gap: 8px;
-  }
-  
   #addAdministratorModal .modal-buttons {
     flex-direction: column;
     gap: 8px;
   }
   
-  .btn-confirm,
-  .btn-cancel,
   #addAdministratorModal .btn-confirm,
   #addAdministratorModal .btn-cancel {
     width: 100%;
@@ -769,12 +886,13 @@ body, html {
     margin-right: 3px;
   }
   
-  .modal-content {
-    padding: 10px;
-    margin: 1% auto;
-  }
+  /* General modal styles removed to prevent conflicts */
   
+  /* SPECIFIC MODAL RESPONSIVE STYLES FOR MOBILE */
+  #editUserModal .modal-content,
   #addAdministratorModal .modal-content {
-    padding: 12px;
+    width: 95%;
+    margin: 5% auto;
+    padding: 20px;
   }
 } 

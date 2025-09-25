@@ -1,29 +1,35 @@
-/* Modal background */
-.modal {
+/* NOTIFICATION MODAL BACKGROUND - SPECIFIC TO NOTIFICATION MODAL ONLY */
+#notification-modal {
   display: none;
   position: fixed;
-  z-index: 1000;
+  z-index: 4000; /* Highest z-index to appear above all other modals */
   inset: 0; /* shorthand for top:0;left:0;width:100%;height:100% */
   background-color: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(3px);
 }
 
-/* Modal box */
-.modal-content {
+/* NOTIFICATION MODAL CONTENT - SPECIFIC TO NOTIFICATION MODAL ONLY */
+#notification-modal .modal-content {
   background: #fff;
-  margin: 8% auto;
+  margin: 0;
   border-radius: 12px;
   width: 600px;
+  max-width: 600px;
   max-height: 50vh;
   display: flex;
   flex-direction: column; /* so header stays on top */
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
   animation: fadeIn 0.25s ease-in-out;
   font-family: "Segoe UI", sans-serif;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2001;
 }
 
-/* Header stays at top */
-.modal-header {
+/* NOTIFICATION MODAL HEADER - SPECIFIC TO NOTIFICATION MODAL ONLY */
+#notification-modal .modal-header {
   position: sticky;
   top: 0;
   z-index: 10;
@@ -38,15 +44,15 @@
 }
 
 
-.modal-header h4 {
+#notification-modal .modal-header h4 {
   margin: 0;
   font-size: 16px;
   font-weight: 600;
 }
 
-/* Close + Clear buttons */
-.clear-btn,
-.modal-close-btn {
+/* NOTIFICATION MODAL BUTTONS - SPECIFIC TO NOTIFICATION MODAL ONLY */
+#notification-modal .clear-btn,
+#notification-modal .modal-close-btn {
   background: transparent;
   border: none;
   cursor: pointer;
@@ -56,12 +62,13 @@
   transition: opacity 0.2s;
 }
 
-.clear-btn:hover,
-.modal-close-btn:hover {
+#notification-modal .clear-btn:hover,
+#notification-modal .modal-close-btn:hover {
   opacity: 0.7;
 }
 
-.modal-body {
+/* NOTIFICATION MODAL BODY - SPECIFIC TO NOTIFICATION MODAL ONLY */
+#notification-modal .modal-body {
   padding: 12px 16px;
   overflow-y: auto;
   max-height: calc(50vh - 60px); /* subtract header height */
@@ -158,4 +165,59 @@
 @keyframes fadeIn {
   from { opacity: 0; transform: scale(0.95); }
   to { opacity: 1; transform: scale(1); }
+}
+
+/* Ensure notification modal works on manageUser page */
+#notification-modal.show {
+  display: block !important;
+}
+
+#notification-modal.show .modal-content {
+  display: flex !important;
+}
+
+/* Override any conflicting styles from manageUser.css */
+#notification-modal .modal-content {
+  background-color: #fff !important;
+  border: none !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25) !important;
+  margin: 0 !important;
+  width: 600px !important;
+  max-width: 600px !important;
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+}
+
+#notification-modal .modal-header {
+  background: #09005e !important;
+  color: #fff !important;
+  border-bottom: none !important;
+  text-align: left !important;
+  font-size: 1rem !important;
+  padding: 12px 16px !important;
+  border-top-left-radius: 12px !important;
+  border-top-right-radius: 12px !important;
+}
+
+/* RESPONSIVE CENTERING FOR NOTIFICATION MODAL */
+@media (max-width: 768px) {
+  #notification-modal .modal-content {
+    width: 90% !important;
+    max-width: 90% !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  #notification-modal .modal-content {
+    width: 95% !important;
+    max-width: 95% !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+  }
 }
