@@ -1,15 +1,14 @@
-
 <?php include 'contribute.php'; ?>
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>User Settings</title>
   <link rel="stylesheet" href="css/userSettings.css">
 
+  <!-- ==================== IMAGE PREVIEW SCRIPT ==================== -->
   <script type="text/javascript">
     function imagePreview(event) {
       if (event.target.files.length > 0) {
@@ -23,9 +22,11 @@
 </head>
 
 <body>
+  <!-- ==================== PROFILE UPDATE FORM ==================== -->
   <form class="profile-form" method="post" enctype="multipart/form-data" action="?command=updateProfileSettings">
     <h2 class="profile-form-title">Profile Info</h2>
 
+    <!-- ==================== PROFILE IMAGE SECTION ==================== -->
     <div class="profile-form-top">
       <div class="profile-img-box">
         <?php
@@ -50,7 +51,9 @@
       </div>
     </div>
 
+    <!-- ==================== FORM FIELDS ==================== -->
     <div class="profile-form-fields">
+      <!-- Personal Information Row -->
       <div class="form-row">
         <div class="form-group">
           <label>Fullname</label>
@@ -62,6 +65,7 @@
         </div>
       </div>
 
+      <!-- Contact Information Row -->
       <div class="form-row">
         <div class="form-group">
           <label>Contact Number</label>
@@ -73,18 +77,19 @@
         </div>
       </div>
 
+      <!-- Password Fields Row -->
       <div class="form-row">
         <div class="form-group">
           <label>Password</label>
           <div class="password-container">
-            <input type="password" id="password" name="password" placeholder="Enter new password">
+            <input type="password" id="password" name="password" placeholder="Leave blank to keep current password">
             <button type="button" class="password-toggle" onclick="togglePassword('password', this)">Show</button>
           </div>
         </div>
         <div class="form-group">
           <label>Confirm password</label>
           <div class="password-container">
-            <input type="password" id="confirmPassword" name="confirmPassword">
+            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm the new password">
             <button type="button" class="password-toggle"
               onclick="togglePassword('confirmPassword', this)">Show</button>
           </div>
@@ -92,9 +97,11 @@
       </div>
     </div>
 
+    <!-- ==================== SUBMIT BUTTON ==================== -->
     <button type="submit" class="save-btn">Confirm and Save</button>
   </form>
 
+  <!-- ==================== PASSWORD TOGGLE FUNCTION ==================== -->
   <script>
     function togglePassword(inputId, toggleBtn) {
       const input = document.getElementById(inputId);
@@ -108,5 +115,4 @@
     }
   </script>
 </body>
-
 </html>

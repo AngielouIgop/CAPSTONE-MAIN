@@ -1,4 +1,4 @@
-
+<!-- ==================== FOOTER SECTION ==================== -->
 <link rel="stylesheet" href="css/header-footer.css">
 <body>
     <footer class="footer-main">
@@ -6,4 +6,4 @@
             <p>&copy; 2025 BASURA APP. All rights reserved.</p>
         </div>
     </footer>
-    </body>
+</body>

@@ -1,4 +1,3 @@
-
 <?php include 'contribute.php'; ?>
 
 <!DOCTYPE html>
@@ -11,6 +10,7 @@
 </head>
 <body>
   <div class="user-dashboard">
+    <!-- ==================== PROFILE HEADER ==================== -->
     <div class="profile-header">
       <div class="profile-avatar">
         <?php
@@ -37,11 +37,15 @@
       </div>
     </div>                 
 
+    <!-- ==================== REWARDS SECTION ==================== -->
     <div class="rewards-section">
+      <!-- Current Points Display -->
       <div class="points-row">
         <span class="points-label">Current Points:</span>
         <span class="points-value"><?php echo number_format($totalCurrentPoints, 2); ?></span>
       </div>
+      
+      <!-- Available Rewards -->
       <div class="rewards-inner">
         <p class="rewards-title"><strong>Available Rewards:</strong></p>
         <div class="rewards-list">
@@ -89,7 +93,7 @@
     </div>
   </div>
 
-  <!-- Claim Confirmation Modal -->
+  <!-- ==================== CLAIM CONFIRMATION MODAL ==================== -->
   <div id="claimModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">

@@ -8,7 +8,7 @@
 </head>
 <body>
 
-  <!-- Custom Modal -->
+  <!-- ==================== NOTIFICATION MODAL ==================== -->
   <div id="notification-modal" class="modal" style="display:none;">
     <div class="modal-content">
       <div class="modal-header">
@@ -22,8 +22,7 @@
     </div>
   </div>
 
-
-  <!-- Include JS -->
+  <!-- ==================== NOTIFICATION JAVASCRIPT ==================== -->
   <script src="js/notifModal.js"></script>
 
 </body>

@@ -8,23 +8,26 @@
 </head>
 <body>
 <?php if (isset($_SESSION['user'])): ?>
-  <!-- Sidebar -->
+  <!-- ==================== SIDEBAR NAVIGATION ==================== -->
   <div class="sidebar" id="sidebar">
     <div>
       <h4 class="sidebar-title">Sidebar</h4>
       <div class="nav-links">
         <?php if ($_SESSION['user']['role'] === 'admin' || $_SESSION['user']['role'] === 'super admin'): ?>
+          <!-- ==================== ADMIN NAVIGATION ==================== -->
           <a href="?command=adminDashboard">Home</a>
           <a href="?command=manageUser">Manage Users</a>
           <a href="?command=rewardInventory">Reward Inventory</a>
           <a href="?command=adminReport">Reports</a>
           <a href="?command=adminProfile">My Profile</a>
         <?php elseif ($_SESSION['user']['role'] === 'user'): ?>
+          <!-- ==================== USER NAVIGATION ==================== -->
           <a href="?command=dashboard">Home</a>
           <a href="?command=userProfile">Profile</a>
           <a href="?command=userSettings">Settings</a>
           <a href="?command=claim">Claim Rewards</a>
         <?php endif; ?>
+        <!-- ==================== LOGOUT LINK ==================== -->
         <a href="?command=logout">Logout</a>
       </div>
     </div>
@@ -32,7 +35,7 @@
   <div class="overlay" id="sidebar-overlay"></div>
 <?php endif; ?>
 
-  <!-- Import sidebar toggle script -->
+  <!-- ==================== SIDEBAR TOGGLE SCRIPT ==================== -->
    <script src="js/toggle.js"></script>
 </body>
 </html>

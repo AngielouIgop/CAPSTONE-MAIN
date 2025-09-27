@@ -2,7 +2,6 @@
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -15,7 +14,7 @@
   <div class="report-container">
     <h1 class="report-title">Reports</h1>
 
-    <!-- Summary Cards -->
+    <!-- ==================== SUMMARY CARDS ==================== -->
     <div class="summary-cards">
       <div class="card">
         <img src="images/plasticBottle.png" alt="Plastic Bottles">
@@ -39,15 +38,16 @@
       </div>
     </div>
 
-    <!-- Main Reports -->
+    <!-- ==================== MAIN REPORTS SECTION ==================== -->
     <div class="main-reports">
-      <!-- Graph -->
+      
+      <!-- ==================== CONTRIBUTION GRAPH ==================== -->
       <div class="contribution-graph">
         <h3>Contributions per Material (This Month)</h3>
         <canvas id="contributionChart"></canvas>
       </div>
 
-      <!-- Leading Zones -->
+      <!-- ==================== LEADING ZONES TABLE ==================== -->
       <div class="leading-zones">
         <h3>Total Contributions per Zone</h3>
         <table class="zones-table">
@@ -90,8 +90,7 @@
         </table>
       </div>
 
-
-      <!-- Top Contributors Table -->
+      <!-- ==================== TOP CONTRIBUTORS TABLE ==================== -->
       <div class="top-contributors">
         <h3>Top Contributed Waste and Contributor</h3>
         <span class="mini-date">📅 <?= date('F d, Y', strtotime($selectedDate)) ?></span>
@@ -175,10 +174,13 @@
               </tr>
             <?php endforeach; ?>
           </tbody>
+        </table>
       </div>
 
+      <!-- ==================== CHART.JS CONFIGURATION ==================== -->
       <script>
         document.addEventListener("DOMContentLoaded", function () {
+          // ==================== CONTRIBUTION CHART SETUP ====================
           const wastePerMaterial = <?= json_encode($wastePerMaterial) ?>;
           const labels = wastePerMaterial.map(item => item.materialType);
           const dataValues = wastePerMaterial.map(item => item.totalQuantity);
@@ -229,7 +231,7 @@
             }
           });
 
-          // Date Filter Functionality
+          // ==================== DATE FILTER FUNCTIONALITY ====================
           const dateFilter = document.getElementById('date-filter');
           const applyFilterBtn = document.getElementById('apply-filter');
 
@@ -252,5 +254,4 @@
         });
       </script>
 </body>
-
 </html>

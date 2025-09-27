@@ -2,7 +2,6 @@
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -14,15 +13,17 @@
   <div class="dashboard">
     <h2>Dashboard</h2>
 
+    <!-- ==================== DASHBOARD HEADER ==================== -->
     <div class="dashboard-top">
       <div class="dashboard-header">
         <h2>Welcome User <?= htmlspecialchars($user['fullName']) ?>!</h2>
       </div>
     </div>
 
-    <!-- GRID CONTAINER -->
+    <!-- ==================== MAIN DASHBOARD GRID ==================== -->
     <div class="dashboard-grid">
-      <!-- Top Left: Waste Contribution History (current user) -->
+      
+      <!-- ==================== WASTE CONTRIBUTION HISTORY ==================== -->
       <div class="card history-card">
         <h3>Your Recent Waste Contributions</h3>
         <?php if (!empty($wasteHistory)): ?>
@@ -60,18 +61,17 @@
         <?php endif; ?>
       </div>
 
-      <!-- Top Right: Calendar -->
+      <!-- ==================== CALENDAR WIDGET ==================== -->
       <div class="card calendar-card">
         <h3 id="calendar-month-year"></h3>
         <div id="calendar"></div>
       </div>
 
-      <!-- Bottom Left: Top Contributors -->
+      <!-- ==================== TOP CONTRIBUTORS BY ZONE ==================== -->
       <div class="card contributors-card">
         <h3>Top Contributors Per Zone</h3>
         <div class="contributors-grid">
           <?php
-          
           $zones = ['Zone 1', 'Zone 2', 'Zone 3', 'Zone 4', 'Zone 5', 'Zone 6', 'Zone 7'];
           foreach ($zones as $zone): ?>
             <div class="contributor">
@@ -89,7 +89,7 @@
         </div>
       </div>
 
-      <!-- Bottom Right: Most Contributed Waste -->
+      <!-- ==================== MOST CONTRIBUTED WASTE ==================== -->
       <div class="card waste-card">
         <h3>Most Contributed Waste</h3>
         <?php if ($mostContributedWaste): ?>
@@ -119,6 +119,7 @@
     </div> 
   </div> 
 
+  <!-- ==================== CALENDAR JAVASCRIPT ==================== -->
   <script>
     // Calendar Rendering
     const calendar = document.getElementById('calendar');

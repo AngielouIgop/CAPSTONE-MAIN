@@ -1,17 +1,17 @@
 <?php include 'notification.php'; ?>
 
-<!-- Include admin dashboard CSS -->
+<!-- ==================== ADMIN DASHBOARD STYLES & SCRIPTS ==================== -->
 <link rel="stylesheet" href="css/adminDashboard.css">
-<!-- Include Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <div class="dashboard">
+  <!-- ==================== DASHBOARD HEADER ==================== -->
   <div class="dashboard-header">
     <h1>Admin Dashboard</h1>
-  <p class="welcome-text">Welcome back, Admin!</p>
+    <p class="welcome-text">Welcome back, Admin!</p>
   </div>
 
-  <!-- Quick Stats Row -->
+  <!-- ==================== QUICK STATISTICS ==================== -->
   <div class="quick-stats">
     <div class="stat-item">
       <div class="stat-icon">👥</div>
@@ -50,10 +50,10 @@
     </div>
   </div>
 
-  <!-- Main Dashboard Grid -->
+  <!-- ==================== MAIN DASHBOARD GRID ==================== -->
   <div class="dashboard-grid">
     
-    <!-- Waste Distribution Chart -->
+    <!-- ==================== WASTE DISTRIBUTION CHART ==================== -->
     <div class="card chart-card">
       <div class="card-header">
         <h3>Waste Distribution</h3>
@@ -64,7 +64,7 @@
       </div>
     </div>
 
-    <!-- Zone Performance Chart -->
+    <!-- ==================== ZONE PERFORMANCE CHART ==================== -->
     <div class="card chart-card">
       <div class="card-header">
         <h3>Zone Performance</h3>
@@ -75,7 +75,7 @@
       </div>
     </div>
 
-    <!-- Enhanced Statistics Cards -->
+    <!-- ==================== WASTE TYPE STATISTICS ==================== -->
     <div class="card stat-card plastic-card">
       <div class="card-icon">
         <img src="images/plasticBottle.png" alt="Plastic Bottles" />
@@ -106,7 +106,7 @@
       </div>
     </div>
 
-    <!-- Action Cards -->
+    <!-- ==================== ADMIN ACTION CARDS ==================== -->
     <div class="card admin-card user-management">
       <div class="card-icon">👥</div>
       <div class="card-content">
@@ -137,9 +137,10 @@
   </div>
 </div>
 
+<!-- ==================== CHART.JS CONFIGURATION ==================== -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Waste Distribution Pie Chart
+    // ==================== WASTE DISTRIBUTION PIE CHART ====================
     const wasteCtx = document.getElementById('wasteDistributionChart').getContext('2d');
     new Chart(wasteCtx, {
       type: 'doughnut',
@@ -167,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   
-    // Zone Performance Bar Chart
+    // ==================== ZONE PERFORMANCE BAR CHART ====================
     const zoneCtx = document.getElementById('zonePerformanceChart').getContext('2d');
     new Chart(zoneCtx, {
       type: 'bar',
@@ -200,5 +201,4 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   });
-</script> 
-
+</script>

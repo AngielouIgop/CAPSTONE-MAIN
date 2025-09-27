@@ -2,23 +2,23 @@
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Rewards</title>
     <link rel="stylesheet" href="css/rewardInventory.css">
 </head>
-
 <body>
+    <!-- ==================== REWARD MANAGEMENT HEADER ==================== -->
     <div class="reward-section-header">
         Manage Rewards
         <button class="reward-pill-btn reward-add-btn" style="float:right;">Add Reward</button>
     </div>
     
-    <!-- Success/Error Messages -->
+    <!-- ==================== SUCCESS/ERROR MESSAGES ==================== -->
     <div id="messageContainer" style="display: none; margin: 10px 16px; padding: 10px; border-radius: 5px; font-weight: bold;"></div>
     
+    <!-- ==================== REWARDS TABLE ==================== -->
     <div class="reward-table-container">
         <table class="reward-custom-table">
             <thead>
@@ -81,7 +81,7 @@
         </table>
     </div>
 
-    <!-- Edit Reward Modal -->
+    <!-- ==================== EDIT REWARD MODAL ==================== -->
     <div id="rewardEditModal" class="reward-modal">
         <div class="reward-modal-content">
             <div class="reward-modal-header">
@@ -91,6 +91,7 @@
                 enctype="multipart/form-data">
                 <input type="hidden" id="reward-edit-id" name="rewardID">
 
+                <!-- Reward Information -->
                 <label for="reward-edit-name">Reward Name *</label>
                 <input type="text" id="reward-edit-name" name="rewardName" required>
 
@@ -103,6 +104,7 @@
                 <label for="reward-edit-slot">Slot Number *</label>
                 <input type="number" id="reward-edit-slot" name="slotNum" min="1" required>
 
+                <!-- Current Image Display -->
                 <label for="reward-edit-img">Current Image</label>
                 <div id="current-image-preview" class="image-preview-container">
                     <img id="current-image" src="" alt="Current image" style="max-width: 150px; max-height: 150px; border-radius: 8px;">
@@ -125,7 +127,7 @@
         </div>
     </div>
 
-    <!-- Add reward Modal -->
+    <!-- ==================== ADD REWARD MODAL ==================== -->
     <div id="addRewardModal" class="reward-modal">
         <div class="reward-modal-content">
             <div class="reward-modal-header">
@@ -135,6 +137,7 @@
                 enctype="multipart/form-data">
                 <input type="hidden" id="reward-add-id" name="rewardID">
 
+                <!-- Reward Information -->
                 <label for="reward-add-name">Reward Name *</label>
                 <input type="text" id="reward-add-name" name="rewardName" required>
 
@@ -147,6 +150,7 @@
                 <label for="reward-add-slot">Slot Number *</label>
                 <input type="number" id="reward-add-slot" name="slotNum" min="1" required>
 
+                <!-- Image Upload -->
                 <label for="reward-add-img">Reward Image *</label>
                 <input type="file" id="reward-add-img" name="rewardImg" accept="image/*" required onchange="previewImage(this, 'add-image-preview')">
                 <div id="add-image-preview" class="image-preview-container" style="display: none;">
@@ -167,8 +171,9 @@
         </div>
     </div>
 
+    <!-- ==================== JAVASCRIPT FUNCTIONS ==================== -->
     <script>
-        // Image preview function
+        // ==================== IMAGE PREVIEW FUNCTION ====================
         function previewImage(input, previewId) {
             const preview = document.getElementById(previewId);
             const img = preview.querySelector('img');
@@ -187,7 +192,7 @@
             }
         }
 
-        // Show message function
+        // ==================== MESSAGE DISPLAY FUNCTION ====================
         function showMessage(message, type = 'success') {
             const messageContainer = document.getElementById('messageContainer');
             messageContainer.textContent = message;
@@ -201,6 +206,7 @@
             }, 5000);
         }
 
+        // ==================== EDIT REWARD MODAL HANDLERS ====================
         document.addEventListener('DOMContentLoaded', function () {
             const modal = document.getElementById('rewardEditModal');
             const editBtns = document.querySelectorAll('.reward-edit-btn');
@@ -246,6 +252,7 @@
             });
         });
 
+        // ==================== ADD REWARD MODAL HANDLERS ====================
         document.addEventListener('DOMContentLoaded', function () {
             const addModal = document.getElementById('addRewardModal');
             const addBtn = document.querySelector('.reward-add-btn');
@@ -269,7 +276,7 @@
             });
         });
 
-        // Form validation
+        // ==================== FORM VALIDATION ====================
         document.getElementById('rewardEditForm').addEventListener('submit', function(e) {
             const stock = parseInt(document.getElementById('reward-edit-stock').value);
             const points = parseInt(document.getElementById('reward-edit-points').value);
@@ -293,5 +300,4 @@
         });
     </script>
 </body>
-
 </html>

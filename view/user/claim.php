@@ -1,4 +1,3 @@
-<?php include 'header.php'; ?>
 <?php include 'contribute.php'; ?>
 
 <!DOCTYPE html>
@@ -11,11 +10,13 @@
 </head>
 <body>
 
+  <!-- ==================== REWARDS HEADER ==================== -->
   <div class="rewards-header">
     <span>Available Rewards</span>
     <span><b><?php echo htmlspecialchars($totalCurrentPoints); ?> pts</b></span>
   </div>
 
+  <!-- ==================== REWARDS GRID ==================== -->
   <div class="rewards-list">
     <?php
       $maxCards = 8;
@@ -50,6 +51,7 @@
           }
         }
       }
+      // Fill remaining slots with "coming soon" cards
       for ($i = $rewardCount; $i < $maxCards; $i++) {
     ?>
       <div class="reward-card coming-soon">
@@ -59,7 +61,7 @@
     <?php } ?>
   </div>
 
-  <!-- Claim Confirmation Modal -->
+  <!-- ==================== CLAIM CONFIRMATION MODAL ==================== -->
   <div id="claimModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">

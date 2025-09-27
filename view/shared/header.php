@@ -9,7 +9,7 @@
 <body>
 <header class="header-main" data-role="<?php echo isset($_SESSION['user']) ? $_SESSION['user']['role'] : 'guest'; ?>">
 
-  <!-- Logo only for guests -->
+  <!-- ==================== LOGO SECTION ==================== -->
   <?php if (!isset($_SESSION['user'])): ?>
     <div class="header-logo">
       <a href="?command=home">
@@ -19,11 +19,12 @@
     </div>
   <?php endif; ?>
 
-  <!-- Hamburger toggle -->
+  <!-- ==================== MOBILE MENU TOGGLE ==================== -->
   <button class="menu-toggle" id="menu-toggle">&#9776;</button>
 
+  <!-- ==================== NAVIGATION MENUS ==================== -->
   <?php if (!isset($_SESSION['user'])): ?>
-    <!-- Guest navigation -->
+    <!-- Guest Navigation -->
     <nav class="header-nav" id="header-nav">
       <ul>
         <li><a href="?command=home">Home</a></li>
@@ -34,7 +35,7 @@
     </nav>
 
   <?php elseif ($_SESSION['user']['role'] === 'user'): ?>
-    <!-- Logged-in user -->
+    <!-- User Navigation -->
     <nav class="header-nav" id="header-nav">
       <ul>
         <li><a href="#" class="start-contributing-btn" onclick="openContributeModal(); return false;">Start Contributing</a></li>
@@ -42,7 +43,7 @@
     </nav>
 
   <?php elseif ($_SESSION['user']['role'] === 'admin' || $_SESSION['user']['role'] === 'super admin'): ?>
-    <!-- Admin -->
+    <!-- Admin Navigation -->
     <nav class="header-nav" id="header-nav">
       <ul>
         <li>
@@ -60,4 +61,3 @@
 </html>
 
 <script src="js/toggle.js"></script>
-
