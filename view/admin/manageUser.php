@@ -163,31 +163,31 @@
                 <input type="hidden" id="add-userID" name="userID">
 
                 <!-- Personal Information -->
-                <label for="add-fullname">Fullname</label>
-                <input type="text" id="add-fullname" name="fullname" required>
+                <label for="add-fullname">Full Name</label>
+                <input type="text" id="add-fullname" name="fullname" placeholder="Enter full name" required>
 
                 <label for="add-email">Email</label>
-                <input type="email" id="add-email" name="email" required>
+                <input type="email" id="add-email" name="email" placeholder="Enter email address" required>
 
                 <label for="add-position">Position</label>
-                <input type="text" id="add-position" name="position" required>
+                <input type="text" id="add-position" name="position" placeholder="e.g., Barangay Captain, SK Kagawad 1, Barangay Kagawad 1" required>
 
                 <label for="add-contactNumber">Contact Number</label>
-                <input type="text" id="add-contactNumber" name="contactNumber" required>
+                <input type="text" id="add-contactNumber" name="contactNumber" placeholder="e.g., 09123456789" required>
 
                 <label for="add-username">Username</label>
-                <input type="text" id="add-username" name="username" required>
+                <input type="text" id="add-username" name="username" placeholder="Choose a unique username" required>
 
                 <!-- Password Fields -->
                 <label for="add-password">Password</label>
                 <div class="password-container">
-                    <input type="password" id="add-password" name="password" placeholder="Enter new administrator password">
+                    <input type="password" id="add-password" name="password" placeholder="Create a strong password">
                     <button type="button" class="password-toggle" onclick="togglePassword('add-password', this)">Show</button>
                 </div>
 
                 <label for="add-confirmPassword">Confirm Password</label>
                 <div class="password-container">
-                    <input type="password" id="add-confirmPassword" name="confirmPassword" placeholder="Confirm the password">
+                    <input type="password" id="add-confirmPassword" name="confirmPassword" placeholder="Re-enter password">
                     <button type="button" class="password-toggle" onclick="togglePassword('add-confirmPassword', this)">Show</button>
                 </div>
 

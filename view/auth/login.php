@@ -11,7 +11,7 @@
   <div class="login-container">
     <!-- ==================== LOGO SECTION ==================== -->
     <div class="logo-side">
-      <img src="images/basura logo.png" alt="Logo" class="logo" />
+      <img src="images/logos/basura logo.png" alt="Logo" class="logo" />
       <h1>B.A.S.U.R.A. Rewards</h1>
       <p id="loginType">Official Admin Login</p>
     </div>

@@ -11,11 +11,11 @@
   <div id="contributeModal" class="modal-overlay" style="display:none;">
     <div class="modal-content">
       <div class="modal-header">
-        <img src="images/basura logo.png" alt="Basura Logo" class="modal-logo" />
+        <img src="images/logos/basura logo.png" alt="Basura Logo" class="modal-logo" />
         <span class="modal-title">B.A.S.U.R.A. Rewards</span>
       </div>
       <div class="modal-body">
-        <img id="materialImage" src="images/1.png" alt="Material"
+        <img id="materialImage" src="images/ui-elements/1.png" alt="Material"
           style="width:80px;height:80px;display:none;margin:0 auto 12px auto;">
         <p class="modal-instruction" id="modalInstruction">Please insert your waste</p>
         <div class="modal-actions">
@@ -30,7 +30,7 @@
   <div id="thankYouModal" class="modal-overlay" style="display:none;">
     <div class="modal-content">
       <div class="modal-header">
-        <img src="images/basura logo.png" alt="Basura Logo" class="modal-logo" />
+        <img src="images/logos/basura logo.png" alt="Basura Logo" class="modal-logo" />
         <span class="modal-title">Thank You!</span>
       </div>
       <div class="modal-body" style="text-align:center;">
@@ -100,7 +100,7 @@
         // Show Thank You modal
         openThankYouModal();
       } catch (error) {
-        materialImg.src = 'images/1.png';
+        materialImg.src = 'images/ui-elements/1.png';
         materialImg.style.display = 'block';
         modalInstruction.textContent = 'Error submitting. Please try again.';
         console.error('Error:', error);

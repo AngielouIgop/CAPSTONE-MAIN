@@ -75,7 +75,7 @@
           $zones = ['Zone 1', 'Zone 2', 'Zone 3', 'Zone 4', 'Zone 5', 'Zone 6', 'Zone 7'];
           foreach ($zones as $zone): ?>
             <div class="contributor">
-            <div class="contributor-icon"> <img src="images/cont-icon.png" alt="cont-img"></div>
+            <div class="contributor-icon"> <img src="images/ui-elements/cont-icon.png" alt="cont-img"></div>
               <?php if (isset($topContributors[$zone])): ?>
                 <?= htmlspecialchars($topContributors[$zone]['fullName']) ?><br>
                 Points: <?= htmlspecialchars($topContributors[$zone]['totalQuantity']) ?><br>
@@ -96,11 +96,11 @@
           <?php
           // Map waste types to image files
           $wasteImages = [
-            'plastic bottles' => 'images/plasticBottle.png',
+            'plastic bottles' => 'images/waste-types/plasticBottle.png',
             'plastic bottle' => 'images/plasticBottle.png',
-            'glass bottles' => 'images/glassBottle.png',
-            'glass bottle' => 'images/glassBottle.png',
-            'tin cans' => 'images/tinCan.png',
+            'glass bottles' => 'images/waste-types/glassBottle.png',
+            'glass bottle' => 'images/waste-types/glassBottle.png',
+            'tin cans' => 'images/waste-types/tinCan.png',
             'tin can' => 'images/tinCan.png',
           ];
           

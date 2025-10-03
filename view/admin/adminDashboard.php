@@ -14,35 +14,35 @@
   <!-- ==================== QUICK STATISTICS ==================== -->
   <div class="quick-stats">
     <div class="stat-item">
-      <div class="stat-icon">👥</div>
+      <div class="stat-icon"><input type="image" src="images/adminIcons/user.png" alt="Total Users"></div>
       <div class="stat-info">
         <span class="stat-number"><?= htmlspecialchars($totalUsers ?? 0) ?></span>
         <span class="stat-label">Total Users</span>
       </div>
     </div>
     <div class="stat-item">
-      <div class="stat-icon">📊</div>
+      <div class="stat-icon"><input type="image" src="images/adminIcons/totalContribution.png" alt="Total Contributions"></div>
       <div class="stat-info">
         <span class="stat-number"><?= htmlspecialchars(($totalPlastic + $totalCans + $totalGlassBottles)) ?></span>
         <span class="stat-label">Total Contributions</span>
       </div>
     </div>
     <div class="stat-item">
-      <div class="stat-icon">🏆</div>
+      <div class="stat-icon"><input type="image" src="images/adminIcons/reward.png" alt="Total Rewards"></div>
       <div class="stat-info">
         <span class="stat-number"><?= htmlspecialchars($totalRewards ?? 0) ?></span>
         <span class="stat-label">Available Rewards</span>
       </div>
     </div>
     <div class="stat-item">
-      <div class="stat-icon">📈</div>
+      <div class="stat-icon"><input type="image" src="images/adminIcons/todaysContribution.png" alt="Todays Contributions"></div>
       <div class="stat-info">
         <span class="stat-number"><?= htmlspecialchars($todayContributions ?? 0) ?></span>
         <span class="stat-label">Today's Contributions</span>
       </div>
     </div>
     <div class="stat-item">
-      <div class="stat-icon">⏳</div>
+      <div class="stat-icon"><input type="image" src="images/adminIcons/pending.png" alt="Total Pending Registrations"></div>
       <div class="stat-info">
         <span class="stat-number"><?= htmlspecialchars($pendingRegistrationCount ?? 0) ?></span>
         <span class="stat-label">Pending Registrations</span>
@@ -78,7 +78,7 @@
     <!-- ==================== WASTE TYPE STATISTICS ==================== -->
     <div class="card stat-card plastic-card">
       <div class="card-icon">
-        <img src="images/plasticBottle.png" alt="Plastic Bottles" />
+        <img src="images/waste-types/plasticBottle.png" alt="Plastic Bottles" />
       </div>
       <div class="card-content">
         <h3>Plastic Bottles</h3>
@@ -88,7 +88,7 @@
 
     <div class="card stat-card cans-card">
       <div class="card-icon">
-        <img src="images/tinCan.png" alt="Tin Cans" />
+        <img src="images/waste-types/tinCan.png" alt="Tin Cans" />
       </div>
       <div class="card-content">
         <h3>Tin Cans</h3>
@@ -98,7 +98,7 @@
 
     <div class="card stat-card glass-card">
       <div class="card-icon">
-        <img src="images/glassBottle.png" alt="Glass Bottles" />
+        <img src="images/waste-types/glassBottle.png" alt="Glass Bottles" />
       </div>
       <div class="card-content">
         <h3>Glass Bottles</h3>
@@ -177,7 +177,7 @@ document.addEventListener('DOMContentLoaded', function() {
         datasets: [{
           label: 'Contributions',
           data: [<?= $getContZone1 ?>, <?= $getContZone2 ?>, <?= $getContZone3 ?>, <?= $getContZone4 ?>, <?= $getContZone5 ?>, <?= $getContZone6 ?>, <?= $getContZone7 ?>],
-          backgroundColor: 'rgba(81, 0, 255, 0.8)',
+          backgroundColor: 'rgba(4, 0, 130, 0.8)',
           borderColor: 'rgb(255, 255, 255)',
           borderWidth: 1
         }]

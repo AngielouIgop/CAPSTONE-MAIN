@@ -17,17 +17,17 @@
     <!-- ==================== SUMMARY CARDS ==================== -->
     <div class="summary-cards">
       <div class="card">
-        <img src="images/plasticBottle.png" alt="Plastic Bottles">
+        <img src="images/waste-types/plasticBottle.png" alt="Plastic Bottles">
         <p>Total Plastic</p>
         <h2><?= htmlspecialchars($totalPlastic) ?></h2>
       </div>
       <div class="card">
-        <img src="images/tincan.png" alt="Tin Cans">
+        <img src="images/waste-types/tincan.png" alt="Tin Cans">
         <p>Total Cans</p>
         <h2><?= htmlspecialchars($totalCans) ?></h2>
       </div>
       <div class="card">
-        <img src="images/glassBottle.png" alt="Glass Bottles">
+        <img src="images/waste-types/glassBottle.png" alt="Glass Bottles">
         <p>Total Bottles</p>
         <h2><?= htmlspecialchars($totalBottles) ?></h2>
       </div>

@@ -7,12 +7,19 @@
   <link rel="stylesheet" href="css/uni-sidebar.css">
 </head>
 <body>
+<!-- ==================== SIDEBAR TOGGLE BUTTON ==================== -->
 <?php if (isset($_SESSION['user'])): ?>
-  <!-- ==================== SIDEBAR NAVIGATION ==================== -->
-  <div class="sidebar" id="sidebar">
-    <div>
-      <h4 class="sidebar-title">Sidebar</h4>
-      <div class="nav-links">
+<button class="sidebar-toggle-btn" id="sidebar-toggle-btn" title="Toggle Sidebar">
+  <span class="toggle-icon">☰</span>
+</button>
+<?php endif; ?>
+
+<!-- ==================== SIDEBAR NAVIGATION ==================== -->
+<div class="sidebar <?php echo isset($_SESSION['user']) ? '' : 'guest-hidden'; ?>" id="sidebar">
+  <div>
+    <h4 class="sidebar-title">Navigation</h4>
+    <div class="nav-links">
+      <?php if (isset($_SESSION['user'])): ?>
         <?php if ($_SESSION['user']['role'] === 'admin' || $_SESSION['user']['role'] === 'super admin'): ?>
           <!-- ==================== ADMIN NAVIGATION ==================== -->
           <a href="?command=adminDashboard">Home</a>
@@ -29,11 +36,18 @@
         <?php endif; ?>
         <!-- ==================== LOGOUT LINK ==================== -->
         <a href="?command=logout">Logout</a>
-      </div>
+      <?php else: ?>
+        <!-- ==================== GUEST NAVIGATION ==================== -->
+        <a href="?command=home">Home</a>
+        <a href="?command=home#about-us-section">About Us</a>
+        <a href="?command=home#how-it-works">How it works</a>
+        <a href="?command=login">Log in</a>
+        <a href="?command=register">Register</a>
+      <?php endif; ?>
     </div>
   </div>
-  <div class="overlay" id="sidebar-overlay"></div>
-<?php endif; ?>
+</div>
+<div class="overlay" id="sidebar-overlay"></div>
 
   <!-- ==================== SIDEBAR TOGGLE SCRIPT ==================== -->
    <script src="js/toggle.js"></script>

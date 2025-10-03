@@ -12,8 +12,8 @@
   <!-- ==================== LOGO SECTION ==================== -->
   <?php if (!isset($_SESSION['user'])): ?>
     <div class="header-logo">
-      <a href="?command=home">
-        <img src="images/basura logo.png" alt="Basura Logo" class="logo-img" />
+      <a href="?command=home" class="logo-link">
+        <img src="images/logos/basura logo.png" alt="Basura Logo" class="logo-img"/>
       </a>
       <p class="header-title"></p>
     </div>

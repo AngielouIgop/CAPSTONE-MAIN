@@ -65,7 +65,7 @@
   <div id="claimModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
-        <img src="images/basura logo.png" alt="Basura Logo" class="modal-logo" />
+        <img src="images/logos/basura logo.png" alt="Basura Logo" class="modal-logo" />
         <span class="modal-title">B.A.S.U.R.A. Rewards</span>
       </div>
       <div class="modal-body">
