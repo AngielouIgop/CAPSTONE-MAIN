@@ -13,6 +13,7 @@ class NotifyEndpoint
     {
         header('Content-Type: application/json');
 
+        // ==================== REQUEST VALIDATION ====================
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             http_response_code(405); // Method Not Allowed
             echo json_encode(['error' => 'Invalid request method']);
@@ -22,6 +23,7 @@ class NotifyEndpoint
         // Debug incoming POST
         error_log("Notification POST data: " . print_r($_POST, true));
 
+        // ==================== INPUT PROCESSING ====================
         $sensorName = $_POST['sensor_name'] ?? '';
         $message    = $_POST['message'] ?? '';
         $status     = $_POST['status'] ?? 'unread';
@@ -32,6 +34,7 @@ class NotifyEndpoint
             return;
         }
 
+        // ==================== NOTIFICATION STORAGE ====================
         try {
             $sql = "INSERT INTO sensor_notifications (sensor_name, message, status, timestamp)
                     VALUES (?, ?, ?, NOW())";
@@ -56,6 +59,7 @@ class NotifyEndpoint
         }
     }
 }
+
 require_once('../model/model.php');
 $endpoint = new NotifyEndpoint();
 $endpoint->processRequest();

@@ -13,7 +13,10 @@ class GetCurrentUser
     {
         header('Content-Type: application/json');
 
-        $result = $this->model->db->query("SELECT userID, username FROM `current_user` LIMIT 1");
+        // ==================== FETCH CURRENT USER ====================
+        $stmt = $this->model->db->prepare("SELECT userID, username FROM `current_user` LIMIT 1");
+        $stmt->execute();
+        $result = $stmt->get_result();
         if ($result && ($row = $result->fetch_assoc())) {
             echo json_encode([
                 'userID' => $row['userID'],
@@ -22,6 +25,7 @@ class GetCurrentUser
         } else {
             echo json_encode(['error' => 'No user logged in']);
         }
+        $stmt->close();
     }
 }
 

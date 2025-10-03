@@ -13,6 +13,7 @@ class GetPendingRegistrations
     {
         header('Content-Type: application/json');
 
+        // ==================== FETCH PENDING REGISTRATIONS ====================
         try {
             $pendingRegistrations = $this->model->getPendingRegistrations();
             

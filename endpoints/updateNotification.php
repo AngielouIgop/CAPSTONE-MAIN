@@ -14,9 +14,11 @@ class UpdateNotification
     {
         header('Content-Type: application/json');
 
+        // ==================== REQUEST VALIDATION ====================
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
 
+            // ==================== NOTIFICATION UPDATE ====================
             if ($id > 0) {
                 $result = $this->model->updateNotifStatus($id, 'read');
                 echo json_encode([
@@ -38,6 +40,7 @@ class UpdateNotification
         }
     }
 }
+
 require_once('../model/model.php');
 $updateNotification = new UpdateNotification();
 $updateNotification->processRequest();

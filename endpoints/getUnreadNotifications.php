@@ -14,10 +14,12 @@ class GetUnreadNotifications
     {
         header('Content-Type: application/json');
 
+        // ==================== FETCH ALL NOTIFICATIONS ====================
         $notifications = $this->model->getAllNotifications(); // includes both sensor and pending registration notifications
         echo json_encode($notifications);
     }
 }
+
 require_once('../model/model.php');
 $getUnreadNotifications = new GetUnreadNotifications();
 $getUnreadNotifications->processRequest();

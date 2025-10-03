@@ -2,13 +2,13 @@
 session_start();
 header('Content-Type: application/json');
 
-// Check if user is logged in
+// ==================== SESSION VALIDATION ====================
 if (!isset($_SESSION['user'])) {
     echo json_encode(['success' => false, 'message' => 'User not logged in']);
     exit();
 }
 
-// Check if rewardId and slotNum are provided
+// ==================== INPUT VALIDATION ====================
 if (!isset($_POST['rewardId']) || empty($_POST['rewardId'])) {
     echo json_encode(['success' => false, 'message' => 'Reward ID is required']);
     exit();
@@ -26,15 +26,15 @@ $userID = $_SESSION['user']['userID'];
 // Debug logging
 error_log("Claim attempt - UserID: $userID, RewardID: $rewardId, SlotNum: $slotNum");
 
-// Include model
+// ==================== MODEL INITIALIZATION ====================
 require_once('../model/model.php');
 $model = new Model();
 
-// Get user's current points
+// ==================== USER POINTS CHECK ====================
 $userPoints = $model->getUserPoints($userID);
 error_log("User points: $userPoints");
 
-// Get reward details
+// ==================== REWARD VALIDATION ====================
 $rewardQuery = "SELECT * FROM reward WHERE rewardID = ? AND availability = 1";
 $stmt = $model->db->prepare($rewardQuery);
 $stmt->bind_param('i', $rewardId);
@@ -50,6 +50,7 @@ if (!$reward) {
 
 error_log("Reward found - Name: " . $reward['rewardName'] . ", Points Required: " . $reward['pointsRequired'] . ", Stock: " . $reward['availableStock']);
 
+// ==================== ELIGIBILITY CHECKS ====================
 if ($userPoints < $reward['pointsRequired']) {
     error_log("Insufficient points - User has: $userPoints, Required: " . $reward['pointsRequired']);
     echo json_encode(['success' => false, 'message' => 'Insufficient points']);
@@ -62,11 +63,11 @@ if ($reward['availableStock'] <= 0) {
     exit();
 }
 
-// Start transaction
+// ==================== TRANSACTION PROCESSING ====================
 $model->db->begin_transaction();
 
 try {
-    // Deduct points from user
+    // ==================== DEDUCT USER POINTS ====================
     $newPoints = $userPoints - $reward['pointsRequired'];
     $updatePointsQuery = "UPDATE user SET totalCurrentPoints = ? WHERE userID = ?";
     $updatePointsStmt = $model->db->prepare($updatePointsQuery);
@@ -74,7 +75,7 @@ try {
     $updatePointsStmt->execute();
     $updatePointsStmt->close();
 
-    // Reduce reward stock
+    // ==================== REDUCE REWARD STOCK ====================
     $newStock = $reward['availableStock'] - 1;
     $updateStockQuery = "UPDATE reward SET availableStock = ? WHERE rewardID = ?";
     $updateStockStmt = $model->db->prepare($updateStockQuery);
@@ -82,14 +83,14 @@ try {
     $updateStockStmt->execute();
     $updateStockStmt->close();
 
-    // Record the redemption
+    // ==================== RECORD REDEMPTION ====================
     $redemptionQuery = "INSERT INTO redemption (userID, rewardID, quantity, totalPointsUsed, redemptionDate) VALUES (?, ?, 1, ?, CURDATE())";
     $redemptionStmt = $model->db->prepare($redemptionQuery);
     $redemptionStmt->bind_param('iii', $userID, $rewardId, $reward['pointsRequired']);
     $redemptionStmt->execute();
     $redemptionStmt->close();
 
-    // Commit transaction
+    // ==================== COMMIT TRANSACTION ====================
     $model->db->commit();
 
     echo json_encode([
@@ -100,7 +101,7 @@ try {
     ]);
 
 } catch (Exception $e) {
-    // Rollback transaction on error
+    // ==================== ROLLBACK ON ERROR ====================
     $model->db->rollback();
     error_log("Claim reward error: " . $e->getMessage());
     echo json_encode([

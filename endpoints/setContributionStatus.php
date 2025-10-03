@@ -16,12 +16,13 @@ class SetContributionStatus
 
         $db = $this->model->db;
 
+        // ==================== INPUT PROCESSING ====================
         $action = $_POST['action'] ?? '';
 
         // Path to the flag file the Arduino will poll - match the path in checkContributionStatus.php
         $flagPath = __DIR__ . DIRECTORY_SEPARATOR . 'json files' . DIRECTORY_SEPARATOR . 'contribution_flag.json';
 
-        // Ensure the directory exists
+        // ==================== DIRECTORY SETUP ====================
         $flagDir = dirname($flagPath);
         if (!is_dir($flagDir)) {
             if (!mkdir($flagDir, 0755, true)) {
@@ -31,14 +32,17 @@ class SetContributionStatus
             }
         }
 
-        // Try to get current user (if any)
+        // ==================== CURRENT USER CHECK ====================
         $currentUser = null;
-        if ($result = $db->query("SELECT userID, username FROM `current_user` LIMIT 1")) {
-            if ($result->num_rows > 0) {
-                $currentUser = $result->fetch_assoc();
-            }
+        $stmt = $db->prepare("SELECT userID, username FROM `current_user` LIMIT 1");
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($result->num_rows > 0) {
+            $currentUser = $result->fetch_assoc();
         }
+        $stmt->close();
 
+        // ==================== CONTRIBUTION START ====================
         if ($action === 'start') {
             if (!$currentUser) {
                 echo json_encode(['status' => 'error', 'message' => 'No current user found']);
@@ -49,7 +53,7 @@ class SetContributionStatus
                 'contribution_started' => true,
                 'userID' => (int)$currentUser['userID'],
                 'username' => (string)$currentUser['username'],
-                'timestamp' => time()
+                'timestamp' => date('Y-m-d H:i:s')
             ];
 
             $result = file_put_contents($flagPath, json_encode($payload));
@@ -60,12 +64,14 @@ class SetContributionStatus
                 error_log("Failed to write contribution flag to: " . $flagPath);
                 echo json_encode(['status' => 'error', 'message' => 'Failed to write flag']);
             }
-        } elseif ($action === 'stop') {
+        } 
+        // ==================== CONTRIBUTION STOP ====================
+        elseif ($action === 'stop') {
             $payload = [
                 'contribution_started' => false,
                 'userID' => $currentUser ? (int)$currentUser['userID'] : null,
                 'username' => $currentUser ? (string)$currentUser['username'] : null,
-                'timestamp' => time()
+                'timestamp' => date('Y-m-d H:i:s')
             ];
 
             $result = file_put_contents($flagPath, json_encode($payload));
@@ -81,6 +87,7 @@ class SetContributionStatus
         }
     }
 }
+
 require_once('../model/model.php');
 $setContributionStatus = new SetContributionStatus();
 $setContributionStatus->processRequest();

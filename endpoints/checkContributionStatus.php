@@ -6,7 +6,6 @@ class CheckContributionStatus
 
     function __construct()
     {
-        
         $this->model = new Model();
     }
 
@@ -16,7 +15,8 @@ class CheckContributionStatus
         
         $flagPath = __DIR__ . DIRECTORY_SEPARATOR . 'json files/contribution_flag.json';
 
-        // 1) Primary source of truth: flag file written by setContributionStatus.php
+        // ==================== FLAG FILE CHECK ====================
+        // Primary source of truth: flag file written by setContributionStatus.php
         if (file_exists($flagPath)) {
             $raw = file_get_contents($flagPath);
             $data = json_decode($raw, true);
@@ -26,23 +26,27 @@ class CheckContributionStatus
                     'contribution_started' => (bool)$data['contribution_started'],
                     'userID' => $data['userID'] ?? null,
                     'username' => $data['username'] ?? null,
-                    'timestamp' => $data['timestamp'] ?? null
+                    'timestamp' => $data['timestamp'] ?? null,
+                    'datetime' => $data['timestamp'] ?? null // Human-readable timestamp
                 ]);
                 exit;
             }
         }
 
-        // 2) If no flag or unreadable, DO NOT auto-start. Optionally include current user info using shared Model DB.
+        // ==================== FALLBACK: CURRENT USER CHECK ====================
+        // If no flag or unreadable, DO NOT auto-start. Optionally include current user info using shared Model DB.
         $userID = null;
         $username = null;
 
-        if ($result = $this->model->db->query("SELECT userID, username FROM `current_user` LIMIT 1")) {
-            if ($result->num_rows > 0) {
-                $row = $result->fetch_assoc();
-                $userID = (int)$row['userID'];
-                $username = (string)$row['username'];
-            }
+        $stmt = $this->model->db->prepare("SELECT userID, username FROM `current_user` LIMIT 1");
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $userID = (int)$row['userID'];
+            $username = (string)$row['username'];
         }
+        $stmt->close();
 
         echo json_encode([
             'status' => 'success',
@@ -53,6 +57,7 @@ class CheckContributionStatus
         ]);
     }
 }
+
 require_once('../model/model.php');
 $checkStatus = new CheckContributionStatus();
 $checkStatus->processRequest();

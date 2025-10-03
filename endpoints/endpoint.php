@@ -13,7 +13,7 @@ class Endpoint
     {
         header('Content-Type: application/json');
 
-        // Handle GET requests (fetch user)
+        // ==================== GET REQUEST HANDLING ====================
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             if (!isset($_SESSION['user']['userID'])) {
                 http_response_code(401);
@@ -28,8 +28,7 @@ class Endpoint
             exit;
         }
 
-
-        // ✅ Handle waste entry only
+        // ==================== INPUT PROCESSING ====================
         $material = $_POST['material'] ?? '';
         $weight = isset($_POST['weight']) ? floatval($_POST['weight']) : 0.0;
         
@@ -40,20 +39,22 @@ class Endpoint
         $timeDeposited = date('H:i:s');
         $userID = $_POST['userID'] ?? '';
 
+        // ==================== INPUT VALIDATION ====================
         if (empty($material) || !isset($_POST['weight']) || empty($userID)) {
             http_response_code(400);
             echo json_encode(["error" => "Missing required fields"]);
             return;
         }
 
+        // ==================== WASTE ENTRY PROCESSING ====================
         try {
-            // Check if user exists
+            // ==================== USER VALIDATION ====================
             $userCheck = $this->model->getUserById($userID);
             if (!$userCheck) {
                 throw new Exception("Invalid userID: $userID");
             }
 
-            // Get material info
+            // ==================== MATERIAL VALIDATION ====================
             $materialQuery = "SELECT materialID FROM materialtype WHERE materialName = ?";
             $stmt = $this->model->db->prepare($materialQuery);
             if (!$stmt) {
@@ -74,10 +75,10 @@ class Endpoint
 
             $stmt->close();
 
-            // Calculate points
+            // ==================== POINTS CALCULATION ====================
             $pointsEarned = $this->model->calcPoints($userID, $materialID, $quantity, $weight);
 
-            // Insert waste entry
+            // ==================== WASTE ENTRY INSERTION ====================
             $sql = "INSERT INTO wasteentry (userID, materialID, quantity, pointsEarned, dateDeposited, timeDeposited, materialWeight)
                     VALUES (?, ?, ?, ?, ?, ?, ?)";
             $stmt = $this->model->db->prepare($sql);
