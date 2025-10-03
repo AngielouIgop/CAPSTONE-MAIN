@@ -9,8 +9,20 @@ class Model
     function __construct()
     {
         try {
-            $this->db = new mysqli('localhost', 'root', '', 'capstone');
+            // Load database configuration
+            require_once(__DIR__ . '/../config/database.php');
+            
+            $this->db = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_NAME);
+            
+            if ($this->db->connect_error) {
+                throw new Exception('Connection failed: ' . $this->db->connect_error);
+            }
+            
+            // Set charset
+            $this->db->set_charset(DB_CHARSET);
+            
         } catch (Exception $e) {
+            error_log('Database connection error: ' . $e->getMessage());
             exit('The database connection could not be established.');
         }
     }
@@ -32,14 +44,26 @@ class Model
 
     public function getNotifications()
     {
-        $result = $this->db->query("SELECT * FROM sensor_notifications WHERE status = 'unread'");
-        return $result->fetch_all(MYSQLI_ASSOC);
+        $stmt = $this->db->prepare("SELECT * FROM sensor_notifications WHERE status = ?");
+        $status = 'unread';
+        $stmt->bind_param('s', $status);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $notifications = $result->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+        return $notifications;
     }
 
     public function getPendingRegistrationNotifications()
     {
-        $result = $this->db->query("SELECT * FROM pending_registrations WHERE status = 'pending' ORDER BY submittedAt DESC");
-        return $result->fetch_all(MYSQLI_ASSOC);
+        $stmt = $this->db->prepare("SELECT * FROM pending_registrations WHERE status = ? ORDER BY submittedAt DESC");
+        $status = 'pending';
+        $stmt->bind_param('s', $status);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $notifications = $result->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+        return $notifications;
     }
 
     public function getAllNotifications()
@@ -58,11 +82,14 @@ class Model
 
     public function getAllUser()
     {
-        $result = $this->db->query("SELECT * FROM user");
+        $stmt = $this->db->prepare("SELECT * FROM user");
+        $stmt->execute();
+        $result = $stmt->get_result();
         $users = [];
         while ($row = $result->fetch_assoc()) {
             $users[] = $row;
         }
+        $stmt->close();
         return $users;
     }
 
@@ -164,14 +191,14 @@ public function getMostContributedWaste()
     // ----- REWARD DATA -----
     public function getAllRewards()
     {
-        $query = "SELECT * FROM reward ORDER BY pointsRequired ASC";
-        $result = $this->db->query($query);
+        $stmt = $this->db->prepare("SELECT * FROM reward ORDER BY pointsRequired ASC");
+        $stmt->execute();
+        $result = $stmt->get_result();
         $rewards = [];
-        if ($result) {
-            while ($row = $result->fetch_assoc()) {
-                $rewards[] = $row;
-            }
+        while ($row = $result->fetch_assoc()) {
+            $rewards[] = $row;
         }
+        $stmt->close();
         return $rewards;
     }
 
@@ -388,9 +415,14 @@ public function getMostContributedWaste()
 
     public function getPendingRegistrations()
     {
-        $query = "SELECT * FROM pending_registrations WHERE status = 'pending' ORDER BY submittedAt DESC";
-        $result = $this->db->query($query);
-        return $result->fetch_all(MYSQLI_ASSOC);
+        $stmt = $this->db->prepare("SELECT * FROM pending_registrations WHERE status = ? ORDER BY submittedAt DESC");
+        $status = 'pending';
+        $stmt->bind_param('s', $status);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $registrations = $result->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+        return $registrations;
     }
 
     public function approveRegistration($registrationId)
@@ -430,6 +462,34 @@ public function getMostContributedWaste()
         return $stmt->execute();
     }
 
+    // ==================== REGISTRATION STATUS FUNCTIONS ====================
+    public function getRegistrationStatus($username)
+    {
+        $query = "SELECT status FROM pending_registrations WHERE username = ? ORDER BY submittedAt DESC LIMIT 1";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            return $row['status'];
+        }
+        return null; // No pending registration found
+    }
+
+    public function isRegistrationPending($username)
+    {
+        $status = $this->getRegistrationStatus($username);
+        return $status === 'pending';
+    }
+
+    public function isRegistrationRejected($username)
+    {
+        $status = $this->getRegistrationStatus($username);
+        return $status === 'rejected';
+    }
+
     public function addAdministrator($fullname, $email, $position, $contactNumber, $username, $password, $role = 'admin')
     {
         if (!in_array($role, ['user', 'admin'])) {
@@ -455,11 +515,22 @@ public function getMostContributedWaste()
 
     public function setCurrentUser($userID, $username)
     {
-        $this->db->query("DELETE FROM `current_user`");
+        // Check if the userID already exists in the current_user table
+        $deleteStmt = $this->db->prepare("DELETE FROM `current_user`");
+        $deleteStmt->execute();
+        $deleteStmt->close();
+        
         $stmt = $this->db->prepare("INSERT INTO `current_user` (userID, username) VALUES (?, ?)");
         $stmt->bind_param("is", $userID, $username);
         $stmt->execute();
         $stmt->close();
+    }
+
+    public function clearCurrentUser(){
+        $stmt = $this->db->prepare("DELETE FROM `current_user`");
+        $result = $stmt->execute();
+        $stmt->close();
+        return $result;
     }
 
     // ========================================================
