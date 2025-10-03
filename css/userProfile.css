@@ -4,24 +4,17 @@ body, html {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: #f8f9fa;
   height: 100%;
-  padding-top: 30px; /* spacing under header */
+  padding-top: 50px; /* spacing under header */
   color: #222;
 }
 
 /* Desktop-only sidebar margin */
 @media (min-width: 901px) {
   body, html {
-    margin-left: 125px ;/* matches your sidebar width */
+    margin-left: 150px; /* reduced from 250px to move content left */
   }
 }
 
-/* --------- MAIN CONTENT --------- */
-.main-content {
-  min-height: 100vh;
-  padding: 2rem 1rem;
-  padding-top: 100px;
-  transition: margin-left 0.3s ease;
-}
 
 .user-dashboard {
   max-width: 1200px;
@@ -234,9 +227,6 @@ body, html {
 
 @media (max-width: 768px) {
   .sidebar {
-    transform: translateX(0);
-  }
-  .sidebar.inactive {
     transform: translateX(-100%);
   }
   .sidebar.active {

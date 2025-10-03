@@ -201,23 +201,4 @@
   border-top-right-radius: 12px !important;
 }
 
-/* RESPONSIVE CENTERING FOR NOTIFICATION MODAL */
-@media (max-width: 768px) {
-  #notification-modal .modal-content {
-    width: 90% !important;
-    max-width: 90% !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-  }
-}
-
-@media (max-width: 480px) {
-  #notification-modal .modal-content {
-    width: 95% !important;
-    max-width: 95% !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-  }
-}
+/* Mobile responsiveness removed - Admin only uses desktop */

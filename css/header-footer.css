@@ -37,10 +37,10 @@
     gap: 0;
 }
 
-.header-title {
+  .header-title {
    width: 400px;
    height: 200px;
-   background-image: url('../images/logo-name.png');
+   background-image: url('../images/logos/logo-name.png');
    background-size: contain;
    background-repeat: no-repeat;
    background-position: center;
@@ -59,6 +59,27 @@
     margin: 0;
 }
 
+.logo-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.logo-link:hover {
+    transform: scale(1.05);
+}
+
+.logo-text {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    letter-spacing: 1px;
+}
+
 .header-nav ul li a {
     text-decoration: none;
     padding: 5px 15px;
@@ -75,15 +96,17 @@
 }
 
 .menu-toggle {
-  display: none;
+  display: block; /* Temporarily show for debugging */
   font-size: 28px;
-  background: none;
+  background: rgba(255, 255, 255, 0.1);
   border: none;
   color: white;
   cursor: pointer;
   margin-left: 15px;
   margin-right: auto;
   z-index: 3000;
+  padding: 8px;
+  border-radius: 8px;
 }
 
 /* Hide Menu button on desktop */
@@ -160,6 +183,7 @@
   .header-main {
     padding: 0 10px;
     height: 70px;
+    flex-wrap: nowrap;
   }
 
   .menu-toggle {
@@ -167,18 +191,33 @@
     font-size: 24px;
     margin-left: 10px;
     margin-right: auto;
-    padding: 5px;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
+    padding: 8px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.1);
   }
 
   .menu-toggle:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+  }
+
+  .header-logo {
+    flex-shrink: 0;
+    margin-right: 10px;
   }
 
   .header-logo .logo-img {
     height: 50px;
     width: 50px;
+  }
+
+  .header-title {
+    display: none;
+  }
+
+  .logo-text {
+    display: none;
   }
 
   .header-nav {
@@ -187,13 +226,26 @@
     top: 70px;
     left: 0;
     width: 100%;
-    background: #2D336B;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(135deg, #2D336B 0%, #1a1f4a 100%);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
     z-index: 999;
+    border-radius: 0 0 20px 20px;
   }
 
   .header-nav.active {
     display: block;
+    animation: slideDown 0.3s ease-out;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .header-nav ul {
@@ -210,54 +262,66 @@
   }
 
   .header-nav ul li a {
-    width: 90%;
+    width: 85%;
     text-align: center;
-    padding: 15px 20px;
+    padding: 12px 16px;
     color: #ffffff;
     background: transparent;
     border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 8px;
-    margin: 5px auto;
+    border-radius: 10px;
+    margin: 6px auto;
     display: block;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 500;
     transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+  }
+
+  .header-nav ul li a.start-contributing-btn,
+  .header-nav ul li a.notifications-btn {
+    width: 60%;
   }
 
   .header-nav ul li a:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.15);
     border-color: rgba(255, 255, 255, 0.4);
     transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
   }
 
   /* Special styling for action buttons */
   .header-nav ul li a.start-contributing-btn,
   .header-nav ul li a.notifications-btn {
-    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    background: #0011ab; /* Solid color instead of gradient */
     border: none;
     color: white;
     font-weight: 600;
     position: relative;
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 10px 16px;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 14px;
+    margin: 6px auto;
+    border-radius: 25px;
+    box-shadow: 0 3px 12px rgba(76, 175, 80, 0.3);
+    font-size: 13px;
   }
 
   .header-nav ul li a.start-contributing-btn:hover,
   .header-nav ul li a.notifications-btn:hover {
-    background: linear-gradient(135deg, #45a049 0%, #3d8b40 100%);
+    background: #190053; /* Solid color instead of gradient */
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+    box-shadow: 0 4px 15px rgba(15, 1, 55, 0.4);
   }
 
   /* Notification counter badge */
   .notification-badge {
-    background: #ff4444;
+    background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
     color: white;
     border-radius: 50%;
-    min-width: 20px;
-    height: 20px;
+    min-width: 22px;
+    height: 22px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -267,7 +331,7 @@
     top: -8px;
     right: -8px;
     border: 2px solid white;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 8px rgba(255, 68, 68, 0.4);
     animation: pulse 2s infinite;
   }
 
@@ -276,7 +340,7 @@
   }
 
   .notification-icon {
-    font-size: 16px;
+    font-size: 18px;
   }
 
   .notification-text {
@@ -305,6 +369,7 @@
   .menu-toggle {
     font-size: 22px;
     margin-left: 8px;
+    padding: 6px;
   }
 
   .header-logo .logo-img {
@@ -321,8 +386,31 @@
   }
 
   .header-nav ul li a {
-    padding: 12px 15px;
-    font-size: 15px;
-    margin: 3px auto;
+    padding: 10px 12px;
+    font-size: 13px;
+    margin: 4px auto;
+    width: 80%;
+  }
+
+  .header-nav ul li a.start-contributing-btn,
+  .header-nav ul li a.notifications-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+    border-radius: 20px;
+    width: 50%;
+  }
+
+  .notification-badge {
+    min-width: 20px;
+    height: 20px;
+    font-size: 11px;
+  }
+
+  .notification-icon {
+    font-size: 16px;
+  }
+
+  .notification-text {
+    font-size: 13px;
   }
 }

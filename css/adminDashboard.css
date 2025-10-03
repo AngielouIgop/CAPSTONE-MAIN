@@ -69,7 +69,6 @@ body, html {
 }
 
 .stat-icon {
-  font-size: 2rem;
   width: 50px;
   height: 50px;
   display: flex;
@@ -77,6 +76,17 @@ body, html {
   justify-content: center;
   background: #f8f9fa;
   border-radius: 10px;
+  overflow: hidden;
+}
+
+.stat-icon input[type="image"] {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border: none;
+  background: none;
+  padding: 8px;
+  cursor: default;
 }
 
 .stat-info {
@@ -270,7 +280,7 @@ body, html {
 }
 
 /* ========================= */
-/* ===== RESPONSIVENESS ==== */
+/* ===== DESKTOP ONLY ====== */
 /* ========================= */
 
 /* Large screens */
@@ -282,128 +292,5 @@ body, html {
   .stat-card,
   .admin-card {
     grid-column: span 4;
-  }
-}
-
-/* Tablet & small laptops */
-@media (max-width: 1199px) {
-  body, html {
-    margin-left: 0;
-  }
-
-  .dashboard {
-    padding: 15px;
-  }
-
-  .chart-card {
-    grid-column: span 12;
-  }
-  
-  .stat-card,
-  .admin-card {
-    grid-column: span 6;
-  }
-
-  .quick-stats {
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  }
-}
-
-/* Mobile */
-@media (max-width: 768px) {
-  .dashboard {
-    padding: 10px;
-  }
-
-  .dashboard-header h1 {
-    font-size: 1.8rem;
-    text-align: center;
-  }
-
-  .welcome-text {
-    text-align: center;
-  }
-
-  .quick-stats {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-  }
-
-  .stat-item {
-    padding: 15px;
-  }
-
-  .stat-icon {
-    width: 40px;
-    height: 40px;
-    font-size: 1.5rem;
-  }
-
-  .stat-number {
-    font-size: 1.5rem;
-  }
-
-  .chart-container {
-    height: 250px;
-  }
-
-  .stat-card,
-  .admin-card {
-    grid-column: span 12;
-  }
-
-  .card {
-    padding: 16px;
-  }
-
-  .card-icon {
-    width: 50px;
-    height: 50px;
-  }
-
-  .card-icon img {
-    width: 30px;
-    height: 30px;
-  }
-}
-
-/* Small Mobile */
-@media (max-width: 480px) {
-  .quick-stats {
-    grid-template-columns: 1fr;
-  }
-
-  .stat-item {
-    padding: 12px;
-  }
-
-  .stat-icon {
-    width: 35px;
-    height: 35px;
-    font-size: 1.2rem;
-  }
-
-  .stat-number {
-    font-size: 1.3rem;
-  }
-
-  .stat-label {
-    font-size: 0.8rem;
-  }
-
-  .chart-container {
-    height: 200px;
-  }
-
-  .card {
-    padding: 12px;
-  }
-
-  .card-content h3 {
-    font-size: 1rem;
-  }
-
-  .stat-number {
-    font-size: 1.5rem;
   }
 }
