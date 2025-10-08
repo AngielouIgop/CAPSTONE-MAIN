@@ -14,7 +14,14 @@ class GetCurrentUser
         header('Content-Type: application/json');
 
         // ==================== FETCH CURRENT USER ====================
-        $stmt = $this->model->db->prepare("SELECT userID, username FROM `current_user` LIMIT 1");
+        // Get the current user where role is 'user' (simple structure)
+        $stmt = $this->model->db->prepare("
+            SELECT cu.userID, cu.username 
+            FROM `current_user` cu
+            INNER JOIN user u ON cu.userID = u.userID
+            WHERE u.role = 'user'
+            LIMIT 1
+        ");
         $stmt->execute();
         $result = $stmt->get_result();
         if ($result && ($row = $result->fetch_assoc())) {

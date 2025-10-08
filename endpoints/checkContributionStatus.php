@@ -41,7 +41,7 @@ class CheckContributionStatus
         $stmt = $this->model->db->prepare("SELECT userID, username FROM `current_user` LIMIT 1");
         $stmt->execute();
         $result = $stmt->get_result();
-        if ($result->num_rows > 0) {
+        if ($result && $result->num_rows > 0) {
             $row = $result->fetch_assoc();
             $userID = (int)$row['userID'];
             $username = (string)$row['username'];

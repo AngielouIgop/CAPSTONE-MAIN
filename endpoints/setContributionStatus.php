@@ -37,7 +37,7 @@ class SetContributionStatus
         $stmt = $db->prepare("SELECT userID, username FROM `current_user` LIMIT 1");
         $stmt->execute();
         $result = $stmt->get_result();
-        if ($result->num_rows > 0) {
+        if ($result && $result->num_rows > 0) {
             $currentUser = $result->fetch_assoc();
         }
         $stmt->close();
