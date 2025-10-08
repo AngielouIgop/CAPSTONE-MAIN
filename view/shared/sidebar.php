@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sidebar</title>
-  <link rel="stylesheet" href="css/uni-sidebar.css">
+  <link rel="stylesheet" href="css/sidebar.css">
 </head>
 <body>
 <!-- ==================== SIDEBAR TOGGLE BUTTON ==================== -->
-<?php if (isset($_SESSION['user'])): ?>
+<?php if (isset($_SESSION['user']) && ($_SESSION['user']['role'] === 'user')): ?>
 <button class="sidebar-toggle-btn" id="sidebar-toggle-btn" title="Toggle Sidebar">
   <span class="toggle-icon">☰</span>
 </button>
@@ -26,7 +26,7 @@
           <a href="?command=manageUser">Manage Users</a>
           <a href="?command=rewardInventory">Reward Inventory</a>
           <a href="?command=adminReport">Reports</a>
-          <a href="?command=adminProfile">My Profile</a>
+          <a href="?command=adminSettings">My Profile</a>
         <?php elseif ($_SESSION['user']['role'] === 'user'): ?>
           <!-- ==================== USER NAVIGATION ==================== -->
           <a href="?command=dashboard">Home</a>
@@ -50,6 +50,8 @@
 <div class="overlay" id="sidebar-overlay"></div>
 
   <!-- ==================== SIDEBAR TOGGLE SCRIPT ==================== -->
+   <?php if (isset($_SESSION['user']) && ($_SESSION['user']['role'] === 'user')): ?>
    <script src="js/toggle.js"></script>
+   <?php endif; ?>
 </body>
 </html>

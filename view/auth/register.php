@@ -42,7 +42,7 @@
         <input type="text" name="zone" id="zone" placeholder="e.g., Zone 1, Zone 2, etc." required>
         
         <label for="brgyIDNum">Brgy ID</label>
-        <input type="text" name="brgyIDNum" id="brgyIDNum" placeholder="Enter your barangay ID number" required>
+        <input type="text" name="brgyIDNum" id="brgyIDNum" placeholder="Enter your barangay ID number (Ex: 2022-28)" required>
         
         <label for="contactNumber">Contact Number</label>
         <input type="text" name="contactNumber" id="contactNumber" placeholder="e.g., 09123456789" required>

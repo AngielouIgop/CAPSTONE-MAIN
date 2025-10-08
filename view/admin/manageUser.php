@@ -204,4 +204,18 @@
     </div>
 
     <script src="js/manageUser.js"></script>
+    
+    <!-- ==================== PASSWORD TOGGLE FUNCTION ==================== -->
+    <script>
+        function togglePassword(inputId, toggleBtn) {
+            const input = document.getElementById(inputId);
+            if (input.type === "password") {
+                input.type = "text";
+                toggleBtn.textContent = "Hide";
+            } else {
+                input.type = "password";
+                toggleBtn.textContent = "Show";
+            }
+        }
+    </script>
 </html>
