@@ -11,11 +11,9 @@ body, html {
   color: #222;
 }
 
-/* Desktop-only sidebar margin */
-@media (min-width: 901px) {
-  body, html {
-    margin-left: 125px ;/* matches your sidebar width */
-  }
+/* Fixed desktop layout (no responsive sidebar margin) */
+body, html {
+  margin-left: 125px ;/* matches your sidebar width */
 }
 
 /* ======================== */
@@ -283,14 +281,12 @@ body, html {
 /* ===== DESKTOP ONLY ====== */
 /* ========================= */
 
-/* Large screens */
-@media (min-width: 1200px) {
-  .chart-card {
-    grid-column: span 6;
-  }
-  
-  .stat-card,
-  .admin-card {
-    grid-column: span 4;
-  }
+/* Desktop layout only */
+.chart-card {
+  grid-column: span 6;
+}
+
+.stat-card,
+.admin-card {
+  grid-column: span 4;
 }

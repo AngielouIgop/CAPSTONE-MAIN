@@ -8,11 +8,9 @@ body, html {
   color: #222;
 }
 
-/* Desktop-only sidebar margin */
-@media (min-width: 901px) {
-  body, html {
-    margin-left: 125px ;/* matches your sidebar width */
-  }
+/* Fixed desktop layout (no responsive sidebar margin) */
+body, html {
+  margin-left: 125px ;/* matches your sidebar width */
 }
 
 

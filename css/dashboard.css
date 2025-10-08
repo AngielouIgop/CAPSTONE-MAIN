@@ -294,7 +294,7 @@ body, html {
 
   .history-table th,
   .history-table td {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     padding: 6px 8px;
   }
   
@@ -358,7 +358,7 @@ body, html {
 
   .history-table th,
   .history-table td {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     padding: 6px;
   }
   
@@ -450,17 +450,15 @@ body, html {
 
   .history-table th,
   .history-table td {
-    font-size: 0.8rem;
+    font-size: 0.6rem;
     padding: 5px;
   }
   
-  /* Hide less critical columns on very small screens: Time, Weight, Points */
+  /* Hide less critical columns on very small screens: Time and Points (keep Weight visible) */
   .history-table th:nth-child(2),
   .history-table td:nth-child(2),
-  .history-table th:nth-child(5),
-  .history-table td:nth-child(5),
-  .history-table th:nth-child(6),
-  .history-table td:nth-child(6) {
+  .history-table th:nth-child(7),
+  .history-table td:nth-child(7) {
     display: none;
   }
   
@@ -545,7 +543,7 @@ body, html {
 
   .history-table th,
   .history-table td {
-    font-size: 0.75rem;
+    font-size: 0.65rem;
     padding: 4px;
   }
   

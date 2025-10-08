@@ -17,7 +17,19 @@
 
 .header-nav{
     margin-left: auto;
-    /* margin-right: 300px; */
+    margin-right: 0;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Shrink header navigation when sidebar is hidden */
+body.sidebar-hidden .header-nav {
+    margin-left: 0;
+    width: 100%;
+}
+
+body.sidebar-hidden .header-nav ul {
+    justify-content: center;
+    gap: 10px;
 }
 
 .header-nav ul {
@@ -96,17 +108,23 @@
 }
 
 .menu-toggle {
-  display: block; /* Temporarily show for debugging */
+  display: block;
   font-size: 28px;
   background: rgba(255, 255, 255, 0.1);
   border: none;
   color: white;
   cursor: pointer;
   margin-left: 15px;
-  margin-right: auto;
+  margin-right: 50px;
   z-index: 3000;
   padding: 8px;
   border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.menu-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
 }
 
 /* Hide Menu button on desktop */
@@ -190,7 +208,7 @@
     display: block;
     font-size: 24px;
     margin-left: 10px;
-    margin-right: auto;
+    margin-right: 75px;
     padding: 8px;
     border-radius: 8px;
     transition: all 0.3s ease;
@@ -277,9 +295,29 @@
     backdrop-filter: blur(10px);
   }
 
-  .header-nav ul li a.start-contributing-btn,
+  .header-nav ul li a.start-contributing-btn {
+    width: 60%;
+    background: #ffca28; /* Yellow for Start Contributing */
+  }
+  
   .header-nav ul li a.notifications-btn {
     width: 60%;
+    background: #0011ab; /* Blue color for notifications */
+  }
+
+  /* Shrink action buttons when sidebar is hidden */
+  body.sidebar-hidden .header-nav ul li a.start-contributing-btn {
+    width: 40%;
+    padding: 4px 8px;
+    font-size: 12px;
+    background: #ffca28; /* Maintain yellow when shrunk */
+  }
+  
+  body.sidebar-hidden .header-nav ul li a.notifications-btn {
+    width: 40%;
+    padding: 4px 8px;
+    font-size: 12px;
+    background: #0011ab; /* Maintain blue color when shrunk */
   }
 
   .header-nav ul li a:hover {
@@ -290,9 +328,15 @@
   }
 
   /* Special styling for action buttons */
-  .header-nav ul li a.start-contributing-btn,
+  .header-nav ul li a.start-contributing-btn {
+    background: #ff6b35; /* Orange color for Start Contributing */
+    border: none;
+    color: white;
+    font-weight: 600;
+  }
+  
   .header-nav ul li a.notifications-btn {
-    background: #0011ab; /* Solid color instead of gradient */
+    background: #0011ab; /* Keep blue for notifications */
     border: none;
     color: white;
     font-weight: 600;
@@ -308,9 +352,14 @@
     font-size: 13px;
   }
 
-  .header-nav ul li a.start-contributing-btn:hover,
+  .header-nav ul li a.start-contributing-btn:hover {
+    background: #ffb300; /* Darker yellow on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 202, 40, 0.4);
+  }
+  
   .header-nav ul li a.notifications-btn:hover {
-    background: #190053; /* Solid color instead of gradient */
+    background: #190053; /* Keep blue hover for notifications */
     transform: translateY(-2px);
     box-shadow: 0 4px 15px rgba(15, 1, 55, 0.4);
   }
@@ -369,6 +418,7 @@
   .menu-toggle {
     font-size: 22px;
     margin-left: 8px;
+    margin-right: 20px;
     padding: 6px;
   }
 
@@ -392,12 +442,20 @@
     width: 80%;
   }
 
-  .header-nav ul li a.start-contributing-btn,
+  .header-nav ul li a.start-contributing-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+    border-radius: 20px;
+    width: 50%;
+    background: #ffca28; /* Yellow color for mobile */
+  }
+  
   .header-nav ul li a.notifications-btn {
     padding: 6px 12px;
     font-size: 12px;
     border-radius: 20px;
     width: 50%;
+    background: #0011ab; /* Blue color for mobile */
   }
 
   .notification-badge {
@@ -409,6 +467,16 @@
   .notification-icon {
     font-size: 16px;
   }
+
+/* ===== Final overrides to ensure Start Contributing is yellow in all modes ===== */
+.header-nav ul li a.start-contributing-btn {
+  background: #ffca28 !important; /* force yellow over generic link styles */
+  color: #000 !important;
+}
+
+.header-nav ul li a.start-contributing-btn:hover {
+  background: #ffb300 !important;
+}
 
   .notification-text {
     font-size: 13px;
