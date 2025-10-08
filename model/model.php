@@ -515,19 +515,102 @@ public function getMostContributedWaste()
 
     public function setCurrentUser($userID, $username)
     {
-        // Check if the userID already exists in the current_user table
-        $deleteStmt = $this->db->prepare("DELETE FROM `current_user`");
-        $deleteStmt->execute();
-        $deleteStmt->close();
+        // Get the user's role from the user table
+        $roleStmt = $this->db->prepare("SELECT role FROM user WHERE userID = ?");
+        $roleStmt->bind_param("i", $userID);
+        $roleStmt->execute();
+        $roleResult = $roleStmt->get_result();
+        $userRole = 'user'; // Default fallback
+        if ($roleResult && ($roleRow = $roleResult->fetch_assoc())) {
+            $userRole = $roleRow['role'];
+        }
+        $roleStmt->close();
         
-        $stmt = $this->db->prepare("INSERT INTO `current_user` (userID, username) VALUES (?, ?)");
-        $stmt->bind_param("is", $userID, $username);
-        $stmt->execute();
-        $stmt->close();
+        // Check if user already has an active session
+        $checkStmt = $this->db->prepare("SELECT id FROM `current_user` WHERE userID = ? AND is_active = TRUE");
+        $checkStmt->bind_param("i", $userID);
+        $checkStmt->execute();
+        $checkResult = $checkStmt->get_result();
+        
+        if ($checkResult->num_rows > 0) {
+            // Update existing session
+            $updateStmt = $this->db->prepare("UPDATE `current_user` SET username = ?, role = ?, last_activity = CURRENT_TIMESTAMP WHERE userID = ? AND is_active = TRUE");
+            $updateStmt->bind_param("ssi", $username, $userRole, $userID);
+            $updateStmt->execute();
+            $updateStmt->close();
+        } else {
+            // Insert new session
+            $stmt = $this->db->prepare("INSERT INTO `current_user` (userID, username, role) VALUES (?, ?, ?)");
+            $stmt->bind_param("iss", $userID, $username, $userRole);
+            $stmt->execute();
+            $stmt->close();
+        }
+        $checkStmt->close();
     }
 
     public function clearCurrentUser(){
         $stmt = $this->db->prepare("DELETE FROM `current_user`");
+        $result = $stmt->execute();
+        $stmt->close();
+        return $result;
+    }
+
+    public function clearUserSession($userID) {
+        // Clear specific user's session
+        $stmt = $this->db->prepare("UPDATE current_user SET is_active = FALSE WHERE userID = ?");
+        $stmt->bind_param("i", $userID);
+        $result = $stmt->execute();
+        $stmt->close();
+        return $result;
+    }
+
+    public function getAllActiveUsers() {
+        // Get all currently active users
+        $stmt = $this->db->prepare("
+            SELECT cu.userID, cu.username, cu.role, cu.login_time, cu.last_activity, u.fullName, u.email, u.zone
+            FROM current_user cu
+            INNER JOIN user u ON cu.userID = u.userID
+            WHERE cu.is_active = TRUE
+            ORDER BY cu.last_activity DESC
+        ");
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $users = [];
+        while ($row = $result->fetch_assoc()) {
+            $users[] = $row;
+        }
+        $stmt->close();
+        return $users;
+    }
+
+    public function getActiveUsersByRole($role) {
+        // Get active users by specific role
+        $stmt = $this->db->prepare("
+            SELECT cu.userID, cu.username, cu.role, cu.login_time, cu.last_activity, u.fullName, u.email, u.zone
+            FROM current_user cu
+            INNER JOIN user u ON cu.userID = u.userID
+            WHERE cu.is_active = TRUE AND cu.role = ?
+            ORDER BY cu.last_activity DESC
+        ");
+        $stmt->bind_param("s", $role);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $users = [];
+        while ($row = $result->fetch_assoc()) {
+            $users[] = $row;
+        }
+        $stmt->close();
+        return $users;
+    }
+
+    public function cleanupInactiveSessions($hours = 24) {
+        // Mark sessions as inactive if they haven't been active for specified hours
+        $stmt = $this->db->prepare("
+            UPDATE current_user 
+            SET is_active = FALSE 
+            WHERE last_activity < DATE_SUB(NOW(), INTERVAL ? HOUR) AND is_active = TRUE
+        ");
+        $stmt->bind_param("i", $hours);
         $result = $stmt->execute();
         $stmt->close();
         return $result;
@@ -817,6 +900,8 @@ public function updateNotifStatus($id, $status = 'read') {
 
         return $result;
     }
+
+    // removed helper methods added for server configuration checks
 
     public function getTotalPlasticByDate($date)
     {
