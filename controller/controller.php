@@ -15,14 +15,17 @@ class Controller
         $command = isset($_GET['command']) ? $_GET['command'] : 'home';
 
         switch ($command) {
+            // ==================== PUBLIC PAGES ====================
             case 'home':
-                include_once('view/home.php');
+                include_once('view/public/home.php');
                 break;
             case 'about':
-                include_once('view/about.php');
+                include_once('view/public/about.php');
                 break;
+
+            // ==================== USER REGISTRATION ====================
             case 'register':
-                include('view/register.php');
+                include('view/auth/register.php');
                 break;
             case 'processRegister':
                 $fullname = $_POST['fullname'] ?? '';
@@ -35,7 +38,6 @@ class Controller
                 $brgyIDNum = $_POST['brgyIDNum'] ?? '';
                 $error = '';
 
-                // Validate if the necessary fields are filled
                 if (empty($fullname) || empty($email) || empty($username) || empty($password) || empty($confirm) || empty($contactNumber) || empty($zone) || empty($brgyIDNum)) {
                     $error = "Please fill out all the required fields.";
                 } elseif ($password !== $confirm) {
@@ -53,24 +55,23 @@ class Controller
                 }
 
                 if ($error) {
-                    include('view/register.php');
+                    include('view/auth/register.php');
                 }
                 break;
 
+            // ==================== USER AUTHENTICATION ====================
             case 'login':
                 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $username = $_POST['username'] ?? '';
                     $password = $_POST['password'] ?? '';
                     $loginRole = strtolower($_POST['loginRole'] ?? '');
-
                     $error = '';
+                    $notice = '';
 
-                    // Check if user exists
+                    // Check if user exists in main user table
                     if ($this->model->userExists($username)) {
-                        // If user exists, attempt login with the loginRole
                         $user = $this->model->loginUser($username, $password, $loginRole);
                         if ($user) {
-                            // Check if the role matches
                             if ($user['role'] === $loginRole) {
                                 $_SESSION['user'] = $user;
                                 $_SESSION['userID'] = $user['userID'];
@@ -93,12 +94,27 @@ class Controller
                             $error = "Invalid username or password.";
                         }
                     } else {
-                        $error = "User does not exist.";
+                        // Check if user has pending or rejected registration
+                        if ($this->model->isRegistrationPending($username)) {
+                            $notice = "Your registration is still being processed. Please wait for admin approval.";
+                        } elseif ($this->model->isRegistrationRejected($username)) {
+                            $notice = "Your registration has been rejected. Please contact the administrator for more information.";
+                        } else {
+                            $error = "User does not exist.";
+                        }
                     }
                 }
-                include_once('view/login.php');
+                include_once('view/auth/login.php');
                 break;
 
+            case 'logout':
+                $this->model->clearCurrentUser();
+                session_unset();
+                session_destroy();
+                header("Location: ?command=login");
+                exit();
+
+            // ==================== USER DASHBOARD & PROFILE ====================
             case 'dashboard':
                 if (!isset($_SESSION['user'])) {
                     header('Location: ?command=Login');
@@ -111,9 +127,8 @@ class Controller
                 $mostContributedWaste = $this->model->getMostContributedWaste();
                 $topContributors = $this->model->getTopContributors();
 
-                include_once('view/dashboard.php');
+                include_once('view/user/dashboard.php');
                 break;
-
 
             case 'userProfile':
                 if (!isset($_SESSION['user'])) {
@@ -125,21 +140,7 @@ class Controller
                 $totalCurrentPoints = (float)$this->model->getUserPoints($userID);
                 $rewards = $this->model->getAllRewards();
 
-                // Debug line - remove after testing
-                error_log("User ID: " . $userID . ", Points: " . $totalCurrentPoints);
-
-                include_once('view/userProfile.php');
-                break;
-
-            case 'claim':
-                if (!isset($_SESSION['user'])) {
-                    header('Location: ?command=Login');
-                }
-                $userID = $_SESSION['user']['userID'];
-                $users = $this->model->getUserPoints($userID);
-                $totalCurrentPoints = $this->model->getUserPoints($userID);
-                $rewards = $this->model->getAllRewards();
-                include_once('view/claim.php');
+                include_once('view/user/userProfile.php');
                 break;
 
             case 'userSettings':
@@ -150,152 +151,44 @@ class Controller
                 $userID = $_SESSION['user']['userID'];
                 $users = $this->model->getUserData($userID);
 
-                include_once('view/userSettings.php');
+                include_once('view/user/userSettings.php');
                 break;
 
-            case 'updateProfileSettings': {
-                // Check if user is logged in (either as user or admin)
-                if (!isset($_SESSION['user']) && !isset($_SESSION['admin'])) {
-                    echo "<script>alert('You must be logged in.'); window.location.href='?command=login';</script>";
-                    exit();
+            case 'claim':
+                if (!isset($_SESSION['user'])) {
+                    header('Location: ?command=Login');
                 }
-
-                // Determine session type and role
-                $sessionType = isset($_SESSION['user']) ? 'user' : 'admin';
-                $userID = $_SESSION[$sessionType]['userID'];
-                $role = $_SESSION[$sessionType]['role'];
-
-                // Get current user data to preserve unchanged fields
-                $currentUser = $this->model->getUserById($userID);
-
-                // Collect form data and only update if provided (not empty)
-                $fullName = !empty($_REQUEST['fullname']) ? $_REQUEST['fullname'] : $currentUser['fullName'];
-                $email = !empty($_REQUEST['email']) ? $_REQUEST['email'] : $currentUser['email'];
-                $contactNumber = !empty($_REQUEST['contactNumber']) ? $_REQUEST['contactNumber'] : $currentUser['contactNumber'];
-                $username = !empty($_REQUEST['username']) ? $_REQUEST['username'] : $currentUser['username'];
-                $password = $_REQUEST['password'] ?? '';
-                $confirmPassword = $_REQUEST['confirmPassword'] ?? '';
-
-                // Handle different fields based on role
-                if ($role === 'user') {
-                    $zone = !empty($_REQUEST['zone']) ? $_REQUEST['zone'] : $currentUser['zone'];
-                    $position = $currentUser['position']; // Keep existing position for users
-                    $redirectCommand = 'userSettings';
-                } else {
-                    $position = !empty($_REQUEST['position']) ? $_REQUEST['position'] : $currentUser['position'];
-                    $zone = $currentUser['zone']; // Keep existing zone for admins
-                    $redirectCommand = 'adminProfile';
-                }
-
-                // Validate passwords match only if password is being changed
-                if ($password && $password !== $confirmPassword) {
-                    echo "<script>alert('Passwords do not match!'); window.location.href='?command=" . $redirectCommand . "';</script>";
-                    break;
-                }
-
-                // Handle profile picture update
-                $profilePicturePath = $currentUser['profilePicture']; // Keep current path by default
-
-                // Check if user wants to remove profile picture
-                $removeProfilePicture = isset($_REQUEST['removeProfilePicture']) && $_REQUEST['removeProfilePicture'] === '1';
-
-                if ($removeProfilePicture) {
-                    if ($profilePicturePath && file_exists($profilePicturePath)) {
-                        if (unlink($profilePicturePath)) { // deletes file using unlink method
-                            // Optional: Log or notify the success of file deletion
-                        } else {
-                            echo "<script>alert('Failed to delete the image file.'); window.location.href='?command=" . $redirectCommand . "';</script>";
-                            break;
-                        }
-                    }
-                    $profilePicturePath = null; // Set to null to remove from database
-                } elseif (!empty($_FILES["profilePicture"]["name"])) {
-                    // Delete old file if it exists
-                    if ($profilePicturePath && file_exists($profilePicturePath)) {
-                        if (unlink($profilePicturePath)) { // deletes file using unlink method
-                            // Optional: Log or notify the success of file deletion
-                        } else {
-                            echo "<script>alert('Failed to delete the image file.'); window.location.href='?command=" . $redirectCommand . "';</script>";
-                            break;
-                        }
-                    }
-                    // Save new file
-                    $targetDir = "profilePic/";
-                    if (!is_dir($targetDir)) {
-                        mkdir($targetDir, 0777, true);
-                    }
-                    $fileName = uniqid() . '_' . basename($_FILES["profilePicture"]["name"]);
-                    $newProfilePicturePath = $targetDir . $fileName;
-                    $imageFileType = strtolower(pathinfo($newProfilePicturePath, PATHINFO_EXTENSION));
-                    $check = getimagesize($_FILES["profilePicture"]["tmp_name"]);
-
-                    $allowedTypes = ['jpg', 'jpeg', 'png', 'gif'];
-                    if ($check === false) {
-                        echo "<script>alert('File is not an image.'); window.location.href='?command=" . $redirectCommand . "';</script>";
-                        break;
-                    }
-                    if (!in_array($imageFileType, $allowedTypes)) {
-                        echo "<script>alert('Only JPG, JPEG, PNG & GIF files are allowed.'); window.location.href='?command=" . $redirectCommand . "';</script>";
-                        break;
-                    }
-                    if (!move_uploaded_file($_FILES["profilePicture"]["tmp_name"], $newProfilePicturePath)) {
-                        echo "<script>alert('Failed to upload image.'); window.location.href='?command=" . $redirectCommand . "';</script>";
-                        break;
-                    }
-                    $profilePicturePath = $newProfilePicturePath;
-                }
-
-                // Hash password only if it's being changed
-                $hashedPassword = $password ? password_hash($password, PASSWORD_DEFAULT) : null;
-
-                // Update user in the database
-                $result = $this->model->updateProfileSettings(
-                    $userID,
-                    $fullName,
-                    $zone,
-                    $position,
-                    $email,
-                    $contactNumber,
-                    $username,
-                    $hashedPassword,
-                    $profilePicturePath
-                );
-
-                // Update session info with new values
-                $_SESSION[$sessionType]['username'] = $username;
-                $_SESSION[$sessionType]['fullName'] = $fullName;
-
-                // Show result and redirect
-                echo "<script>alert('Profile updated successfully.'); window.location.href='?command=" . $redirectCommand . "';</script>";
+                $userID = $_SESSION['user']['userID'];
+                $users = $this->model->getUserPoints($userID);
+                $totalCurrentPoints = $this->model->getUserPoints($userID);
+                $rewards = $this->model->getAllRewards();
+                include_once('view/user/claim.php');
                 break;
-            }
 
+            // ==================== WASTE CONTRIBUTION ====================
             case 'contribute':
-                include_once('view/contribute.php');
+                include_once('view/user/contribute.php');
                 break;
 
+            // ==================== ADMIN DASHBOARD & MANAGEMENT ====================
             case 'adminDashboard':
                 $totalPlastic = $this->model->getTotalPlastic();
                 $totalCans = $this->model->getTotalCans();
                 $totalGlassBottles = $this->model->getTotalBottles();
                 $notification = $this->model->getNotifications();
                 
-                // Additional data for enhanced dashboard
                 $totalUsers = count($this->model->getAllUsers());
                 $totalRewards = count($this->model->getAllRewards());
                 $todayContributions = $this->model->getTotalPlasticByDate(date('Y-m-d')) + 
                                     $this->model->getTotalCansByDate(date('Y-m-d')) + 
                                     $this->model->getTotalBottlesByDate(date('Y-m-d'));
                 
-                // Pending registration notifications
                 $pendingRegistrations = $this->model->getPendingRegistrationNotifications();
                 $pendingRegistrationCount = count($pendingRegistrations);
                 
-                // Calculate total notification count for header
                 $sensorNotificationCount = count($this->model->getNotifications());
                 $notificationCount = $sensorNotificationCount + $pendingRegistrationCount;
                 
-                // Zone data for charts
                 $getContZone1 = $this->model->getContZone1();
                 $getContZone2 = $this->model->getContZone2();
                 $getContZone3 = $this->model->getContZone3();
@@ -304,17 +197,70 @@ class Controller
                 $getContZone6 = $this->model->getContZone6();
                 $getContZone7 = $this->model->getContZone7();
                 
-                include_once('view/adminDashboard.php');
+                include_once('view/admin/adminDashboard.php');
                 break;
 
+            case 'adminSettings':
+                if (!isset($_SESSION['user'])) {
+                    header('Location: ?command=Login');
+                    exit();
+                }
+
+                $userID = $_SESSION['user']['userID'];
+                $admin = $this->model->getUserData($userID);
+                
+                $notificationCount = count($this->model->getNotifications());
+
+                include_once('view/admin/adminSettings.php');
+                break;
+
+            case 'adminReport':
+                $selectedDate = isset($_GET['date']) ? $_GET['date'] : date('Y-m-d');
+                $userID = $_SESSION['userID'];
+                $notificationCount = count($this->model->getNotifications());
+                
+                if ($selectedDate && $selectedDate !== date('Y-m-d')) {
+                    $totalCans = $this->model->getTotalCansByDate($selectedDate);
+                    $totalBottles = $this->model->getTotalBottlesByDate($selectedDate);
+                    $totalPlastic = $this->model->getTotalPlasticByDate($selectedDate);
+                    $wastePerMaterial = $this->model->getWasteContributionsPerMaterialByDate($selectedDate);
+                    $wasteHistory = $this->model->getWasteHistoryByDate($selectedDate);
+                    
+                    $getContZone1 = $this->model->getZoneContributionByDate('Zone 1', $selectedDate);
+                    $getContZone2 = $this->model->getZoneContributionByDate('Zone 2', $selectedDate);
+                    $getContZone3 = $this->model->getZoneContributionByDate('Zone 3', $selectedDate);
+                    $getContZone4 = $this->model->getZoneContributionByDate('Zone 4', $selectedDate);
+                    $getContZone5 = $this->model->getZoneContributionByDate('Zone 5', $selectedDate);
+                    $getContZone6 = $this->model->getZoneContributionByDate('Zone 6', $selectedDate);
+                    $getContZone7 = $this->model->getZoneContributionByDate('Zone 7', $selectedDate);
+                } else {
+                    $totalCans = $this->model->getTotalCans();
+                    $totalBottles = $this->model->getTotalBottles();
+                    $totalPlastic = $this->model->getTotalPlastic();
+                    $wastePerMaterial = $this->model->getWasteContributionsPerMaterialThisMonth();
+                    $wasteHistory = $this->model->getWasteHistory();
+                    
+                    $getContZone1 = $this->model->getContZone1();
+                    $getContZone2 = $this->model->getContZone2();
+                    $getContZone3 = $this->model->getContZone3();
+                    $getContZone4 = $this->model->getContZone4();
+                    $getContZone5 = $this->model->getContZone5();
+                    $getContZone6 = $this->model->getContZone6();
+                    $getContZone7 = $this->model->getContZone7();
+                }
+                
+                $users = $this->model->getTopUsers(7);
+
+                include_once('view/admin/adminReport.php');
+                break;
+
+            // ==================== USER MANAGEMENT ====================
             case 'manageUser':
                 $users = $this->model->getAllUsers();
                 $admins = $this->model->getAllAdmins();
-                
-                // Calculate total notification count for header (sensor notifications only)
                 $notificationCount = count($this->model->getNotifications());
                 
-                include_once('view/manageUser.php');
+                include_once('view/admin/manageUser.php');
                 break;
 
             case 'updateUserProfile':
@@ -362,7 +308,6 @@ class Controller
                 break;
 
             case 'addAdministrator':
-
                 if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'super admin') {
                     echo "<script>alert('Access denied. Only Super Admin can add an administrator.');
                     window.location.href='?command=manageUser';</script>";
@@ -378,7 +323,6 @@ class Controller
                 $position = $_POST['position'] ?? '';
                 $error = '';
 
-                // Validation for admin fields only
                 if (empty($fullname) || empty($email) || empty($username) || empty($password) || empty($confirm) || empty($contactNumber) || empty($position)) {
                     $error = "Please fill out all the required fields.";
                 } elseif ($password !== $confirm) {
@@ -386,7 +330,6 @@ class Controller
                 } elseif ($this->model->userExists($username)) {
                     $error = "Username already exists.";
                 } else {
-                    // Register admin (position is passed as the 'zone' parameter)
                     $success = $this->model->addAdministrator($fullname, $email, $position, $contactNumber, $username, $password, 'admin');
                     if ($success) {
                         echo "<script>alert('Administrator added successfully.'); window.location.href='?command=manageUser';</script>";
@@ -401,55 +344,15 @@ class Controller
                 }
                 break;
 
-            case 'adminProfile':
-                if (!isset($_SESSION['user'])) {
-                    header('Location: ?command=Login');
-                    exit();
-                }
-
-                $userID = $_SESSION['user']['userID'];
-                $admin = $this->model->getUserData($userID);
-                
-                // Calculate total notification count for header (sensor notifications only)
-                $notificationCount = count($this->model->getNotifications());
-
-                include_once('view/adminProfile.php');
-                break;
-
+            // ==================== REWARD MANAGEMENT ====================
             case 'rewardInventory':
                 if (!isset($_SESSION['user'])) {
                     header('Location: ?command=Login');
                 }
                 $userID = $_SESSION['user']['userID'];
                 $rewards = $this->model->getAllRewards();
-                include_once('view/rewardInventory.php');
+                include_once('view/admin/rewardInventory.php');
                 break;
-
-            case 'updateReward':
-                $rewardID = $_POST['rewardID'];
-                $rewardName = $_POST['rewardName'];
-                $availableStock = $_POST['availableStock'];
-                $slotNum = $_POST['slotNum'];
-                $pointsRequired = $_POST['pointsRequired'];
-                $availability = isset($_POST['availability']) ? intval($_POST['availability']) : 1;
-
-                // Validate inputs
-                if (empty($rewardName) || empty($pointsRequired) || empty($slotNum) || empty($availableStock)) {
-                    echo "<script>alert('Please fill out all required fields.'); window.location.href='?command=rewardInventory';</script>";
-                    exit();
-                }
-
-                // Update reward in database without changing the image
-                // Pass empty string for imagePath since we're not updating the image
-                $result = $this->model->updateReward($rewardName, $pointsRequired, $slotNum, $availableStock, $rewardID, "", $availability);
-                
-                if ($result) {
-                    echo "<script>alert('Reward updated successfully.'); window.location.href='?command=rewardInventory';</script>";
-                } else {
-                    echo "<script>alert('Failed to update reward. Please try again.'); window.location.href='?command=rewardInventory';</script>";
-                }
-                break;
-
 
             case 'addReward':
                 $rewardName = $_POST['rewardName'];
@@ -458,17 +361,15 @@ class Controller
                 $pointsRequired = $_POST['pointsRequired'];
                 $availability = isset($_POST['availability']) ? intval($_POST['availability']) : 1;
 
-                // Validate inputs
                 if (empty($rewardName) || empty($pointsRequired) || empty($slotNum) || empty($availableStock)) {
                     echo "<script>alert('Please fill out all required fields.'); window.location.href='?command=rewardInventory';</script>";
                     exit();
                 }
 
-                $imagePath = null; // Default to null if no image is uploaded
+                $imagePath = null;
 
-                // Handle image upload
                 if (!empty($_FILES['rewardImg']['name'])) {
-                    $uploadResult = $this->model->validateAndUploadImage($_FILES["rewardImg"], "reward/");
+                    $uploadResult = $this->model->validateAndUploadImage($_FILES["rewardImg"], "images/reward/");
                     
                     if ($uploadResult['success']) {
                         $imagePath = $uploadResult['path'];
@@ -481,7 +382,6 @@ class Controller
                     exit();
                 }
 
-                // Save to database
                 $result = $this->model->addReward($rewardName, $pointsRequired, $slotNum, $availableStock, $imagePath, $availability);
 
                 if ($result) {
@@ -491,17 +391,33 @@ class Controller
                 }
                 break;
 
+            case 'updateReward':
+                $rewardID = $_POST['rewardID'];
+                $rewardName = $_POST['rewardName'];
+                $availableStock = $_POST['availableStock'];
+                $slotNum = $_POST['slotNum'];
+                $pointsRequired = $_POST['pointsRequired'];
+                $availability = isset($_POST['availability']) ? intval($_POST['availability']) : 1;
+
+                if (empty($rewardName) || empty($pointsRequired) || empty($slotNum) || empty($availableStock)) {
+                    echo "<script>alert('Please fill out all required fields.'); window.location.href='?command=rewardInventory';</script>";
+                    exit();
+                }
+
+                $result = $this->model->updateReward($rewardName, $pointsRequired, $slotNum, $availableStock, $rewardID, "", $availability);
+                
+                if ($result) {
+                    echo "<script>alert('Reward updated successfully.'); window.location.href='?command=rewardInventory';</script>";
+                } else {
+                    echo "<script>alert('Failed to update reward. Please try again.'); window.location.href='?command=rewardInventory';</script>";
+                }
+                break;
 
             case 'deleteReward':
                 $rewardID = $_REQUEST['rewardID'];
-                
-                // Get image path before deleting
                 $imagePath = $this->model->getRewardImagePathById($rewardID);
-                
-                // Delete from database
                 $result = $this->model->deleteReward($rewardID);
                 
-                // Delete image file if it exists
                 if ($imagePath && file_exists($imagePath)) {
                     unlink($imagePath);
                 }
@@ -512,68 +428,114 @@ class Controller
                  </script>";
                 break;
 
-
-            case 'adminReport':
-                // Get date filter if provided
-                $selectedDate = isset($_GET['date']) ? $_GET['date'] : date('Y-m-d');
-                
-                $userID = $_SESSION['userID'];
-                
-                // Calculate total notification count for header (sensor notifications only)
-                $notificationCount = count($this->model->getNotifications());
-                
-                // Use date-filtered functions if date is provided, otherwise use current data
-                if ($selectedDate && $selectedDate !== date('Y-m-d')) {
-                    $totalCans = $this->model->getTotalCansByDate($selectedDate);
-                    $totalBottles = $this->model->getTotalBottlesByDate($selectedDate);
-                    $totalPlastic = $this->model->getTotalPlasticByDate($selectedDate);
-                    $wastePerMaterial = $this->model->getWasteContributionsPerMaterialByDate($selectedDate);
-                    $wasteHistory = $this->model->getWasteHistoryByDate($selectedDate);
-                    
-                    // Get zone contributions by date
-                    $getContZone1 = $this->model->getZoneContributionByDate('Zone 1', $selectedDate);
-                    $getContZone2 = $this->model->getZoneContributionByDate('Zone 2', $selectedDate);
-                    $getContZone3 = $this->model->getZoneContributionByDate('Zone 3', $selectedDate);
-                    $getContZone4 = $this->model->getZoneContributionByDate('Zone 4', $selectedDate);
-                    $getContZone5 = $this->model->getZoneContributionByDate('Zone 5', $selectedDate);
-                    $getContZone6 = $this->model->getZoneContributionByDate('Zone 6', $selectedDate);
-                    $getContZone7 = $this->model->getZoneContributionByDate('Zone 7', $selectedDate);
-                } else {
-                    $totalCans = $this->model->getTotalCans();
-                    $totalBottles = $this->model->getTotalBottles();
-                    $totalPlastic = $this->model->getTotalPlastic();
-                    $wastePerMaterial = $this->model->getWasteContributionsPerMaterialThisMonth();
-                    $wasteHistory = $this->model->getWasteHistory();
-                    
-                    // Get leading zones & users
-                    $getContZone1 = $this->model->getContZone1();
-                    $getContZone2 = $this->model->getContZone2();
-                    $getContZone3 = $this->model->getContZone3();
-                    $getContZone4 = $this->model->getContZone4();
-                    $getContZone5 = $this->model->getContZone5();
-                    $getContZone6 = $this->model->getContZone6();
-                    $getContZone7 = $this->model->getContZone7();
+            // ==================== PROFILE SETTINGS ====================
+            case 'updateProfileSettings': {
+                if (!isset($_SESSION['user']) && !isset($_SESSION['admin'])) {
+                    echo "<script>alert('You must be logged in.'); window.location.href='?command=login';</script>";
+                    exit();
                 }
-                
-                $users = $this->model->getTopUsers(7);
 
-                include_once('view/adminReport.php');
+                $sessionType = isset($_SESSION['user']) ? 'user' : 'admin';
+                $userID = $_SESSION[$sessionType]['userID'];
+                $role = $_SESSION[$sessionType]['role'];
+
+                $currentUser = $this->model->getUserById($userID);
+
+                $fullName = !empty($_REQUEST['fullname']) ? $_REQUEST['fullname'] : $currentUser['fullName'];
+                $email = !empty($_REQUEST['email']) ? $_REQUEST['email'] : $currentUser['email'];
+                $contactNumber = !empty($_REQUEST['contactNumber']) ? $_REQUEST['contactNumber'] : $currentUser['contactNumber'];
+                $username = !empty($_REQUEST['username']) ? $_REQUEST['username'] : $currentUser['username'];
+                $password = $_REQUEST['password'] ?? '';
+                $confirmPassword = $_REQUEST['confirmPassword'] ?? '';
+
+                if ($role === 'user') {
+                    $zone = !empty($_REQUEST['zone']) ? $_REQUEST['zone'] : $currentUser['zone'];
+                    $position = $currentUser['position'];
+                    $redirectCommand = 'userSettings';
+                } else {
+                    $position = !empty($_REQUEST['position']) ? $_REQUEST['position'] : $currentUser['position'];
+                    $zone = $currentUser['zone'];
+                    $redirectCommand = 'adminSettings';
+                }
+
+                if ($password && $password !== $confirmPassword) {
+                    echo "<script>alert('Passwords do not match!'); window.location.href='?command=" . $redirectCommand . "';</script>";
+                    break;
+                }
+
+                $profilePicturePath = $currentUser['profilePicture'];
+                $removeProfilePicture = isset($_REQUEST['removeProfilePicture']) && $_REQUEST['removeProfilePicture'] === '1';
+
+                if ($removeProfilePicture) {
+                    if ($profilePicturePath && file_exists($profilePicturePath)) {
+                        if (unlink($profilePicturePath)) {
+                            // File deleted successfully
+                        } else {
+                            echo "<script>alert('Failed to delete the image file.'); window.location.href='?command=" . $redirectCommand . "';</script>";
+                            break;
+                        }
+                    }
+                    $profilePicturePath = null;
+                } elseif (!empty($_FILES["profilePicture"]["name"])) {
+                    if ($profilePicturePath && file_exists($profilePicturePath)) {
+                        if (unlink($profilePicturePath)) {
+                            // File deleted successfully
+                        } else {
+                            echo "<script>alert('Failed to delete the image file.'); window.location.href='?command=" . $redirectCommand . "';</script>";
+                            break;
+                        }
+                    }
+                    
+                    $targetDir = "images/profilePic/";
+                    if (!is_dir($targetDir)) {
+                        mkdir($targetDir, 0777, true);
+                    }
+                    $fileName = uniqid() . '_' . basename($_FILES["profilePicture"]["name"]);
+                    $newProfilePicturePath = $targetDir . $fileName;
+                    $imageFileType = strtolower(pathinfo($newProfilePicturePath, PATHINFO_EXTENSION));
+                    $check = getimagesize($_FILES["profilePicture"]["tmp_name"]);
+
+                    $allowedTypes = ['jpg', 'jpeg', 'png', 'gif'];
+                    if ($check === false) {
+                        echo "<script>alert('File is not an image.'); window.location.href='?command=" . $redirectCommand . "';</script>";
+                        break;
+                    }
+                    if (!in_array($imageFileType, $allowedTypes)) {
+                        echo "<script>alert('Only JPG, JPEG, PNG & GIF files are allowed.'); window.location.href='?command=" . $redirectCommand . "';</script>";
+                        break;
+                    }
+                    if (!move_uploaded_file($_FILES["profilePicture"]["tmp_name"], $newProfilePicturePath)) {
+                        echo "<script>alert('Failed to upload image.'); window.location.href='?command=" . $redirectCommand . "';</script>";
+                        break;
+                    }
+                    $profilePicturePath = $newProfilePicturePath;
+                }
+
+                $hashedPassword = $password ? password_hash($password, PASSWORD_DEFAULT) : null;
+
+                $result = $this->model->updateProfileSettings(
+                    $userID,
+                    $fullName,
+                    $zone,
+                    $position,
+                    $email,
+                    $contactNumber,
+                    $username,
+                    $hashedPassword,
+                    $profilePicturePath
+                );
+
+                $_SESSION[$sessionType]['username'] = $username;
+                $_SESSION[$sessionType]['fullName'] = $fullName;
+
+                echo "<script>alert('Profile updated successfully.'); window.location.href='?command=" . $redirectCommand . "';</script>";
                 break;
-
-
-
-            case 'logout':
-                session_unset();
-                session_destroy();
-                header("Location: ?command=login");
-                exit();
+            }
 
             default:
-            include_once('view/404.php');
-            break;
+                include_once('view/shared/404.php');
+                break;
         }
     }
-
 }
-
 ?>
