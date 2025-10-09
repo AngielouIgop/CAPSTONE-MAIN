@@ -7,9 +7,9 @@
 // WiFi credentials
 const char* ssid = "iPhone";
 const char* password = "gelo123456789";
-const char* serverName = "http://172.20.10.2/CAPSTONE-MAIN/endpoints/endpoint.php";
-const char* statusCheckUrl = "http://172.20.10.2/CAPSTONE-MAIN/endpoints/checkContributionStatus.php";
-const char* claimServoUrl = "http://172.20.10.2/CAPSTONE-MAIN/endpoints/checkClaimServo.php";
+const char* serverName = "http://172.20.10.3/CAPSTONE-MAIN/endpoints/endpoint.php";
+const char* statusCheckUrl = "http://172.20.10.3/CAPSTONE-MAIN/endpoints/checkContributionStatus.php";
+const char* claimServoUrl = "http://172.20.10.3/CAPSTONE-MAIN/endpoints/checkClaimServo.php";
 
 // HX711 weight sensors (Plastic, Glass, Can)
 #define DOUT_PLASTIC 33
@@ -38,8 +38,8 @@ const int SERVO_PIN3 = 21; // Can
 const int BUZZER_PIN = 5;
 
 // Communication with Arduino Uno
-const int ARDUINO_RX = 17; // ESP32 TX to Arduino RX (green)
-const int ARDUINO_TX = 16; // ESP32 RX to Arduino TX (orange)
+const int ARDUINO_RX = 16; // ESP32 RX pin (receives from Arduino TX)
+const int ARDUINO_TX = 17; // ESP32 TX pin (sends to Arduino RX)
 
 // Bin full flags (received from Arduino Uno)
 bool plasticBinFullNotified = false;
@@ -62,12 +62,12 @@ const int NUM_READINGS = 10;
 const int READING_DELAY = 50;
 
 // Thresholds
-const int PLASTIC_THRESHOLD_MIN = 47;
-const int PLASTIC_THRESHOLD_MAX = 80;
+const int PLASTIC_THRESHOLD_MIN = 70;
+const int PLASTIC_THRESHOLD_MAX = 100;
 const int BOTTLE_THRESHOLD_MIN = 1;
-const int BOTTLE_THRESHOLD_MAX = 21;
-const int CAN_THRESHOLD_MIN = 22;
-const int CAN_THRESHOLD_MAX = 46;
+const int BOTTLE_THRESHOLD_MAX = 39;
+const int CAN_THRESHOLD_MIN = 40;
+const int CAN_THRESHOLD_MAX = 69;
 const int PLASTIC_CONFIDENCE_THRESHOLD = 6;
 const int BOTTLE_CONFIDENCE_THRESHOLD = 5;
 const int CAN_CONFIDENCE_THRESHOLD = 5;
@@ -76,7 +76,7 @@ const int CAN_CONFIDENCE_THRESHOLD = 5;
 unsigned long previousMillis = 0;
 const long interval = 5000; // 5 seconds
 unsigned long lastStatusCheck = 0;
-const long statusCheckInterval = 2000; // Check status every 2 seconds
+const long statusCheckInterval = 500; // Check contribution status every 500ms (PRIORITY)
 unsigned long lastClaimCheck = 0;
 const long claimCheckInterval = 1000; // Check for claim triggers every 1 second
 unsigned long lastArduinoCheck = 0;
@@ -85,25 +85,42 @@ const long arduinoCheckInterval = 1000; // Check Arduino communication every 1 s
 // Communication protocol with Arduino Uno
 void sendToArduino(String command) {
     Serial2.println(command);
-    Serial.println("Sent to Arduino: " + command);
+    Serial.println("📤 Sent to Arduino: " + command);
+    Serial.println("📡 Serial2 status - Available: " + String(Serial2.available()));
 }
 
 void checkArduinoCommunication() {
     if (Serial2.available()) {
         String arduinoMessage = Serial2.readStringUntil('\n');
         arduinoMessage.trim();
-        Serial.println("Received from Arduino: " + arduinoMessage);
+        Serial.println("📨 Received from Arduino: " + arduinoMessage);
         
-        // Parse bin status messages from Arduino
-        if (arduinoMessage.startsWith("BIN_FULL:")) {
-            String binType = arduinoMessage.substring(9);
-            handleBinFullNotification(binType);
-        } else if (arduinoMessage.startsWith("BIN_EMPTY:")) {
-            String binType = arduinoMessage.substring(10);
-            handleBinEmptyNotification(binType);
-        } else if (arduinoMessage.startsWith("CLAIM_SERVO_COMPLETE:")) {
+        // Parse messages from Arduino
+        if (arduinoMessage.startsWith("ARDUINO_READY")) {
+            Serial.println("✅ Arduino Uno is ready and responding!");
+        }
+        else if (arduinoMessage.startsWith("CLAIM_SERVO_COMPLETE:")) {
             String slotNum = arduinoMessage.substring(20);
-            Serial.println("Claim servo movement completed for slot " + slotNum + "!");
+            Serial.println("✅ Claim servo movement completed for slot " + slotNum + "!");
+        }
+        else if (arduinoMessage.startsWith("BIN_FULL:")) {
+            String binType = arduinoMessage.substring(9);
+            Serial.println("⚠️ Bin full notification from Arduino: " + binType);
+            handleBinFullNotification(binType);
+        }
+        else if (arduinoMessage.startsWith("BIN_EMPTY:")) {
+            String binType = arduinoMessage.substring(10);
+            Serial.println("✅ Bin empty notification from Arduino: " + binType);
+            handleBinEmptyNotification(binType);
+        }
+        else if (arduinoMessage == "PONG") {
+            Serial.println("🏓 PONG received from Arduino - Communication working!");
+        }
+        else if (arduinoMessage == "TEST_RESPONSE") {
+            Serial.println("✅ TEST_RESPONSE received from Arduino - Communication working!");
+        }
+        else {
+            Serial.println("❓ Unknown message from Arduino: " + arduinoMessage);
         }
     }
 }
@@ -134,7 +151,7 @@ void handleBinEmptyNotification(String binType) {
 void sendBinFullNotification(String sensorName, String message) {
     if (WiFi.status() == WL_CONNECTED) {
         HTTPClient http;
-        http.begin("http://172.20.10.2/CAPSTONE-MAIN/endpoints/notifEndpoint.php");   
+        http.begin("http://172.20.10.3/CAPSTONE-MAIN/endpoints/notificationEndpoint.php");   
         http.addHeader("Content-Type", "application/x-www-form-urlencoded");
 
         String postData = "sensor_name=" + sensorName + "&message=" + message + "&status=unread";
@@ -145,12 +162,14 @@ void sendBinFullNotification(String sensorName, String message) {
 
         if (httpResponseCode > 0) {
             String response = http.getString();
-            Serial.println(response);
+            Serial.println("📤 Notification sent to database: " + response);
         } else {
-            Serial.print("Error in sending " + sensorName + " full request: ");
+            Serial.print("❌ Error sending " + sensorName + " notification: ");
             Serial.println(httpResponseCode);
         }
         http.end();
+    } else {
+        Serial.println("❌ WiFi not connected - notification not sent to database");
     }
 }
 
@@ -193,26 +212,35 @@ bool checkClaimServoTrigger() {
 
 bool fetchCurrentUser() {
     HTTPClient http;
-    http.begin("http://172.20.10.2/CAPSTONE-MAIN/endpoints/get_current_user.php");
+    http.begin("http://172.20.10.3/CAPSTONE-MAIN/endpoints/getCurrentUser.php");
     int httpResponseCode = http.GET();
+    Serial.println("🔍 Fetching current user...");
+    Serial.println("📡 HTTP Response code: " + String(httpResponseCode));
+    
     if (httpResponseCode > 0) {
         String response = http.getString();
-        Serial.println("Response: " + response);
+        Serial.println("📨 Response: " + response);
         DynamicJsonDocument doc(1024);
         DeserializationError error = deserializeJson(doc, response);
-        if (!error && doc.containsKey("userID")) {
-            userID = doc["userID"];
-            username = doc["username"] | "Unknown";
-            userIDSet = true;
-            Serial.print("Current user: "); Serial.println(username);
-            Serial.print("UserID: "); Serial.println(userID);
-            return true;
+        
+        if (!error) {
+            if (doc.containsKey("userID")) {
+                userID = doc["userID"];
+                username = doc["username"] | "Unknown";
+                userIDSet = true;
+                Serial.println("✅ Current user: " + username);
+                Serial.println("✅ UserID: " + String(userID));
+                return true;
+            } else if (doc.containsKey("error")) {
+                Serial.println("❌ Error from server: " + String(doc["error"].as<String>()));
+            } else {
+                Serial.println("❌ No userID or error field in response");
+            }
         } else {
-            Serial.println("No user currently logged in or JSON parsing error.");
-            Serial.println("Error: " + String(error.c_str()));
+            Serial.println("❌ JSON parsing error: " + String(error.c_str()));
         }
     } else {
-        Serial.print("Error fetching user: "); Serial.println(httpResponseCode);
+        Serial.println("❌ HTTP request failed with code: " + String(httpResponseCode));
     }
     http.end();
     return false;
@@ -224,15 +252,18 @@ bool checkContributionStatus() {
     int httpResponseCode = http.GET();
     if (httpResponseCode > 0) {
         String response = http.getString();
-        Serial.println("Status check response: " + response);
+        Serial.println("🔍 Status check response: " + response);
         DynamicJsonDocument doc(1024);
         DeserializationError error = deserializeJson(doc, response);
         if (!error && doc.containsKey("contribution_started")) {
             bool newStatus = doc["contribution_started"];
+            Serial.println("📊 Current status: " + String(contributionStarted ? "STARTED" : "STOPPED") + 
+                          " | Server status: " + String(newStatus ? "STARTED" : "STOPPED"));
+            
             if (newStatus != contributionStarted) {
                 contributionStarted = newStatus;
                 if (contributionStarted) {
-                    Serial.println("Contribution STARTED - Ready to accept waste materials!");
+                    Serial.println("🚀 CONTRIBUTION STARTED - Ready to accept waste materials!");
                     // Activate buzzer to indicate ready
                     digitalWrite(BUZZER_PIN, HIGH);
                     delay(200);
@@ -242,13 +273,22 @@ bool checkContributionStatus() {
                     delay(200);
                     digitalWrite(BUZZER_PIN, LOW);
                 } else {
-                    Serial.println("Contribution STOPPED - Waiting for user to start...");
+                    Serial.println("⏸️ CONTRIBUTION STOPPED - Waiting for user to start...");
+                }
+            } else {
+                // Show current status periodically
+                static unsigned long lastStatusPrint = 0;
+                if (millis() - lastStatusPrint > 5000) { // Every 5 seconds
+                    lastStatusPrint = millis();
+                    Serial.println("📊 Contribution status: " + String(contributionStarted ? "ACTIVE" : "WAITING"));
                 }
             }
             return true;
+        } else {
+            Serial.println("❌ Error parsing contribution status JSON");
         }
     } else {
-        Serial.print("Error checking status: "); Serial.println(httpResponseCode);
+        Serial.print("❌ Error checking status: "); Serial.println(httpResponseCode);
     }
     http.end();
     return false;
@@ -302,6 +342,7 @@ String determineMaterial() {
 void setup() {
     Serial.begin(9600);
     Serial2.begin(9600, SERIAL_8N1, ARDUINO_RX, ARDUINO_TX); // Initialize Serial2 for Arduino communication
+    Serial.println("🔧 Serial2 initialized on pins RX=" + String(ARDUINO_RX) + ", TX=" + String(ARDUINO_TX));
     delay(2000);
 
     // Initialize WiFi
@@ -357,12 +398,23 @@ void setup() {
     digitalWrite(BUZZER_PIN, LOW);
 
     // Send initialization command to Arduino Uno
+    Serial.println("🔄 Sending INIT command to Arduino Uno...");
     sendToArduino("INIT");
+    
+    // Wait for Arduino response
+    delay(2000);
+    checkArduinoCommunication();
+    
+    // Test communication with ping-pong
+    Serial.println("🔄 Testing communication with PING...");
+    sendToArduino("PING");
+    delay(1000);
+    checkArduinoCommunication();
 
-    Serial.println("Setup complete");
-    Serial.println("Waiting for user to start contributing...");
-    Serial.println("Claim servo ready - monitoring for reward claims...");
-    Serial.println("Arduino Uno communication initialized");
+    Serial.println("✅ Setup complete");
+    Serial.println("⏳ Waiting for user to start contributing...");
+    Serial.println("🎯 Claim servo ready - monitoring for reward claims...");
+    Serial.println("🔗 Arduino Uno communication initialized");
 }
 
 void loop() {
@@ -396,6 +448,14 @@ void loop() {
     if (currentMillis - lastArduinoCheck >= arduinoCheckInterval) {
         lastArduinoCheck = currentMillis;
         checkArduinoCommunication();
+        
+        // Send a test message every 5 seconds
+        static unsigned long lastTestMessage = 0;
+        if (millis() - lastTestMessage > 5000) {
+            lastTestMessage = millis();
+            Serial.println("🔄 Sending test message to Arduino...");
+            sendToArduino("TEST");
+        }
     }
 
     // Check for claim servo triggers every 1 second
@@ -404,7 +464,7 @@ void loop() {
         checkClaimServoTrigger();
     }
 
-    // Check contribution status every 2 seconds
+    // PRIORITY: Check contribution status every 500ms (most important)
     if (currentMillis - lastStatusCheck >= statusCheckInterval) {
         lastStatusCheck = currentMillis;
         checkContributionStatus();
@@ -413,9 +473,10 @@ void loop() {
     // Only process waste materials if contribution has started
     if (contributionStarted && currentMillis - previousMillis >= interval) {
         previousMillis = currentMillis;
-
+        Serial.println("🔄 Processing waste materials - Contribution is ACTIVE");
+        
         String materialType = determineMaterial();
-        Serial.print("Detected Material: "); Serial.println(materialType);
+        Serial.print("🔍 Detected Material: "); Serial.println(materialType);
 
         if (materialType != "unknown") {
             digitalWrite(BUZZER_PIN, HIGH);
@@ -451,25 +512,56 @@ void loop() {
                                          "&weight=" + String(weight, 2) +
                                          "&userID=" + String(userID);
 
-                Serial.print("Sending data: "); Serial.println(httpRequestData);
+                Serial.print("📤 Sending data: "); Serial.println(httpRequestData);
 
                 int httpResponseCode = http.POST(httpRequestData);
-                Serial.print("HTTP Response code: "); Serial.println(httpResponseCode);
+                Serial.print("📡 HTTP Response code: "); Serial.println(httpResponseCode);
                 if (httpResponseCode > 0) {
                     String response = http.getString();
-                    Serial.println("Response: " + response);
+                    Serial.println("📨 Response: " + response);
                 } else {
-                    Serial.print("POST error: "); Serial.println(httpResponseCode);
+                    Serial.print("❌ POST error: "); Serial.println(httpResponseCode);
                 }
                 http.end();
             } else {
-                Serial.println("User ID not set, skipping POST");
+                Serial.println("❌ User ID not set, attempting to fetch user...");
+                if (fetchCurrentUser()) {
+                    Serial.println("✅ User fetched successfully, retrying data submission...");
+                    // Retry the data submission
+                    HTTPClient http;
+                    http.begin(serverName);
+                    http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+
+                    String httpRequestData = "material=" + materialType +
+                                             "&weight=" + String(weight, 2) +
+                                             "&userID=" + String(userID);
+
+                    Serial.print("📤 Retrying data submission: "); Serial.println(httpRequestData);
+
+                    int httpResponseCode = http.POST(httpRequestData);
+                    Serial.print("📡 HTTP Response code: "); Serial.println(httpResponseCode);
+                    if (httpResponseCode > 0) {
+                        String response = http.getString();
+                        Serial.println("📨 Response: " + response);
+                    } else {
+                        Serial.print("❌ POST error: "); Serial.println(httpResponseCode);
+                    }
+                    http.end();
+                } else {
+                    Serial.println("❌ Failed to fetch user, skipping data submission");
+                }
             }
         } else {
             Serial.println("Material not detected. Servo will not move. Buzzer will remain silent.");
         }
     } else if (!contributionStarted) {
-        // Optional: Add a small delay when waiting to reduce CPU usage
+        // Show waiting status periodically
+        static unsigned long lastWaitingPrint = 0;
+        if (millis() - lastWaitingPrint > 10000) { // Every 10 seconds
+            lastWaitingPrint = millis();
+            Serial.println("⏳ Waiting for contribution to start...");
+        }
+        // Small delay to reduce CPU usage
         delay(100);
     }
 }
