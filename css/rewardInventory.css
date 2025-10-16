@@ -1,0 +1,305 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f8f9fa;
+  height: 100%;
+  padding-top: 30px; /* spacing under header */
+  color: #222;
+}
+
+/* Fixed desktop layout (no responsive sidebar margin) */
+body, html {
+  margin-left: 125px ;/* matches your sidebar width */
+}
+
+.reward-section-header {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 24px 0 8px 16px;
+
+  padding: 8px 16px;
+  border-radius: 8px 8px 0 0;
+}
+
+.reward-table-container {
+
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  margin: 0 auto 32px auto;
+  max-width: 1100px;
+  overflow: hidden;
+}
+
+.reward-custom-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.reward-custom-table th {
+  background: #2d316b;
+  color: #fff;
+  font-weight: 600;
+  padding: 16px 12px;
+  text-align: left;
+  font-size: 1.1rem;
+}
+
+.reward-custom-table tr {
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.reward-custom-table td {
+  padding: 14px 12px;
+  font-size: 1rem;
+  color: #222;
+  vertical-align: middle;
+}
+
+.reward-custom-table tbody tr:nth-child(even) {
+  background: #e3e7fa;
+}
+
+.reward-custom-table tbody tr:nth-child(odd) {
+  background: #c7d2f7;
+}
+
+.reward-profile-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #2d316b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 1.6rem;
+  margin-right: 8px;
+}
+
+.reward-image {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 2px solid #e0e0e0;
+  transition: transform 0.2s ease;
+}
+
+.reward-image:hover {
+  transform: scale(1.1);
+  cursor: pointer;
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-badge.available {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.status-badge.unavailable {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.image-preview-container {
+  margin: 10px 0;
+  text-align: center;
+}
+
+.image-preview-container img {
+  border: 2px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.reward-delete-btn {
+  background: #dc3545;
+}
+
+.reward-delete-btn:hover {
+  background: #c82333;
+}
+
+.reward-action-btn {
+  background: #2d316b;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-right: 8px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.reward-action-btn:last-child {
+  margin-right: 0;
+}
+
+.reward-action-btn:hover {
+  background: #1a1d4d;
+  transform: translateY(-1px);
+}
+
+.reward-action-btn:active {
+  transform: translateY(0);
+}
+
+.reward-pill-btn {
+  background: #bfc8e6;
+  color: #2d316b;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-left: 12px;
+  transition: all 0.2s ease;
+}
+
+.reward-pill-btn:hover {
+  background: #a3b0d6;
+  transform: translateY(-1px);
+}
+
+.reward-pill-btn:active {
+  transform: translateY(0);
+}
+
+/* Modal Styling */
+.reward-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.6);
+}
+
+/* Use the same modal content style for both modals */
+.reward-modal-content {
+    background-color: #fefefe;
+    margin: 7% auto;
+    padding: 25px 30px 20px 30px;
+    border: 1px solid #888;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+    position: relative;
+}
+
+/* Use the same header style for both modals */
+.reward-modal-header {
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e0e0e0;
+    text-align: center;
+    font-size: 1.6em;
+    color: #2c3e50;
+    margin-bottom: 18px;
+}
+
+/* Use the same form style for both modals */
+.reward-modal form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px 0 0 0;
+}
+
+.reward-modal label {
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 3px;
+}
+
+.reward-modal input[type="text"],
+.reward-modal input[type="number"],
+.reward-modal input[type="file"],
+.reward-modal select {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid #bfc9d1;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-bottom: 8px;
+    background: #f8fafc;
+    transition: border-color 0.2s ease;
+    box-sizing: border-box;
+}
+
+.reward-modal select {
+    background: #fff;
+    cursor: pointer;
+}
+
+.reward-modal input[type="text"]:focus,
+.reward-modal input[type="number"]:focus,
+.reward-modal select:focus {
+    border-color: #4a90e2;
+    outline: none;
+    background: #fff;
+}
+
+.reward-modal small {
+    color: #888;
+    font-size: 0.85em;
+    margin-bottom: 8px;
+}
+
+.reward-modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.reward-btn-confirm {
+    background: #1d007e;
+    color: #fff;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.reward-btn-confirm:hover {
+    background: #5400db;
+    transform: translateY(-1px);
+}
+
+.reward-btn-cancel {
+    background: #f44336;
+    color: #fff;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.reward-btn-cancel:hover {
+    background: #b71c1c;
+    transform: translateY(-1px);
+}
+
+/* Mobile responsiveness removed - Admin only uses desktop */

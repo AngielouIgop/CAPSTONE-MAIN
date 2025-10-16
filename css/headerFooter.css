@@ -1,0 +1,490 @@
+.header-main {
+    width: 100%;
+    height: 80px;
+    display: flex;
+    background-color: #2D336B;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); 
+    transition: box-shadow 0.3s ease;
+    padding: 0 15px;
+}
+
+.header-nav{
+    margin-left: auto;
+    margin-right: 0;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Shrink header navigation when sidebar is hidden */
+body.sidebar-hidden .header-nav {
+    margin-left: 0;
+    width: 100%;
+}
+
+body.sidebar-hidden .header-nav ul {
+    justify-content: center;
+    gap: 10px;
+}
+
+.header-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end; 
+}
+
+.header-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 5px;
+    gap: 0;
+}
+
+  .header-title {
+   width: 400px;
+   height: 200px;
+   background-image: url('../images/logos/logo-name.png');
+   background-size: contain;
+   background-repeat: no-repeat;
+   background-position: center;
+   display: inline-block;
+   text-indent: -9999px;
+   margin: 0;
+   padding: 0;
+}
+
+.header-logo .logo-img {
+    height: 70px;
+    width: 70px;  
+    object-fit: cover; 
+    border-radius: 50%; 
+    padding: 0;
+    margin: 0;
+}
+
+.logo-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.logo-link:hover {
+    transform: scale(1.05);
+}
+
+.logo-text {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    letter-spacing: 1px;
+}
+
+.header-nav ul li a {
+    text-decoration: none;
+    padding: 5px 15px;
+    color: rgb(0, 0, 0);
+    border-radius: 15px;
+    background-color: #F2EFE7;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: inline-block;
+    transition: 0.3s ease-in-out;
+}
+
+.header-nav ul li a:hover {
+    background-color: #f7f7f7;
+}
+
+.menu-toggle {
+  display: block;
+  font-size: 28px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+  cursor: pointer;
+  margin-left: 15px;
+  margin-right: 50px;
+  z-index: 3000;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.menu-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+/* Hide Menu button on desktop */
+.menu-btn {
+  display: none;
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 50px;
+}
+
+/* Desktop navigation */
+@media (min-width: 901px) {
+  .menu-toggle {
+    display: none !important;
+  }
+}
+
+.header-nav {
+  margin-left: auto;
+  margin-right: 20px;
+}
+
+.header-nav ul {
+  list-style: none;
+  display: flex;
+  gap: 15px;
+  margin: 0;
+  padding: 0;
+}
+
+.header-nav ul li a {
+  text-decoration: none;
+  padding: 5px 15px;
+  color: black;
+  border-radius: 15px;
+  background-color: #F2EFE7;
+  transition: 0.3s ease-in-out;
+}
+
+.header-nav ul li a:hover {
+  background-color: #3c0af1;
+}
+
+.footer-main {
+    padding: 5px 20px;
+    background-color: #2D336B;
+    text-align: center;
+    position: fixed;
+    width: 100%;
+    left: 0;
+    bottom: 0;
+    z-index: 1000;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin: 0 auto;
+}
+
+.body{
+   padding-bottom: 50px; 
+}
+
+.footer-main p {
+    margin: 0;
+    font-size: 14px;
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* --- Mobile Responsive --- */
+@media (max-width: 768px) {
+  .header-main {
+    padding: 0 10px;
+    height: 70px;
+    flex-wrap: nowrap;
+  }
+
+  .menu-toggle {
+    display: block;
+    font-size: 24px;
+    margin-left: 10px;
+    margin-right: 75px;
+    padding: 8px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .menu-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+  }
+
+  .header-logo {
+    flex-shrink: 0;
+    margin-right: 10px;
+  }
+
+  .header-logo .logo-img {
+    height: 50px;
+    width: 50px;
+  }
+
+  .header-title {
+    display: none;
+  }
+
+  .logo-text {
+    display: none;
+  }
+
+  .header-nav {
+    display: none;
+    position: absolute;
+    top: 70px;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(135deg, #2D336B 0%, #1a1f4a 100%);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    z-index: 999;
+    border-radius: 0 0 20px 20px;
+  }
+
+  .header-nav.active {
+    display: block;
+    animation: slideDown 0.3s ease-out;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .header-nav ul {
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    padding: 20px 0;
+    margin: 0;
+  }
+
+  .header-nav ul li {
+    width: 100%;
+    margin: 0;
+  }
+
+  .header-nav ul li a {
+    width: 85%;
+    text-align: center;
+    padding: 12px 16px;
+    color: #ffffff;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    margin: 6px auto;
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+  }
+
+  .header-nav ul li a.start-contributing-btn {
+    width: 60%;
+    background: #ffca28; /* Yellow for Start Contributing */
+  }
+  
+  .header-nav ul li a.notifications-btn {
+    width: 60%;
+    background: #0011ab; /* Blue color for notifications */
+  }
+
+  /* Shrink action buttons when sidebar is hidden */
+  body.sidebar-hidden .header-nav ul li a.start-contributing-btn {
+    width: 40%;
+    padding: 4px 8px;
+    font-size: 12px;
+    background: #ffca28; /* Maintain yellow when shrunk */
+  }
+  
+  body.sidebar-hidden .header-nav ul li a.notifications-btn {
+    width: 40%;
+    padding: 4px 8px;
+    font-size: 12px;
+    background: #0011ab; /* Maintain blue color when shrunk */
+  }
+
+  .header-nav ul li a:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+  }
+
+  /* Special styling for action buttons */
+  .header-nav ul li a.start-contributing-btn {
+    background: #ff6b35; /* Orange color for Start Contributing */
+    border: none;
+    color: white;
+    font-weight: 600;
+  }
+  
+  .header-nav ul li a.notifications-btn {
+    background: #0011ab; /* Keep blue for notifications */
+    border: none;
+    color: white;
+    font-weight: 600;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 14px;
+    margin: 6px auto;
+    border-radius: 25px;
+    box-shadow: 0 3px 12px rgba(76, 175, 80, 0.3);
+    font-size: 13px;
+  }
+
+  .header-nav ul li a.start-contributing-btn:hover {
+    background: #ffb300; /* Darker yellow on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 202, 40, 0.4);
+  }
+  
+  .header-nav ul li a.notifications-btn:hover {
+    background: #190053; /* Keep blue hover for notifications */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(15, 1, 55, 0.4);
+  }
+
+  /* Notification counter badge */
+  .notification-badge {
+    background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
+    color: white;
+    border-radius: 50%;
+    min-width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    border: 2px solid white;
+    box-shadow: 0 2px 8px rgba(255, 68, 68, 0.4);
+    animation: pulse 2s infinite;
+  }
+
+  .notification-badge.hidden {
+    display: none;
+  }
+
+  .notification-icon {
+    font-size: 18px;
+  }
+
+  .notification-text {
+    font-size: 14px;
+  }
+
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .header-main {
+    padding: 0 8px;
+    height: 65px;
+  }
+
+  .menu-toggle {
+    font-size: 22px;
+    margin-left: 8px;
+    margin-right: 20px;
+    padding: 6px;
+  }
+
+  .header-logo .logo-img {
+    height: 45px;
+    width: 45px;
+  }
+
+  .header-nav {
+    top: 65px;
+  }
+
+  .header-nav ul {
+    padding: 15px 0;
+  }
+
+  .header-nav ul li a {
+    padding: 10px 12px;
+    font-size: 13px;
+    margin: 4px auto;
+    width: 80%;
+  }
+
+  .header-nav ul li a.start-contributing-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+    border-radius: 20px;
+    width: 50%;
+    background: #ffca28; /* Yellow color for mobile */
+  }
+  
+  .header-nav ul li a.notifications-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+    border-radius: 20px;
+    width: 50%;
+    background: #0011ab; /* Blue color for mobile */
+  }
+
+  .notification-badge {
+    min-width: 20px;
+    height: 20px;
+    font-size: 11px;
+  }
+
+  .notification-icon {
+    font-size: 16px;
+  }
+
+/* ===== Final overrides to ensure Start Contributing is yellow in all modes ===== */
+.header-nav ul li a.start-contributing-btn {
+  background: #ffca28 !important; /* force yellow over generic link styles */
+  color: #000 !important;
+}
+
+.header-nav ul li a.start-contributing-btn:hover {
+  background: #ffb300 !important;
+}
+
+  .notification-text {
+    font-size: 13px;
+  }
+}

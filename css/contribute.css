@@ -1,0 +1,126 @@
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  }
+  .modal-content {
+    background: #fff;
+    border-radius: 8px;
+    width: 350px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.2);
+    padding: 24px 24px 18px 24px;
+    text-align: center;
+  }
+  .modal-header {
+    background: #28377b;
+    color: #fff;
+    border-radius: 8px 8px 0 0;
+    padding: 12px 0 8px 0;
+    margin: -24px -24px 16px -24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  .modal-logo {
+    width: 40px;
+    height: 40px;
+  }
+  .modal-title {
+    font-size: 1.4rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+  }
+  .modal-instruction {
+    font-size: 1.1rem;
+    margin: 18px 0 18px 0;
+    font-weight: 500;
+  }
+  .progress-bar-bg {
+    width: 90%;
+    height: 18px;
+    background: #ccc;
+    border-radius: 10px;
+    margin: 0 auto 22px auto;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    width: 40%; /* Adjust as needed for progress */
+    height: 100%;
+    background: #0a174e;
+    border-radius: 10px 0 0 10px;
+    transition: width 0.4s;
+  }
+  .modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+  }
+  .modal-btn {
+    padding: 8px 28px;
+    border: none;
+    border-radius: 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+  .done-btn {
+    background: #5c6bc0;
+    color: #fff;
+  }
+  .cancel-btn {
+    background: #bdbdbd;
+    color: #fff;
+  }
+  /* Spinner styles */
+.modal-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 16px 0;
+  min-height: 40px;
+}
+
+.modal-spinner:after {
+  content: "";
+  display: block;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 4px solid #4caf50;
+  border-top: 4px solid #e0e0e0;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.dynamic-progress-bar-bg {
+  width: 100%;
+  height: 12px;
+  background: #e0e0e0;
+  border-radius: 6px;
+  margin: 18px 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.dynamic-progress-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #4caf50 60%, #81c784 100%);
+  border-radius: 6px;
+  transition: width 0.4s ease;
+  animation: progressBarMove 2s linear forwards;
+}
+
+@keyframes progressBarMove {
+  from { width: 0%; }
+  to { width: 100%; }
+}

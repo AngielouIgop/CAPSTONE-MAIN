@@ -1,0 +1,696 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 300vh;
+    width: 100%;
+    box-sizing: border-box;
+    scroll-behavior: smooth;    
+    overflow-x: hidden;
+    z-index: 2000;
+}
+
+a {
+    cursor: pointer;
+}
+
+.container {
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+}
+
+.header-image-container {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    z-index: 1;
+    margin-top: 80px; /* Add this to prevent the slideshow from going under the header */
+}
+.slideshow {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    animation: slideshow 9s infinite ease-in-out;
+}
+
+.slide {
+    min-width: 100%;
+    height: 100%;
+    flex-shrink: 0;
+}
+
+.header-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+/* Step Content Styles */
+.step-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 15px;
+}
+
+.step-number {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+    margin-bottom: 10px;
+}
+
+.step-by-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 60px;
+    padding: 50px 20px;
+    margin-top: 100px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.how-text {
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+}
+
+.step {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 1000px;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.steps {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    flex-shrink: 0;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.steps:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15); 
+}
+
+.step.reverse {
+    flex-direction: row-reverse;
+}
+
+.step-text {
+    font-size: 16px;
+    line-height: 1.6;
+    max-width: 600px;
+    text-align: justify;
+    flex: 1;
+    min-width: 300px;
+} 
+
+.step-text p {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.steps-text:hover {
+    color: black;
+    transition: color 0.3 ease;
+}
+
+@keyframes slideshow {
+    0% { transform: translateX(0); }
+    33% { transform: translateX(-100%); }
+    66% { transform: translateX(-200%); }
+    100% { transform: translateX(0); }
+}
+
+.header-main {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.header-logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo-img {
+    height: 50px;
+    width: auto;
+}
+
+.header-nav ul {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 1.5rem;
+}
+
+.header-nav a {
+    text-decoration: none;
+    color: #333;
+    transition: color 0.3s ease;
+}
+
+.header-nav a:hover {
+    color: rgb(0, 48, 96);
+}
+
+/* Add styles for the About Us section */
+.about-us-section {
+    text-align: center;
+    padding: 50px 20px;
+    background-color: #f8f9fa;
+}
+
+.about-text {
+    width: 100%;
+    max-width: 800px;
+    height: auto;
+    margin: 0 auto 40px auto;
+}
+
+.about-us-blocks-container {
+    margin-top: 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    flex-wrap: wrap;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.about-us-block {
+    width: 100%;
+    max-width: 350px;
+    min-height: 500px;
+    background: linear-gradient(135deg, #3f487f 0%, #2d316b 100%);
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(63, 72, 127, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+}
+
+.about-us-block:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(63, 72, 127, 0.4);
+}
+
+.block-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 30px 25px;
+    text-align: center;
+}
+
+.block-image {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    margin: 0 auto 20px auto;
+}
+
+.block-text h3 {
+    color: #ffffff;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0 0 15px 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.block-text { 
+    text-align: left; /* ensure lists and content align left inside blocks */
+}
+
+.block-text p {
+    color: #e8e9f0;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0;
+    text-align: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Fact list styling */
+.fact-list {
+    margin: 10px 0 0 18px;
+    padding: 0;
+    color: #ffffff;
+}
+
+.fact-list li {
+    margin: 6px 0;
+    line-height: 1.6;
+}
+
+.fact-list li strong {
+    color: #FF8C00; /* orange highlight for bullet titles */
+}
+
+.about-img {
+    width: 400px;
+    height: 600px;
+}
+
+/* About text content styling */
+.why, .what {
+    background: linear-gradient(135deg, #3f487f 0%, #2d316b 100%);
+    border-radius: 15px;
+    padding: 30px;
+    margin: 20px 0;
+    box-shadow: 0 8px 25px rgba(63, 72, 127, 0.3);
+    max-width: 100%;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.why:hover, .what:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(63, 72, 127, 0.4);
+}
+
+.about-p, .what-p {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: #ffffff;
+    text-align: justify;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.about-p2 {
+    background: linear-gradient(135deg, #3f487f 0%, #2d316b 100%);
+    border-radius: 15px;
+    padding: 30px;
+    margin: 20px 0;
+    box-shadow: 0 8px 25px rgba(63, 72, 127, 0.3);
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: #ffffff;
+    text-align: justify;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 500;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.about-p2 strong {
+    display: inline-block;
+    font-size: 1.4rem;
+    margin-bottom: 12px;
+    color: #FF8C00; /* Orange complementary to blue */
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.about-p2:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(63, 72, 127, 0.4);
+}
+
+/* BASURA expanded acronym styling */
+.acronym-title {
+    display: inline-block;
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+}
+
+/* Description text styling to match Mission description */
+.description-text {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: #ffffff;
+    text-align: justify;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 500;
+}
+
+.cap-initial {
+    color: #FFD54F; /* warm accent for initials */
+    font-weight: 800;
+}
+
+/* Make the inline title stronger */
+.about-p strong, .what-p strong {
+    display: inline-block;
+    font-size: 1.4rem;
+    margin-bottom: 12px;
+    color: #FF8C00; /* Orange complementary to blue */
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Add styles for the Contact Us section */
+.contact-us-section {
+  text-align: center;
+  padding: 50px 0; /* Remove the horizontal padding */
+  background-color: #aeb8d9; /* Example lighter blue/purple color, adjust as needed */
+  width: auto; /* Add this property to make it full-width */
+  margin: 0 auto; /* Add this property to center it horizontally */
+  box-sizing: border-box; /* Add this property to include padding in the width calculation */
+}
+
+.contact-divider {
+    width: 100%; /* Example width, adjust as needed */
+    margin: 20px auto;
+    border: 0;
+    height: 1px;
+    background: #777; /* Example line color, adjust as needed */
+}
+
+.contact-us-section p {
+    margin-bottom: 20px;
+    color: #333; /* Example text color, adjust as needed */
+}
+
+.social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* Space between icons */
+}
+
+.social-icon img {
+    width: 80px; /* Example icon size, adjust as needed */
+    height: 80px; /* Example icon size, adjust as needed */
+    /* Add other styles like border-radius if needed */
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    body, html {
+        height: auto;
+        overflow-x: hidden;
+    }
+    
+    .header-image-container {
+        height: 50vh;
+        margin-top: 70px;
+    }
+    
+    .slideshow {
+        animation-duration: 12s;
+    }
+    
+    .about-us-section {
+        padding: 30px 15px;
+    }
+    
+    .about-text {
+        max-width: 100%;
+        margin-bottom: 30px;
+    }
+    
+    .about-us-blocks-container {
+        gap: 20px;
+        padding: 0 10px;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .about-us-block {
+        max-width: 100%;
+        min-height: 350px;
+        width: 100%;
+    }
+    
+    .block-content {
+        padding: 25px 20px;
+    }
+    
+    .block-image {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 15px;
+    }
+    
+    .block-text h3 {
+        font-size: 1.3rem;
+        margin-bottom: 12px;
+    }
+    
+    .block-text p {
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+    
+    /* About text mobile styles */
+    .why, .what, .about-p2 {
+        padding: 20px;
+        margin: 15px 0;
+        border-radius: 12px;
+    }
+    
+    .about-p, .what-p, .about-p2 {
+        font-size: 1rem;
+        line-height: 1.6;
+        text-align: left;
+    }
+    
+    .about-p strong, .what-p strong, .about-p2 strong {
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+    }
+    
+    .description-text {
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+    
+    .step-by-step {
+        gap: 30px;
+        padding: 30px 15px;
+        margin-top: 60px;
+    }
+    
+    .how-text {
+        max-width: 100%;
+    }
+    
+    .step {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .step.reverse {
+        flex-direction: column;
+    }
+    
+    .steps {
+        max-width: 100%;
+        width: 100%;
+        border-radius: 15px;
+    }
+    
+    .step-text {
+        font-size: 14px;
+        line-height: 1.6;
+        max-width: 100%;
+        min-width: auto;
+        text-align: center;
+        padding: 0 10px;
+    }
+    
+    .contact-us-section {
+        padding: 30px 15px;
+    }
+    
+    .social-icons {
+        gap: 15px;
+    }
+    
+    .social-icon img {
+        width: 60px;
+        height: 60px;
+    }
+    
+    /* Step content mobile styles */
+    .step-content {
+        gap: 10px;
+    }
+    
+    .step-number {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-image-container {
+        height: 40vh;
+        margin-top: 65px;
+    }
+    
+    .slideshow {
+        animation-duration: 15s;
+    }
+    
+    .about-us-section {
+        padding: 20px 10px;
+    }
+    
+    .about-us-blocks-container {
+        gap: 15px;
+        padding: 0 5px;
+    }
+    
+    .about-us-block {
+        min-height: 320px;
+    }
+    
+    .block-content {
+        padding: 20px 15px;
+    }
+    
+    .block-image {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 12px;
+    }
+    
+    .block-text h3 {
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+    }
+    
+    .block-text p {
+        font-size: 0.85rem;
+        line-height: 1.4;
+    }
+    
+    /* About text small mobile styles */
+    .why, .what, .about-p2 {
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 10px;
+    }
+    
+    .about-p, .what-p, .about-p2 {
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+    
+    .about-p strong, .what-p strong, .about-p2 strong {
+        font-size: 1.1rem;
+        margin-bottom: 8px;
+    }
+    
+    .description-text {
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+    
+    .step-by-step {
+        gap: 25px;
+        padding: 20px 10px;
+        margin-top: 40px;
+    }
+    
+    .step {
+        padding: 15px;
+        margin: 0 5px;
+    }
+    
+    .step-text {
+        font-size: 13px;
+        line-height: 1.5;
+        padding: 0 5px;
+    }
+    
+    .contact-us-section {
+        padding: 20px 10px;
+    }
+    
+    .social-icons {
+        gap: 10px;
+    }
+    
+    .social-icon img {
+        width: 50px;
+        height: 50px;
+    }
+    
+    /* Step content small mobile styles */
+    .step-number {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+    }
+}
+
+/* Tablet Responsiveness */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .header-image-container {
+        height: 70vh;
+        margin-top: 80px;
+    }
+    
+    .about-us-blocks-container {
+        gap: 25px;
+        max-width: 900px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .about-us-block {
+        max-width: 280px;
+        min-height: 450px;
+        flex: 1 1 280px;
+    }
+    
+    .step {
+        gap: 30px;
+        padding: 30px;
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 20px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .steps {
+        max-width: 250px;
+    }
+    
+    .step-text {
+        font-size: 15px;
+    }
+    
+    .contact-us-section {
+        padding: 40px 20px;
+    }
+}

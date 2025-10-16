@@ -1,0 +1,669 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f8f9fa;
+  height: auto;
+  padding-top: 30px; /* spacing under header */
+  color: #222;
+}
+
+/* Fixed desktop layout (no responsive sidebar margin) */
+body, html {
+  margin-left: 125px ;/* matches your sidebar width */
+}
+
+/* Pending Registrations Modal Styles */
+#pendingRegistrationsModal {
+  display: none;
+  position: fixed;
+  z-index: 3000;
+  inset: 0;
+  background-color: rgba(0,0,0,0.6);
+  backdrop-filter: blur(3px);
+}
+
+#pendingRegistrationsModal.show {
+  display: block !important;
+}
+
+#pendingRegistrationsModal .modal-content {
+  width: 90%;
+  max-width: 800px;
+  margin: 0;
+  padding: 0;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3001;
+}
+
+#pendingRegistrationsModal .modal-header {
+  background: #2d316b;
+  color: white;
+  padding: 20px 25px;
+  border-radius: 12px 12px 0 0;
+  margin: 0;
+  position: relative;
+}
+
+#pendingRegistrationsModal .modal-header h2 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+#pendingRegistrationsModal .close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  color: white;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+#pendingRegistrationsModal .close:hover {
+  color: #ffcccb;
+}
+
+#pendingRegistrationsModal .modal-body {
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: 20px;
+  background: #f8f9fa;
+}
+
+#pendingRegistrationsModal .modal-footer {
+  background: white;
+  padding: 20px 25px;
+  border-top: 1px solid #e0e0e0;
+  border-radius: 0 0 12px 12px;
+  text-align: center;
+}
+
+#pendingRegistrationsModal .modal-footer .btn-cancel {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.3s;
+  box-shadow: 0 2px 4px rgba(108, 117, 125, 0.3);
+}
+
+#pendingRegistrationsModal .modal-footer .btn-cancel:hover {
+  background: #5a6268;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(108, 117, 125, 0.4);
+}
+
+.pending-registration-item {
+  padding: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  background: #f9f9f9;
+}
+
+.registration-info h4 {
+  margin: 0 0 8px 0;
+  color: #2d316b;
+  font-size: 1.2rem;
+}
+
+.registration-info p {
+  margin: 2px 0;
+  color: #666;
+  font-size: 0.9rem;
+  line-height: 1.3;
+}
+
+.registration-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  justify-content: flex-end;
+}
+
+.btn-approve {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.3s;
+}
+
+.btn-approve:hover {
+  background: #218838;
+}
+
+.btn-reject {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.3s;
+}
+
+.btn-reject:hover {
+  background: #c82333;
+}
+
+/* Empty state styling */
+#pendingRegistrationsList p {
+  text-align: center;
+  color: #666;
+  font-size: 1rem;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+/* Mobile responsiveness removed - Admin only uses desktop */
+
+.section-header {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 24px 0 8px 16px;
+  padding: 8px 16px;
+  border-radius: 8px 8px 0 0;
+}
+
+.table-container {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  margin: 0 auto 32px auto;
+  max-width: 1100px;
+  overflow: hidden;
+}
+
+.custom-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.custom-table th {
+  background: #2d316b;
+  color: #fff;
+  font-weight: 600;
+  padding: 16px 12px;
+  text-align: left;
+  font-size: 1.1rem;
+}
+
+.custom-table tr {
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.custom-table td {
+  padding: 14px 12px;
+  font-size: 1rem;
+  color: #222;
+  vertical-align: middle;
+}
+
+.custom-table tbody tr:nth-child(even) {
+  background: #e3e7fa;
+}
+
+.custom-table tbody tr:nth-child(odd) {
+  background: #c7d2f7;
+}
+
+.profile-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #2d316b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 1.6rem;
+  margin-right: 8px;
+}
+
+.action-btn {
+  background: #2d316b;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-right: 8px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.action-btn:last-child {
+  margin-right: 0;
+}
+
+.action-btn:hover {
+  background: #1a1d4d;
+  transform: translateY(-1px);
+}
+
+.action-btn:active {
+  transform: translateY(0);
+}
+
+.pill-btn {
+  background: #bfc8e6;
+  color: #2d316b;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-right: 20px;
+  transition: all 0.2s ease;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Pending registrations button with counter */
+.pending-registrations-btn {
+  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+  color: white;
+  position: relative;
+}
+
+.pending-registrations-btn:hover {
+  background: linear-gradient(135deg, #f57c00 0%, #ef6c00 100%);
+  transform: translateY(-1px);
+}
+
+.pending-icon {
+  font-size: 16px;
+}
+
+.pending-text {
+  font-size: 14px;
+}
+
+.pending-badge {
+  background: #ff4444;
+  color: white;
+  border-radius: 50%;
+  min-width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  border: 2px solid white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  animation: pulse 2s infinite;
+}
+
+.pending-badge.hidden {
+  display: none;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.pill-btn:hover {
+  background: #a3b0d6;
+  transform: translateY(-1px);
+}
+
+.pill-btn:active {
+  transform: translateY(0);
+}
+
+/* ========================================
+   GENERAL MODAL STYLES (Base/Default)
+   ======================================== */
+/* Note: General modal styles removed to prevent conflicts with notification.css */
+
+/* ========================================
+   PENDING REGISTRATIONS MODAL
+   ======================================== */
+
+/* ========================================
+   EDIT USER MODAL
+   ======================================== */
+#editUserModal {
+    display: none;
+    position: fixed;
+    z-index: 1600;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.6);
+}
+
+#editUserModal.show {
+    display: block !important;
+}
+
+/* ========================================
+   ADD ADMINISTRATOR MODAL
+   ======================================== */
+#addAdministratorModal {
+    display: none;
+    position: fixed;
+    z-index: 1600;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.6);
+}
+
+#addAdministratorModal.show {
+    display: block !important;
+}
+
+/* EDIT USER MODAL CONTENT */
+#editUserModal .modal-content {
+    background-color: #fff;
+    margin: 7% auto;
+    padding: 25px 30px 20px 30px;
+    border: 1px solid #888;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+    position: relative;
+    z-index: 1601;
+}
+
+/* ADD ADMINISTRATOR MODAL CONTENT */
+#addAdministratorModal .modal-content {
+    background-color: #fff;
+    margin: 7% auto;
+    padding: 25px 30px 20px 30px;
+    border: 1px solid #888;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+    position: relative;
+    z-index: 1601;
+}
+
+/* EDIT USER MODAL HEADER */
+#editUserModal .modal-header {
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e0e0e0;
+    text-align: center;
+    font-size: 1.6em;
+    color: #2c3e50;
+    margin-bottom: 18px;
+    position: relative;
+}
+
+#editUserModal .close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+#editUserModal .close:hover {
+    color: #000;
+}
+
+/* ADD ADMINISTRATOR MODAL HEADER */
+#addAdministratorModal .modal-header {
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e0e0e0;
+    text-align: center;
+    font-size: 1.6em;
+    color: #2c3e50;
+    margin-bottom: 18px;
+}
+
+/* EDIT USER FORM */
+#editUserForm {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#editUserForm label {
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 3px;
+}
+
+/* ADD ADMINISTRATOR FORM */
+#addAdministratorForm {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#addAdministratorForm label {
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 3px;
+}
+
+/* EDIT USER FORM INPUTS */
+#editUserForm input[type="text"],
+#editUserForm input[type="email"],
+#editUserForm input[type="password"] {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid #bfc9d1;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-bottom: 8px;
+    background: #f8fafc;
+    transition: border-color 0.2s ease;
+    box-sizing: border-box;
+}
+
+#editUserForm input[type="text"]:focus,
+#editUserForm input[type="email"]:focus,
+#editUserForm input[type="password"]:focus {
+    border-color: #4a90e2;
+    outline: none;
+    background: #fff;
+}
+
+/* ADD ADMINISTRATOR FORM INPUTS */
+#addAdministratorForm input[type="text"],
+#addAdministratorForm input[type="email"],
+#addAdministratorForm input[type="password"],
+#addAdministratorForm input[type="file"] {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid #bfc9d1;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-bottom: 8px;
+    background: #f8fafc;
+    transition: border-color 0.2s ease;
+    box-sizing: border-box;
+}
+
+#addAdministratorForm input[type="text"]:focus,
+#addAdministratorForm input[type="email"]:focus,
+#addAdministratorForm input[type="password"]:focus {
+    border-color: #4a90e2;
+    outline: none;
+    background: #fff;
+}
+
+#addAdministratorForm small {
+    color: #888;
+    font-size: 0.85em;
+    margin-bottom: 8px;
+}
+
+/* ADD ADMINISTRATOR MODAL BUTTONS */
+#addAdministratorModal .modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+#addAdministratorModal .btn-confirm {
+    background: #331bcf;
+    color: #fff;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#addAdministratorModal .btn-confirm:hover {
+    background: #221172;
+    transform: translateY(-1px);
+}
+
+#addAdministratorModal .btn-cancel {
+    background: #f44336;
+    color: #fff;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#addAdministratorModal .btn-cancel:hover {
+    background: #b71c1c;
+    transform: translateY(-1px);
+}
+
+/* EDIT USER MODAL BUTTONS */
+#editUserModal .modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+#editUserModal .btn-confirm {
+    background: #2d316b;
+    color: #fff;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#editUserModal .btn-confirm:hover {
+    background: #1a1d4d;
+    transform: translateY(-1px);
+}
+
+#editUserModal .btn-cancel {
+    background: #f44336;
+    color: #fff;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#editUserModal .btn-cancel:hover {
+    background: #d32f2f;
+    transform: translateY(-1px);
+}
+
+/* Password toggle styles */
+.password-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 8px;
+}
+
+.password-container input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding-right: 40px;
+  margin-bottom: 0;
+}
+
+.password-toggle {
+  margin-left: auto;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #666;
+  padding: 5px;
+  transition: color 0.2s ease;
+}
+
+.password-toggle:hover {
+  color: #333;
+}
+
+.password-container input[type="password"],
+.password-container input[type="text"] {
+  padding-right: 40px;
+}
+
+
+/* ========================================
+   MODAL DISPLAY RULES
+   ======================================== */
+#editUserModal.show .modal-content,
+#addAdministratorModal.show .modal-content {
+  display: block !important;
+  position: relative;
+  z-index: 1601;
+}
+
+/* Mobile responsiveness removed - Admin only uses desktop */ 
