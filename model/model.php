@@ -458,7 +458,7 @@ class Model
 
     public function verifyRecaptcha($recaptchaResponse)
     {
-        $secretKey = '6LfDIO0rAAAAAGH4921gG11yfY6eoFe1z_ETHTQO';
+        $secretKey = RECAPTCHA_SECRET_KEY;
         $recaptchaUrl = 'https://www.google.com/recaptcha/api/siteverify';
         
         $data = array(
