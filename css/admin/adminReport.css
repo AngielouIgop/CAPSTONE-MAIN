@@ -208,19 +208,6 @@ body, html {
   position: relative;
 }
 
-.contribution-graph h3::after,
-.leading-zones h3::after,
-.top-contributors h3::after {
-  content: '';
-  position: absolute;
-  bottom: -8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 50px;
-  height: 3px;
-  background: linear-gradient(90deg, #2D336B, #1a1f4a);
-  border-radius: 2px;
-}
 
 .total-waste {
   font-size: 18px;

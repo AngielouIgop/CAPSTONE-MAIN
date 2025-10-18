@@ -17,11 +17,10 @@
 
 .header-nav{
     margin-left: auto;
-    margin-right: 0;
+    margin-right: 50px;
     transition: all 0.3s ease-in-out;
 }
 
-/* Shrink header navigation when sidebar is hidden */
 body.sidebar-hidden .header-nav {
     margin-left: 0;
     width: 100%;
@@ -49,7 +48,7 @@ body.sidebar-hidden .header-nav ul {
     gap: 0;
 }
 
-  .header-title {
+.header-title {
    width: 400px;
    height: 200px;
    background-image: url('../images/logos/logo-name.png');
@@ -127,49 +126,10 @@ body.sidebar-hidden .header-nav ul {
   transform: scale(1.05);
 }
 
-/* Hide Menu button on desktop */
-.menu-btn {
-  display: none;
-  background: #007bff;
-  color: white;
-  border: none;
-  padding: 8px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-right: 50px;
-}
-
-/* Desktop navigation */
 @media (min-width: 901px) {
   .menu-toggle {
     display: none !important;
   }
-}
-
-.header-nav {
-  margin-left: auto;
-  margin-right: 20px;
-}
-
-.header-nav ul {
-  list-style: none;
-  display: flex;
-  gap: 15px;
-  margin: 0;
-  padding: 0;
-}
-
-.header-nav ul li a {
-  text-decoration: none;
-  padding: 5px 15px;
-  color: black;
-  border-radius: 15px;
-  background-color: #F2EFE7;
-  transition: 0.3s ease-in-out;
-}
-
-.header-nav ul li a:hover {
-  background-color: #3c0af1;
 }
 
 .footer-main {
@@ -202,7 +162,6 @@ body.sidebar-hidden .header-nav ul {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* --- Mobile Responsive --- */
 @media (max-width: 768px) {
   .header-main {
     padding: 0 10px;
@@ -301,117 +260,11 @@ body.sidebar-hidden .header-nav ul {
     backdrop-filter: blur(10px);
   }
 
-  .header-nav ul li a.start-contributing-btn {
-    width: 60%;
-    background: #ffca28; /* Yellow for Start Contributing */
-  }
-  
-  .header-nav ul li a.notifications-btn {
-    width: 60%;
-    background: #0011ab; /* Blue color for notifications */
-  }
-
-  /* Shrink action buttons when sidebar is hidden */
-  body.sidebar-hidden .header-nav ul li a.start-contributing-btn {
-    width: 40%;
-    padding: 4px 8px;
-    font-size: 12px;
-    background: #ffca28; /* Maintain yellow when shrunk */
-  }
-  
-  body.sidebar-hidden .header-nav ul li a.notifications-btn {
-    width: 40%;
-    padding: 4px 8px;
-    font-size: 12px;
-    background: #0011ab; /* Maintain blue color when shrunk */
-  }
-
   .header-nav ul li a:hover {
     background: rgba(255, 255, 255, 0.15);
     border-color: rgba(255, 255, 255, 0.4);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
-  }
-
-  /* Special styling for action buttons */
-  .header-nav ul li a.start-contributing-btn {
-    background: #ff6b35; /* Orange color for Start Contributing */
-    border: none;
-    color: white;
-    font-weight: 600;
-  }
-  
-  .header-nav ul li a.notifications-btn {
-    background: #0011ab; /* Keep blue for notifications */
-    border: none;
-    color: white;
-    font-weight: 600;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    padding: 8px 14px;
-    margin: 6px auto;
-    border-radius: 25px;
-    box-shadow: 0 3px 12px rgba(76, 175, 80, 0.3);
-    font-size: 13px;
-  }
-
-  .header-nav ul li a.start-contributing-btn:hover {
-    background: #ffb300; /* Darker yellow on hover */
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(255, 202, 40, 0.4);
-  }
-  
-  .header-nav ul li a.notifications-btn:hover {
-    background: #190053; /* Keep blue hover for notifications */
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(15, 1, 55, 0.4);
-  }
-
-  /* Notification counter badge */
-  .notification-badge {
-    background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
-    color: white;
-    border-radius: 50%;
-    min-width: 22px;
-    height: 22px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    font-weight: 700;
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    border: 2px solid white;
-    box-shadow: 0 2px 8px rgba(255, 68, 68, 0.4);
-    animation: pulse 2s infinite;
-  }
-
-  .notification-badge.hidden {
-    display: none;
-  }
-
-  .notification-icon {
-    font-size: 18px;
-  }
-
-  .notification-text {
-    font-size: 14px;
-  }
-
-  @keyframes pulse {
-    0% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(1.1);
-    }
-    100% {
-      transform: scale(1);
-    }
   }
 }
 
@@ -446,45 +299,5 @@ body.sidebar-hidden .header-nav ul {
     font-size: 13px;
     margin: 4px auto;
     width: 80%;
-  }
-
-  .header-nav ul li a.start-contributing-btn {
-    padding: 6px 12px;
-    font-size: 12px;
-    border-radius: 20px;
-    width: 50%;
-    background: #ffca28; /* Yellow color for mobile */
-  }
-  
-  .header-nav ul li a.notifications-btn {
-    padding: 6px 12px;
-    font-size: 12px;
-    border-radius: 20px;
-    width: 50%;
-    background: #0011ab; /* Blue color for mobile */
-  }
-
-  .notification-badge {
-    min-width: 20px;
-    height: 20px;
-    font-size: 11px;
-  }
-
-  .notification-icon {
-    font-size: 16px;
-  }
-
-/* ===== Final overrides to ensure Start Contributing is yellow in all modes ===== */
-.header-nav ul li a.start-contributing-btn {
-  background: #ffca28 !important; /* force yellow over generic link styles */
-  color: #000 !important;
-}
-
-.header-nav ul li a.start-contributing-btn:hover {
-  background: #ffb300 !important;
-}
-
-  .notification-text {
-    font-size: 13px;
   }
 }
