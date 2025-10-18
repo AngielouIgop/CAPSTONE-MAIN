@@ -3,35 +3,28 @@ class Model
 {
     public $db = null;
 
-    // ========================================================
-    // ===================== CONSTRUCTOR ======================
-    // ========================================================
     function __construct()
     {
         try {
-            // Load database configuration
             require_once(__DIR__ . '/../config/database.php');
-            
             $this->db = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_NAME);
-            
+
             if ($this->db->connect_error) {
                 throw new Exception('Connection failed: ' . $this->db->connect_error);
             }
-            
-            // Set charset
+
             $this->db->set_charset(DB_CHARSET);
-            
+
         } catch (Exception $e) {
             error_log('Database connection error: ' . $e->getMessage());
             exit('The database connection could not be established.');
         }
     }
 
-    // ========================================================
-    // ===================== GET FUNCTIONS ====================
-    // ========================================================
+    // ===========================================
+    // USER FUNCTIONS
+    // ===========================================
 
-    // ----- USER DATA -----
     public function getUserById($userID)
     {
         $query = "SELECT * FROM user WHERE userID = ?";
@@ -42,35 +35,6 @@ class Model
         return $result->fetch_assoc();
     }
 
-    public function getNotifications()
-    {
-        $stmt = $this->db->prepare("SELECT * FROM sensor_notifications WHERE status = ?");
-        $status = 'unread';
-        $stmt->bind_param('s', $status);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $notifications = $result->fetch_all(MYSQLI_ASSOC);
-        $stmt->close();
-        return $notifications;
-    }
-
-    public function getPendingRegistrationNotifications()
-    {
-        $stmt = $this->db->prepare("SELECT * FROM pending_registrations WHERE status = ? ORDER BY submittedAt DESC");
-        $status = 'pending';
-        $stmt->bind_param('s', $status);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $notifications = $result->fetch_all(MYSQLI_ASSOC);
-        $stmt->close();
-        return $notifications;
-    }
-
-    public function getAllNotifications()
-    {
-        // Get only sensor notifications
-        return $this->getNotifications();
-    }
     public function getUserData($userID)
     {
         $stmt = $this->db->prepare("SELECT fullName, username, password, email, contactNumber, zone, profilePicture FROM user WHERE userID = ?");
@@ -78,55 +42,6 @@ class Model
         $stmt->execute();
         $result = $stmt->get_result();
         return $result->fetch_assoc();
-    }
-
-    public function getAllUser()
-    {
-        $stmt = $this->db->prepare("SELECT * FROM user");
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $users = [];
-        while ($row = $result->fetch_assoc()) {
-            $users[] = $row;
-        }
-        $stmt->close();
-        return $users;
-    }
-
-    public function getAllUsers()
-    {
-        $stmt = $this->db->prepare("SELECT * FROM user WHERE role = 'user'");
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $users = [];
-        while ($row = $result->fetch_assoc()) {
-            $users[] = $row;
-        }
-        $stmt->close();
-        return $users;
-    }
-
-    public function getAllAdmins()
-    {
-        $stmt = $this->db->prepare("SELECT * FROM user WHERE role = 'admin'");
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $admins = [];
-        while ($row = $result->fetch_assoc()) {
-            $admins[] = $row;
-        }
-        $stmt->close();
-        return $admins;
-    }
-
-    public function getPicturePathById($userID)
-    {
-        $stmt = $this->db->prepare("SELECT profilePicture FROM user WHERE userID = ?");
-        $stmt->bind_param("i", $userID);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $row = $result->fetch_assoc();
-        return $row ? $row['profilePicture'] : null;
     }
 
     public function getUserPoints($userID)
@@ -139,197 +54,34 @@ class Model
         return $row ? (int) $row['totalCurrentPoints'] : 0;
     }
 
-  public function getTopContributors()
-{
-    $stmt = $this->db->prepare("
-        SELECT u.zone, u.userID, u.fullName, SUM(w.quantity) AS totalQuantity
-        FROM user u
-        LEFT JOIN wasteentry w ON u.userID = w.userID
-        WHERE u.role = 'user'
-        GROUP BY u.zone, u.userID, u.fullName
-        HAVING totalQuantity IS NOT NULL
-    ");
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    $zoneLeaders = [];
-
-    // loop through results, keep only top contributor per zone
-    while ($row = $result->fetch_assoc()) {
-        $zone = $row['zone'];
-        $quantity = (int) $row['totalQuantity'];
-
-        if (!isset($zoneLeaders[$zone]) || $quantity > $zoneLeaders[$zone]['totalQuantity']) {
-            $zoneLeaders[$zone] = [
-                'userID' => $row['userID'],
-                'fullName' => $row['fullName'],
-                'totalQuantity' => $quantity
-            ];
-        }
-    }
-
-    return $zoneLeaders; // key = zone, value = top user
-}
-
-
-public function getMostContributedWaste()
-{
-    $stmt = $this->db->prepare("
-        SELECT m.materialID, m.materialName, m.materialImg, SUM(e.quantity) as totalQuantity
-        FROM wasteentry e
-        INNER JOIN materialtype m ON e.materialID = m.materialID
-        GROUP BY m.materialID
-        ORDER BY totalQuantity DESC
-        LIMIT 1
-    ");
-    $stmt->execute();
-    return $stmt->get_result()->fetch_assoc();
-}
-
-
-
-    // ----- REWARD DATA -----
-    public function getAllRewards()
+    public function getUserWasteHistory($userID)
     {
-        $stmt = $this->db->prepare("SELECT * FROM reward ORDER BY pointsRequired ASC");
+        $stmt = $this->db->prepare("
+            SELECT
+                w.entryID,
+                w.dateDeposited,
+                w.timeDeposited,
+                w.quantity,
+                w.materialWeight,
+                w.pointsEarned,
+                m.materialName
+            FROM wasteentry w
+            INNER JOIN materialType m ON m.materialID = w.materialID
+            WHERE w.userID = ?
+            ORDER BY w.dateDeposited DESC, w.timeDeposited DESC, w.entryID DESC
+            LIMIT 10
+        ");
+        $stmt->bind_param('i', $userID);
         $stmt->execute();
         $result = $stmt->get_result();
-        $rewards = [];
+        $rows = [];
         while ($row = $result->fetch_assoc()) {
-            $rewards[] = $row;
+            $rows[] = $row;
         }
         $stmt->close();
-        return $rewards;
+        return $rows;
     }
 
-    public function getRewardById($rewardID)
-    {
-        $stmt = $this->db->prepare("SELECT * FROM reward WHERE rewardID = ?");
-        $stmt->bind_param("i", $rewardID);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        return $result->fetch_assoc();
-    }
-
-    // ----- TOTAL WASTE QUANTITY (All Users) -----
-    public function getTotalPlastic()
-    {
-        $stmt = $this->db->prepare("SELECT SUM(quantity) as totalPlastic FROM wasteentry WHERE materialID = 1");
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $row = $result->fetch_assoc();
-        return $row ? $row['totalPlastic'] : 0;
-    }
-
-    public function getTotalBottles()
-    {
-        $stmt = $this->db->prepare("SELECT SUM(quantity) as totalBottles FROM wasteentry WHERE materialID = 2");
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $row = $result->fetch_assoc();
-        return $row ? $row['totalBottles'] : 0;
-    }
-
-    public function getTotalCans()
-    {
-        $stmt = $this->db->prepare("SELECT SUM(quantity) as totalCans FROM wasteentry WHERE materialID = 3");
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $row = $result->fetch_assoc();
-        return $row ? $row['totalCans'] : 0;
-    }
-
-    // ----- WASTE STATS PER MONTH -----
-    public function getWasteContributionsPerMaterialThisMonth()
-    {
-        $stmt = $this->db->prepare("
-            SELECT m.materialName, SUM(w.quantity) AS totalQuantity
-            FROM wasteentry w
-            JOIN materialType m ON w.materialID = m.materialID
-            WHERE MONTH(w.dateDeposited) = MONTH(CURRENT_DATE())
-              AND YEAR(w.dateDeposited) = YEAR(CURRENT_DATE())
-            GROUP BY m.materialName
-        ");
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        $data = [];
-        while ($row = $result->fetch_assoc()) {
-            $data[] = [
-                'materialType' => $row['materialName'],
-                'totalQuantity' => (int) $row['totalQuantity']
-            ];
-        }
-
-        return $data;
-    }
-
-    // ----- CONTRIBUTIONS PER ZONE -----
-    public function getContZone1()
-    {
-        return $this->getZoneContribution('Zone 1');
-    }
-    public function getContZone2()
-    {
-        return $this->getZoneContribution('Zone 2');
-    }
-    public function getContZone3()
-    {
-        return $this->getZoneContribution('Zone 3');
-    }
-    public function getContZone4()
-    {
-        return $this->getZoneContribution('Zone 4');
-    }
-    public function getContZone5()
-    {
-        return $this->getZoneContribution('Zone 5');
-    }
-    public function getContZone6()
-    {
-        return $this->getZoneContribution('Zone 6');
-    }
-    public function getContZone7()
-    {
-        return $this->getZoneContribution('Zone 7');
-    }
-
-    private function getZoneContribution($zone)
-    {
-        $stmt = $this->db->prepare("
-            SELECT SUM(w.quantity) AS totalQuantity
-            FROM wasteentry w
-            JOIN user u ON w.userID = u.userID
-            WHERE u.zone = ?
-        ");
-        $stmt->bind_param("s", $zone);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $row = $result->fetch_assoc();
-        return $row ? (int) $row['totalQuantity'] : 0;
-    }
-
-    // ----- WASTE HISTORY -----
-    public function getWasteHistory()
-    {
-        $stmt = $this->db->prepare("
-            SELECT w.*, u.fullName, m.materialName
-            FROM wasteentry w
-            JOIN user u ON w.userID = u.userID
-            JOIN materialType m ON w.materialID = m.materialID
-            ORDER BY w.dateDeposited DESC
-        ");
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        $history = [];
-        while ($row = $result->fetch_assoc()) {
-            $history[] = $row;
-        }
-        return $history;
-    }
-
-    // ----- USER-SPECIFIC TOTALS -----
     public function getUserTotalPlastic($userID)
     {
         $stmt = $this->db->prepare("SELECT SUM(quantity) as totalPlastic FROM wasteentry WHERE userID = ? AND materialID = 1");
@@ -360,36 +112,73 @@ public function getMostContributedWaste()
         return $row ? (int) $row['totalCans'] : 0;
     }
 
-    public function getUserWasteHistory($userID){
-        $stmt = $this->db->prepare("
-            SELECT
-                w.entryID,
-                w.dateDeposited,
-                w.timeDeposited,
-                w.quantity,
-                w.materialWeight,
-                w.pointsEarned,
-                m.materialName
-            FROM wasteentry w
-            INNER JOIN materialType m ON m.materialID = w.materialID
-            WHERE w.userID = ?
-            ORDER BY w.dateDeposited DESC, w.timeDeposited DESC, w.entryID DESC
-            LIMIT 10
-        ");
-        $stmt->bind_param('i', $userID);
+    public function getAllRewards()
+    {
+        $stmt = $this->db->prepare("SELECT * FROM reward ORDER BY pointsRequired ASC");
         $stmt->execute();
         $result = $stmt->get_result();
-        $rows = [];
+        $rewards = [];
         while ($row = $result->fetch_assoc()) {
-            $rows[] = $row;
+            $rewards[] = $row;
         }
         $stmt->close();
-        return $rows;
+        return $rewards;
     }
-    
-    // ========================================================
-    // ===================== ADD FUNCTIONS ===================
-    // ========================================================
+
+    public function getRewardById($rewardID)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM reward WHERE rewardID = ?");
+        $stmt->bind_param("i", $rewardID);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_assoc();
+    }
+
+    public function getTopContributors()
+    {
+        $stmt = $this->db->prepare("
+        SELECT u.zone, u.userID, u.fullName, SUM(w.quantity) AS totalQuantity
+        FROM user u
+        LEFT JOIN wasteentry w ON u.userID = w.userID
+        WHERE u.role = 'user'
+        GROUP BY u.zone, u.userID, u.fullName
+        HAVING totalQuantity IS NOT NULL
+    ");
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $zoneLeaders = [];
+
+        while ($row = $result->fetch_assoc()) {
+            $zone = $row['zone'];
+            $quantity = (int) $row['totalQuantity'];
+
+            if (!isset($zoneLeaders[$zone]) || $quantity > $zoneLeaders[$zone]['totalQuantity']) {
+                $zoneLeaders[$zone] = [
+                    'userID' => $row['userID'],
+                    'fullName' => $row['fullName'],
+                    'totalQuantity' => $quantity
+                ];
+            }
+        }
+
+        return $zoneLeaders;
+    }
+
+    public function getMostContributedWaste()
+    {
+        $stmt = $this->db->prepare("
+        SELECT m.materialID, m.materialName, m.materialImg, SUM(e.quantity) as totalQuantity
+        FROM wasteentry e
+        INNER JOIN materialtype m ON e.materialID = m.materialID
+        GROUP BY m.materialID
+        ORDER BY totalQuantity DESC
+        LIMIT 1
+    ");
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
+
     public function registerUser($fullname, $email, $zone, $brgyIDNum, $contactNumber, $username, $password)
     {
         if ($this->userExists($username) || $this->pendingUserExists($username)) {
@@ -400,6 +189,37 @@ public function getMostContributedWaste()
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("sssssss", $fullname, $email, $zone, $brgyIDNum, $contactNumber, $username, $hashedPassword);
         return $stmt->execute();
+    }
+
+    public function loginUser($username, $password, $role)
+    {
+        $query = "SELECT * FROM user WHERE username = ? AND role = ?";
+        if ($stmt = $this->db->prepare($query)) {
+            $stmt->bind_param('ss', $username, $role);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            if ($result->num_rows === 1) {
+                $user = $result->fetch_assoc();
+                if (password_verify($password, $user['password'])) {
+                    return $user;
+                }
+            }
+        }
+        return false;
+    }
+
+    public function userExists($username)
+    {
+        $query = "SELECT 1 FROM user WHERE username = ? LIMIT 1";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $stmt->store_result();
+        $exists = $stmt->num_rows > 0;
+        $stmt->free_result();
+        $stmt->close();
+        return $exists;
     }
 
     public function pendingUserExists($username)
@@ -413,56 +233,6 @@ public function getMostContributedWaste()
         return $count > 0;
     }
 
-    public function getPendingRegistrations()
-    {
-        $stmt = $this->db->prepare("SELECT * FROM pending_registrations WHERE status = ? ORDER BY submittedAt DESC");
-        $status = 'pending';
-        $stmt->bind_param('s', $status);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $registrations = $result->fetch_all(MYSQLI_ASSOC);
-        $stmt->close();
-        return $registrations;
-    }
-
-    public function approveRegistration($registrationId)
-    {
-        // Get pending registration data
-        $query = "SELECT * FROM pending_registrations WHERE id = ? AND status = 'pending'";
-        $stmt = $this->db->prepare($query);
-        $stmt->bind_param("i", $registrationId);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $pendingUser = $result->fetch_assoc();
-
-        if (!$pendingUser) {
-            return false;
-        }
-
-        // Insert into users table
-        $insertQuery = "INSERT INTO user (fullname, email, zone, contactNumber, username, password, role, totalCurrentPoints) VALUES (?,?,?,?,?,?,'user', 0.00)";
-        $insertStmt = $this->db->prepare($insertQuery);
-        $insertStmt->bind_param("ssssss", $pendingUser['fullName'], $pendingUser['email'], $pendingUser['zone'], $pendingUser['contactNumber'], $pendingUser['username'], $pendingUser['password']);
-
-        if ($insertStmt->execute()) {
-            // Update pending registration status
-            $updateQuery = "UPDATE pending_registrations SET status = 'approved' WHERE id = ?";
-            $updateStmt = $this->db->prepare($updateQuery);
-            $updateStmt->bind_param("i", $registrationId);
-            return $updateStmt->execute();
-        }
-        return false;
-    }
-
-    public function rejectRegistration($registrationId)
-    {
-        $query = "UPDATE pending_registrations SET status = 'rejected' WHERE id = ?";
-        $stmt = $this->db->prepare($query);
-        $stmt->bind_param("i", $registrationId);
-        return $stmt->execute();
-    }
-
-    // ==================== REGISTRATION STATUS FUNCTIONS ====================
     public function getRegistrationStatus($username)
     {
         $query = "SELECT status FROM pending_registrations WHERE username = ? ORDER BY submittedAt DESC LIMIT 1";
@@ -470,12 +240,12 @@ public function getMostContributedWaste()
         $stmt->bind_param("s", $username);
         $stmt->execute();
         $result = $stmt->get_result();
-        
+
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
             return $row['status'];
         }
-        return null; // No pending registration found
+        return null;
     }
 
     public function isRegistrationPending($username)
@@ -490,56 +260,29 @@ public function getMostContributedWaste()
         return $status === 'rejected';
     }
 
-    public function addAdministrator($fullname, $email, $position, $contactNumber, $username, $password, $role = 'admin')
-    {
-        if (!in_array($role, ['user', 'admin'])) {
-            return false;
-        }
-        if ($this->userExists($username)) {
-            return false;
-        }
-        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-        $query = "INSERT INTO user (fullname, email, position, contactNumber, username, password, role) VALUES (?,?,?,?,?,?,?)";
-        $stmt = $this->db->prepare($query);
-        $stmt->bind_param("sssssss", $fullname, $email, $position, $contactNumber, $username, $hashedPassword, $role);
-        return $stmt->execute();
-    }
-
-    public function addReward($rewardName, $pointsRequired, $slotNum, $availableStock, $imagePath, $availability = 1)
-    {
-        $query = "INSERT INTO reward (rewardName, pointsRequired, slotNum, availableStock, rewardImg, availability) VALUES (?, ?, ?, ?, ?, ?)";
-        $stmt = $this->db->prepare($query);
-        $stmt->bind_param("siiisi", $rewardName, $pointsRequired, $slotNum, $availableStock, $imagePath, $availability);
-        return $stmt->execute();
-    }
-
     public function setCurrentUser($userID, $username)
     {
-        // Get the user's role from the user table
         $roleStmt = $this->db->prepare("SELECT role FROM user WHERE userID = ?");
         $roleStmt->bind_param("i", $userID);
         $roleStmt->execute();
         $roleResult = $roleStmt->get_result();
-        $userRole = 'user'; // Default fallback
+        $userRole = 'user';
         if ($roleResult && ($roleRow = $roleResult->fetch_assoc())) {
             $userRole = $roleRow['role'];
         }
         $roleStmt->close();
-        
-        // Check if user already has an active session
+
         $checkStmt = $this->db->prepare("SELECT id FROM `current_user` WHERE userID = ? AND is_active = TRUE");
         $checkStmt->bind_param("i", $userID);
         $checkStmt->execute();
         $checkResult = $checkStmt->get_result();
-        
+
         if ($checkResult->num_rows > 0) {
-            // Update existing session
             $updateStmt = $this->db->prepare("UPDATE `current_user` SET username = ?, role = ?, last_activity = CURRENT_TIMESTAMP WHERE userID = ? AND is_active = TRUE");
             $updateStmt->bind_param("ssi", $username, $userRole, $userID);
             $updateStmt->execute();
             $updateStmt->close();
         } else {
-            // Insert new session
             $stmt = $this->db->prepare("INSERT INTO `current_user` (userID, username, role) VALUES (?, ?, ?)");
             $stmt->bind_param("iss", $userID, $username, $userRole);
             $stmt->execute();
@@ -548,15 +291,16 @@ public function getMostContributedWaste()
         $checkStmt->close();
     }
 
-    public function clearCurrentUser(){
+    public function clearCurrentUser()
+    {
         $stmt = $this->db->prepare("DELETE FROM `current_user`");
         $result = $stmt->execute();
         $stmt->close();
         return $result;
     }
 
-    public function clearUserSession($userID) {
-        // Clear specific user's session
+    public function clearUserSession($userID)
+    {
         $stmt = $this->db->prepare("UPDATE current_user SET is_active = FALSE WHERE userID = ?");
         $stmt->bind_param("i", $userID);
         $result = $stmt->execute();
@@ -564,61 +308,6 @@ public function getMostContributedWaste()
         return $result;
     }
 
-    public function getAllActiveUsers() {
-        // Get all currently active users
-        $stmt = $this->db->prepare("
-            SELECT cu.userID, cu.username, cu.role, cu.login_time, cu.last_activity, u.fullName, u.email, u.zone
-            FROM current_user cu
-            INNER JOIN user u ON cu.userID = u.userID
-            WHERE cu.is_active = TRUE
-            ORDER BY cu.last_activity DESC
-        ");
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $users = [];
-        while ($row = $result->fetch_assoc()) {
-            $users[] = $row;
-        }
-        $stmt->close();
-        return $users;
-    }
-
-    public function getActiveUsersByRole($role) {
-        // Get active users by specific role
-        $stmt = $this->db->prepare("
-            SELECT cu.userID, cu.username, cu.role, cu.login_time, cu.last_activity, u.fullName, u.email, u.zone
-            FROM current_user cu
-            INNER JOIN user u ON cu.userID = u.userID
-            WHERE cu.is_active = TRUE AND cu.role = ?
-            ORDER BY cu.last_activity DESC
-        ");
-        $stmt->bind_param("s", $role);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $users = [];
-        while ($row = $result->fetch_assoc()) {
-            $users[] = $row;
-        }
-        $stmt->close();
-        return $users;
-    }
-
-    public function cleanupInactiveSessions($hours = 24) {
-        // Mark sessions as inactive if they haven't been active for specified hours
-        $stmt = $this->db->prepare("
-            UPDATE current_user 
-            SET is_active = FALSE 
-            WHERE last_activity < DATE_SUB(NOW(), INTERVAL ? HOUR) AND is_active = TRUE
-        ");
-        $stmt->bind_param("i", $hours);
-        $result = $stmt->execute();
-        $stmt->close();
-        return $result;
-    }
-
-    // ========================================================
-    // ===================== UPDATE FUNCTIONS =================
-    // ========================================================
     public function updateProfileSettings($userID, $fullName, $zone, $position, $email, $contactNumber, $username, $hashedPassword = null, $profilePicturePath = null)
     {
         $fields = "fullName=?, zone=?, position=?, email=?, contactNumber=?, username=?";
@@ -647,6 +336,299 @@ public function getMostContributedWaste()
         return $result ? "Profile Updated" : $stmt->error;
     }
 
+    public function calcPoints($userID, $materialID, $quantity, $materialWeight)
+    {
+        $query = "SELECT pointsPerItem, thresholdMaterialWeight FROM materialType WHERE materialID = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $materialID);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result && $result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $pointsPerItem = $row['pointsPerItem'];
+            $thresholdMaterialWeight = $row['thresholdMaterialWeight'];
+
+            $pointsEarned = $pointsPerItem * $quantity;
+
+            if ($materialWeight > $thresholdMaterialWeight) {
+                $pointsEarned += 0.5;
+            }
+
+            $updateQuery = "UPDATE user 
+                        SET totalCurrentPoints = COALESCE(totalCurrentPoints, 0) + ? 
+                        WHERE userID = ?";
+            $updateStmt = $this->db->prepare($updateQuery);
+            if (!$updateStmt) {
+                error_log("Prepare failed: " . $this->db->error);
+                return 0;
+            }
+
+            if (!$updateStmt->bind_param("di", $pointsEarned, $userID)) {
+                error_log("Binding parameters failed: " . $updateStmt->error);
+                return 0;
+            }
+
+            if ($updateStmt->execute()) {
+                error_log("Points updated successfully. UserID: $userID, Points Earned: $pointsEarned");
+                return $pointsEarned;
+            } else {
+                error_log("Execute failed: " . $updateStmt->error);
+                return 0;
+            }
+        }
+        return 0;
+    }
+
+    public function verifyIdentity($username, $email)
+    {
+        $query = "SELECT userID, username, email FROM user WHERE username = ? AND email = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param('ss', $username, $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows === 1) {
+            return $result->fetch_assoc();
+        }
+        return false;
+    }
+
+    public function verifyUserIdentity($username, $email)
+    {
+        $query = "SELECT userID, username, email FROM user WHERE username = ? AND email = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param('ss', $username, $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows === 1) {
+            return $result->fetch_assoc();
+        }
+        return false;
+    }
+
+    public function generatePasswordResetToken($userID)
+    {
+        $token = bin2hex(random_bytes(32));
+        $expiry = date('Y-m-d H:i:s', strtotime('+24 hours'));
+        $query = "INSERT INTO password_reset_tokens (userID, token, expires_at) VALUES (?, ?, ?) 
+              ON DUPLICATE KEY UPDATE token = ?, expires_at = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param('issss', $userID, $token, $expiry, $token, $expiry);
+
+        if ($stmt->execute()) {
+            return $token;
+        }
+        return false;
+    }
+
+    public function verifyPasswordResetToken($userID, $token)
+    {
+        $query = "SELECT * FROM password_reset_tokens WHERE userID = ? AND token = ? AND expires_at > NOW()";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param('is', $userID, $token);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        return $result->num_rows === 1;
+    }
+
+    public function updateUserPassword($userID, $newPassword)
+    {
+        $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+        $query = "UPDATE user SET password = ? WHERE userID = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param('si', $hashedPassword, $userID);
+
+        if ($stmt->execute()) {
+            $this->deletePasswordResetToken($userID);
+            return true;
+        }
+        return false;
+    }
+
+    public function deletePasswordResetToken($userID)
+    {
+        $query = "DELETE FROM password_reset_tokens WHERE userID = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param('i', $userID);
+        return $stmt->execute();
+    }
+
+    public function verifyRecaptcha($recaptchaResponse)
+    {
+        $secretKey = '6LfDIO0rAAAAAGH4921gG11yfY6eoFe1z_ETHTQO';
+        $recaptchaUrl = 'https://www.google.com/recaptcha/api/siteverify';
+        
+        $data = array(
+            'secret' => $secretKey,
+            'response' => $recaptchaResponse,
+            'remoteip' => $_SERVER['REMOTE_ADDR']
+        );
+        
+        $options = array(
+            'http' => array(
+                'header' => "Content-type: application/x-www-form-urlencoded\r\n",
+                'method' => 'POST',
+                'content' => http_build_query($data)
+            )
+        );
+        
+        $context = stream_context_create($options);
+        $result = file_get_contents($recaptchaUrl, false, $context);
+        $response = json_decode($result, true);
+        
+        return $response['success'] ?? false;
+    }
+
+    // ===========================================
+    // ADMIN FUNCTIONS
+    // ===========================================
+
+    public function getAllUsers()
+    {
+        $stmt = $this->db->prepare("SELECT * FROM user WHERE role = 'user'");
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $users = [];
+        while ($row = $result->fetch_assoc()) {
+            $users[] = $row;
+        }
+        $stmt->close();
+        return $users;
+    }
+
+    public function getAllAdmins()
+    {
+        $stmt = $this->db->prepare("SELECT * FROM user WHERE role = 'admin'");
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $admins = [];
+        while ($row = $result->fetch_assoc()) {
+            $admins[] = $row;
+        }
+        $stmt->close();
+        return $admins;
+    }
+
+    public function getAllUser()
+    {
+        $stmt = $this->db->prepare("SELECT * FROM user");
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $users = [];
+        while ($row = $result->fetch_assoc()) {
+            $users[] = $row;
+        }
+        $stmt->close();
+        return $users;
+    }
+
+    public function getTopUsers($limit = 7)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM user WHERE role = 'user' LIMIT ?");
+        $stmt->bind_param("i", $limit);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $users = [];
+        while ($row = $result->fetch_assoc()) {
+            $users[] = $row;
+        }
+        $stmt->close();
+        return $users;
+    }
+
+    public function getNotifications()
+    {
+        $stmt = $this->db->prepare("SELECT * FROM sensor_notifications WHERE status = ?");
+        $status = 'unread';
+        $stmt->bind_param('s', $status);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $notifications = $result->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+        return $notifications;
+    }
+
+    public function getPendingRegistrationNotifications()
+    {
+        $stmt = $this->db->prepare("SELECT * FROM pending_registrations WHERE status = ? ORDER BY submittedAt DESC");
+        $status = 'pending';
+        $stmt->bind_param('s', $status);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $notifications = $result->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+        return $notifications;
+    }
+
+    public function getAllNotifications()
+    {
+        return $this->getNotifications();
+    }
+
+    public function getPendingRegistrations()
+    {
+        $stmt = $this->db->prepare("SELECT * FROM pending_registrations WHERE status = ? ORDER BY submittedAt DESC");
+        $status = 'pending';
+        $stmt->bind_param('s', $status);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $registrations = $result->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+        return $registrations;
+    }
+
+    public function approveRegistration($registrationId)
+    {
+        $query = "SELECT * FROM pending_registrations WHERE id = ? AND status = 'pending'";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $registrationId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $pendingUser = $result->fetch_assoc();
+
+        if (!$pendingUser) {
+            return false;
+        }
+
+        $insertQuery = "INSERT INTO user (fullname, email, zone, contactNumber, username, password, role, totalCurrentPoints) VALUES (?,?,?,?,?,?,'user', 0.00)";
+        $insertStmt = $this->db->prepare($insertQuery);
+        $insertStmt->bind_param("ssssss", $pendingUser['fullName'], $pendingUser['email'], $pendingUser['zone'], $pendingUser['contactNumber'], $pendingUser['username'], $pendingUser['password']);
+
+        if ($insertStmt->execute()) {
+            $updateQuery = "UPDATE pending_registrations SET status = 'approved' WHERE id = ?";
+            $updateStmt = $this->db->prepare($updateQuery);
+            $updateStmt->bind_param("i", $registrationId);
+            return $updateStmt->execute();
+        }
+        return false;
+    }
+
+    public function rejectRegistration($registrationId)
+    {
+        $query = "UPDATE pending_registrations SET status = 'rejected' WHERE id = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $registrationId);
+        return $stmt->execute();
+    }
+
+    public function addAdministrator($fullname, $email, $position, $contactNumber, $username, $password, $role = 'admin')
+    {
+        if (!in_array($role, ['user', 'admin'])) {
+            return false;
+        }
+        if ($this->userExists($username)) {
+            return false;
+        }
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        $query = "INSERT INTO user (fullname, email, position, contactNumber, username, password, role) VALUES (?,?,?,?,?,?,?)";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("sssssss", $fullname, $email, $position, $contactNumber, $username, $hashedPassword, $role);
+        return $stmt->execute();
+    }
+
     public function updateUserProfile($userID, $fullName, $zone, $email, $contactNumber, $username, $hashedPassword)
     {
         $sql = "UPDATE user SET fullName=?, zone=?, email=?, contactNumber=?, username=?";
@@ -666,103 +648,6 @@ public function getMostContributedWaste()
         $stmt = $this->db->prepare($sql);
         $stmt->bind_param($types, ...$params);
         return $stmt->execute();
-    }
-
-    public function updateReward($rewardName, $pointsRequired, $slotNum, $availableStock, $rewardID, $imagePath, $availability)
-    {
-        // Always update without changing the image - keep existing image
-        $query = "UPDATE reward 
-                  SET rewardName = ?, pointsRequired = ?, slotNum = ?, availableStock = ?, availability = ? 
-                  WHERE rewardID = ?";
-        $stmt = $this->db->prepare($query);
-        $stmt->bind_param("siiiii", $rewardName, $pointsRequired, $slotNum, $availableStock, $availability, $rewardID);
-        return $stmt->execute();
-    }
-
-    // 
-
-    public function calcPoints($userID, $materialID, $quantity, $materialWeight)
-    {
-        // Get material data (points per item + threshold weight)
-        $query = "SELECT pointsPerItem, thresholdMaterialWeight FROM materialType WHERE materialID = ?";
-        $stmt = $this->db->prepare($query);
-        $stmt->bind_param("i", $materialID);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        if ($result && $result->num_rows > 0) {
-            $row = $result->fetch_assoc();
-            $pointsPerItem = $row['pointsPerItem'];
-            $thresholdMaterialWeight = $row['thresholdMaterialWeight'];
-
-            // Base points
-            $pointsEarned = $pointsPerItem * $quantity;
-
-            // ✅ Extra +0.5 points if inserted weight is greater than threshold
-            if ($materialWeight > $thresholdMaterialWeight) {
-                $pointsEarned += 0.5;
-            }
-
-            // Update user points
-            $updateQuery = "UPDATE user 
-                        SET totalCurrentPoints = COALESCE(totalCurrentPoints, 0) + ? 
-                        WHERE userID = ?";
-            $updateStmt = $this->db->prepare($updateQuery);
-            if (!$updateStmt) {
-                error_log("Prepare failed: " . $this->db->error);
-                return 0;
-            }
-
-            if (!$updateStmt->bind_param("di", $pointsEarned, $userID)) {
-                // "d" for float/double since points can now have decimals
-                error_log("Binding parameters failed: " . $updateStmt->error);
-                return 0;
-            }
-
-            if ($updateStmt->execute()) {
-                error_log("Points updated successfully. UserID: $userID, Points Earned: $pointsEarned");
-                return $pointsEarned;
-            } else {
-                error_log("Execute failed: " . $updateStmt->error);
-                return 0;
-            }
-        }
-        return 0;
-    }
-public function updateNotifStatus($id, $status = 'read') {
-    $stmt = $this->db->prepare("UPDATE sensor_notifications SET status = ? WHERE id = ?");
-    if (!$stmt) {
-        return false;
-    }
-    $stmt->bind_param("si", $status, $id);
-    return $stmt->execute();
-}
-
-
-
-    // ========================================================
-    // ===================== DELETE FUNCTIONS =================
-    // ========================================================
-    public function deleteReward($rewardID)
-    {
-        $stmt = $this->db->prepare("DELETE FROM reward WHERE rewardID = ?");
-        if (!$stmt) {
-            return "Error preparing statement: " . $this->db->error;
-        }
-        $stmt->bind_param("i", $rewardID);
-        if ($stmt->execute()) {
-            $affected = $stmt->affected_rows;
-            $stmt->close();
-            if ($affected > 0) {
-                return "Reward deleted successfully.";
-            } else {
-                return "No reward found with that ID.";
-            }
-        } else {
-            $error = $stmt->error;
-            $stmt->close();
-            return "Error deleting reward: $error";
-        }
     }
 
     public function deleteUser($userID)
@@ -787,54 +672,44 @@ public function updateNotifStatus($id, $status = 'read') {
         }
     }
 
-    // ========================================================
-    // ===================== UTILITY FUNCTIONS ================
-    // ========================================================
-    public function loginUser($username, $password, $role)
+    public function addReward($rewardName, $pointsRequired, $slotNum, $availableStock, $imagePath, $availability = 1)
     {
-        $query = "SELECT * FROM user WHERE username = ? AND role = ?";
-        if ($stmt = $this->db->prepare($query)) {
-            $stmt->bind_param('ss', $username, $role);
-            $stmt->execute();
-            $result = $stmt->get_result();
-
-            if ($result->num_rows === 1) {
-                $user = $result->fetch_assoc();
-                if (password_verify($password, $user['password'])) {
-                    return $user;
-                }
-            }
-        }
-        return false;
-    }
-
-    public function userExists($username)
-    {
-        $query = "SELECT 1 FROM user WHERE username = ? LIMIT 1";
+        $query = "INSERT INTO reward (rewardName, pointsRequired, slotNum, availableStock, rewardImg, availability) VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("s", $username);
-        $stmt->execute();
-        // Use store_result to avoid dependency on mysqlnd for get_result()
-        $stmt->store_result();
-        $exists = $stmt->num_rows > 0;
-        $stmt->free_result();
-        $stmt->close();
-        return $exists;
+        $stmt->bind_param("siiisi", $rewardName, $pointsRequired, $slotNum, $availableStock, $imagePath, $availability);
+        return $stmt->execute();
     }
 
-    // ----- ADDITIONAL ADMIN METHODS -----
-    public function getTopUsers($limit = 7)
+    public function updateReward($rewardName, $pointsRequired, $slotNum, $availableStock, $rewardID, $imagePath, $availability)
     {
-        $stmt = $this->db->prepare("SELECT * FROM user WHERE role = 'user' LIMIT ?");
-        $stmt->bind_param("i", $limit);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $users = [];
-        while ($row = $result->fetch_assoc()) {
-            $users[] = $row;
+        $query = "UPDATE reward 
+                  SET rewardName = ?, pointsRequired = ?, slotNum = ?, availableStock = ?, availability = ? 
+                  WHERE rewardID = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("siiiii", $rewardName, $pointsRequired, $slotNum, $availableStock, $availability, $rewardID);
+        return $stmt->execute();
+    }
+
+    public function deleteReward($rewardID)
+    {
+        $stmt = $this->db->prepare("DELETE FROM reward WHERE rewardID = ?");
+        if (!$stmt) {
+            return "Error preparing statement: " . $this->db->error;
         }
-        $stmt->close();
-        return $users;
+        $stmt->bind_param("i", $rewardID);
+        if ($stmt->execute()) {
+            $affected = $stmt->affected_rows;
+            $stmt->close();
+            if ($affected > 0) {
+                return "Reward deleted successfully.";
+            } else {
+                return "No reward found with that ID.";
+            }
+        } else {
+            $error = $stmt->error;
+            $stmt->close();
+            return "Error deleting reward: $error";
+        }
     }
 
     public function getRewardImagePathById($rewardID)
@@ -851,19 +726,16 @@ public function updateNotifStatus($id, $status = 'read') {
     {
         $result = ['success' => false, 'error' => '', 'path' => ''];
 
-        // Check if file was uploaded
         if (!isset($file) || $file['error'] !== UPLOAD_ERR_OK) {
             $result['error'] = "No file uploaded or upload error occurred.";
             return $result;
         }
 
-        // Check file size (max 5MB)
         if ($file['size'] > 5 * 1024 * 1024) {
             $result['error'] = "File size too large. Maximum size is 5MB.";
             return $result;
         }
 
-        // Check file type
         $imageFileType = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
         $allowedTypes = ['jpg', 'jpeg', 'png', 'gif'];
         if (!in_array($imageFileType, $allowedTypes)) {
@@ -871,14 +743,12 @@ public function updateNotifStatus($id, $status = 'read') {
             return $result;
         }
 
-        // Verify it's actually an image
         $check = getimagesize($file['tmp_name']);
         if ($check === false) {
             $result['error'] = "File is not a valid image.";
             return $result;
         }
 
-        // Create target directory if it doesn't exist
         if (!is_dir($targetDir)) {
             if (!mkdir($targetDir, 0755, true)) {
                 $result['error'] = "Failed to create target directory.";
@@ -886,11 +756,9 @@ public function updateNotifStatus($id, $status = 'read') {
             }
         }
 
-        // Generate unique filename
         $fileName = uniqid() . '_' . basename($file['name']);
         $targetPath = $targetDir . $fileName;
 
-        // Move uploaded file
         if (move_uploaded_file($file['tmp_name'], $targetPath)) {
             $result['success'] = true;
             $result['path'] = $targetPath;
@@ -901,7 +769,125 @@ public function updateNotifStatus($id, $status = 'read') {
         return $result;
     }
 
-    // removed helper methods added for server configuration checks
+    public function getTotalPlastic()
+    {
+        $stmt = $this->db->prepare("SELECT SUM(quantity) as totalPlastic FROM wasteentry WHERE materialID = 1");
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        return $row ? $row['totalPlastic'] : 0;
+    }
+
+    public function getTotalBottles()
+    {
+        $stmt = $this->db->prepare("SELECT SUM(quantity) as totalBottles FROM wasteentry WHERE materialID = 2");
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        return $row ? $row['totalBottles'] : 0;
+    }
+
+    public function getTotalCans()
+    {
+        $stmt = $this->db->prepare("SELECT SUM(quantity) as totalCans FROM wasteentry WHERE materialID = 3");
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        return $row ? $row['totalCans'] : 0;
+    }
+
+    public function getWasteContributionsPerMaterialThisMonth()
+    {
+        $stmt = $this->db->prepare("
+            SELECT m.materialName, SUM(w.quantity) AS totalQuantity
+            FROM wasteentry w
+            JOIN materialType m ON w.materialID = m.materialID
+            WHERE MONTH(w.dateDeposited) = MONTH(CURRENT_DATE())
+              AND YEAR(w.dateDeposited) = YEAR(CURRENT_DATE())
+            GROUP BY m.materialName
+        ");
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $data = [];
+        while ($row = $result->fetch_assoc()) {
+            $data[] = [
+                'materialType' => $row['materialName'],
+                'totalQuantity' => (int) $row['totalQuantity']
+            ];
+        }
+
+        return $data;
+    }
+
+    public function getWasteHistory()
+    {
+        $stmt = $this->db->prepare("
+            SELECT w.*, u.fullName, m.materialName
+            FROM wasteentry w
+            JOIN user u ON w.userID = u.userID
+            JOIN materialType m ON w.materialID = m.materialID
+            ORDER BY w.dateDeposited DESC
+        ");
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $history = [];
+        while ($row = $result->fetch_assoc()) {
+            $history[] = $row;
+        }
+        return $history;
+    }
+
+    public function getContZone1()
+    {
+        return $this->getZoneContribution('Zone 1');
+    }
+
+    public function getContZone2()
+    {
+        return $this->getZoneContribution('Zone 2');
+    }
+
+    public function getContZone3()
+    {
+        return $this->getZoneContribution('Zone 3');
+    }
+
+    public function getContZone4()
+    {
+        return $this->getZoneContribution('Zone 4');
+    }
+
+    public function getContZone5()
+    {
+        return $this->getZoneContribution('Zone 5');
+    }
+
+    public function getContZone6()
+    {
+        return $this->getZoneContribution('Zone 6');
+    }
+
+    public function getContZone7()
+    {
+        return $this->getZoneContribution('Zone 7');
+    }
+
+    private function getZoneContribution($zone)
+    {
+        $stmt = $this->db->prepare("
+            SELECT SUM(w.quantity) AS totalQuantity
+            FROM wasteentry w
+            JOIN user u ON w.userID = u.userID
+            WHERE u.zone = ?
+        ");
+        $stmt->bind_param("s", $zone);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        return $row ? (int) $row['totalQuantity'] : 0;
+    }
 
     public function getTotalPlasticByDate($date)
     {
@@ -994,6 +980,78 @@ public function updateNotifStatus($id, $status = 'read') {
         }
         $stmt->close();
         return $data;
+    }
+
+    public function getAllActiveUsers()
+    {
+        $stmt = $this->db->prepare("
+            SELECT cu.userID, cu.username, cu.role, cu.login_time, cu.last_activity, u.fullName, u.email, u.zone
+            FROM current_user cu
+            INNER JOIN user u ON cu.userID = u.userID
+            WHERE cu.is_active = TRUE
+            ORDER BY cu.last_activity DESC
+        ");
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $users = [];
+        while ($row = $result->fetch_assoc()) {
+            $users[] = $row;
+        }
+        $stmt->close();
+        return $users;
+    }
+
+    public function getActiveUsersByRole($role)
+    {
+        $stmt = $this->db->prepare("
+            SELECT cu.userID, cu.username, cu.role, cu.login_time, cu.last_activity, u.fullName, u.email, u.zone
+            FROM current_user cu
+            INNER JOIN user u ON cu.userID = u.userID
+            WHERE cu.is_active = TRUE AND cu.role = ?
+            ORDER BY cu.last_activity DESC
+        ");
+        $stmt->bind_param("s", $role);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $users = [];
+        while ($row = $result->fetch_assoc()) {
+            $users[] = $row;
+        }
+        $stmt->close();
+        return $users;
+    }
+
+    public function cleanupInactiveSessions($hours = 24)
+    {
+        $stmt = $this->db->prepare("
+            UPDATE current_user 
+            SET is_active = FALSE 
+            WHERE last_activity < DATE_SUB(NOW(), INTERVAL ? HOUR) AND is_active = TRUE
+        ");
+        $stmt->bind_param("i", $hours);
+        $result = $stmt->execute();
+        $stmt->close();
+        return $result;
+    }
+
+    public function updateNotifStatus($id, $status = 'read')
+    {
+        $stmt = $this->db->prepare("UPDATE sensor_notifications SET status = ? WHERE id = ?");
+        if (!$stmt) {
+            return false;
+        }
+        $stmt->bind_param("si", $status, $id);
+        return $stmt->execute();
+    }
+
+    public function getPicturePathById($userID)
+    {
+        $stmt = $this->db->prepare("SELECT profilePicture FROM user WHERE userID = ?");
+        $stmt->bind_param("i", $userID);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        return $row ? $row['profilePicture'] : null;
     }
 }
 ?>
