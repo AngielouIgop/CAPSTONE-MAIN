@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Header</title>
-  <link rel="stylesheet" href="css/headerFooter.css">
+  <link rel="stylesheet" href="css/shared/headerFooter.css">
 </head>
 <body>
 <header class="header-main" data-role="<?php echo isset($_SESSION['user']) ? $_SESSION['user']['role'] : 'guest'; ?>">
@@ -25,9 +25,8 @@
     <nav class="header-nav" id="header-nav">
       <ul>
         <li><a href="?command=home">Home</a></li>
-        <li><a href="?command=home#about-us-section">About Us</a></li>
-        <li><a href="?command=home#how-it-works">How it works</a></li>
         <li><a href="?command=login">Log in</a></li>
+        <li><a href="?command=register">Register</a></li>
       </ul>
     </nav>
     <!-- ==================== MOBILE MENU TOGGLE ==================== -->

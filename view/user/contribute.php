@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Contribute</title>
-  <link rel="stylesheet" href="css/contribute.css">
+  <link rel="stylesheet" href="css/user/contribute.css">
 </head>
 <body>
   <!-- ==================== CONTRIBUTION MODAL ==================== -->

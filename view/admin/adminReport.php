@@ -7,7 +7,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Reports</title>
-  <link rel="stylesheet" href="css/adminReport.css" />
+  <link rel="stylesheet" href="css/admin/adminReport.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 

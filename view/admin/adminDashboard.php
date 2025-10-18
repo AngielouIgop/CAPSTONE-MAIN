@@ -1,7 +1,7 @@
 <?php include 'notification.php'; ?>
 
 <!-- ==================== ADMIN DASHBOARD STYLES & SCRIPTS ==================== -->
-<link rel="stylesheet" href="css/adminDashboard.css">
+<link rel="stylesheet" href="css/admin/adminDashboard.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <div class="dashboard">

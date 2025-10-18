@@ -1,5 +1,5 @@
 <!-- ==================== FOOTER SECTION ==================== -->
-<link rel="stylesheet" href="css/headerFooter.css">
+<link rel="stylesheet" href="css/shared/headerFooter.css">
 <body>
     <footer class="footer-main">
         <div class="footer-content">

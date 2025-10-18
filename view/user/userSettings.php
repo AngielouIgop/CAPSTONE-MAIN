@@ -6,7 +6,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>User Settings</title>
-  <link rel="stylesheet" href="css/userSettings.css">
+  <link rel="stylesheet" href="css/user/userSettings.css">
 
   <!-- ==================== IMAGE PREVIEW SCRIPT ==================== -->
   <script type="text/javascript">

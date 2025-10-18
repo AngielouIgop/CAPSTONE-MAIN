@@ -1,5 +1,5 @@
 <!-- ==================== HOME PAGE STYLES ==================== -->
-<link rel="stylesheet" href="css/home.css">
+<link rel="stylesheet" href="css/public/home.css">
 
 <!-- ==================== HERO SLIDESHOW ==================== -->
 <div class="header-image-container">

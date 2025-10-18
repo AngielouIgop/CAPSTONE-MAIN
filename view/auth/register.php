@@ -4,16 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Register</title>
-  <link rel="stylesheet" href="css/register.css" />
+  <link rel="stylesheet" href="css/auth/register.css" />
 </head>
 
 <body>
   <div class="register-container">
     <!-- ==================== LOGO SECTION ==================== -->
     <div class="logo-side">
-      <img src="images/logos/basura logo.png" alt="Logo" class="logo" />
-      <h1>B.A.S.U.R.A. Rewards</h1>
-      <p>Official User Registration</p>
+      <img src="images/image-toggles/user-registration.png" alt="Logo" class="logo" />
     </div>
     
     <!-- ==================== REGISTRATION FORM ==================== -->
@@ -32,34 +30,34 @@
         <?php endif; ?>
         
         <!-- Personal Information -->
-        <label for="fullname">Full Name</label>
-        <input type="text" name="fullname" id="fullname" placeholder="Enter your full name" required>
+        <label for="fullname">Full Name *</label>
+        <input type="text" name="fullname" id="fullname" placeholder="Enter your full name" required minlength="2" maxlength="100">
         
-        <label for="email">Email</label>
-        <input type="email" name="email" id="email" placeholder="Enter your email address" required>
+        <label for="email">Email *</label>
+        <input type="email" name="email" id="email" placeholder="Enter your email address" required maxlength="100">
         
-        <label for="zone">Zone</label>
-        <input type="text" name="zone" id="zone" placeholder="e.g., Zone 1, Zone 2, etc." required>
+        <label for="zone">Zone *</label>
+        <input type="text" name="zone" id="zone" placeholder="e.g., Zone 1, Zone 2, etc." required minlength="2" maxlength="50">
         
-        <label for="brgyIDNum">Brgy ID</label>
-        <input type="text" name="brgyIDNum" id="brgyIDNum" placeholder="Enter your barangay ID number (Ex: 2022-28)" required>
+        <label for="brgyIDNum">Brgy ID *</label>
+        <input type="text" name="brgyIDNum" id="brgyIDNum" placeholder="Enter your barangay ID number (Ex: 2022-28)" required minlength="5" maxlength="20">
         
-        <label for="contactNumber">Contact Number</label>
-        <input type="text" name="contactNumber" id="contactNumber" placeholder="e.g., 09123456789" required>
+        <label for="contactNumber">Contact Number *</label>
+        <input type="tel" name="contactNumber" id="contactNumber" placeholder="e.g., 09123456789" required pattern="[0-9]{11}" minlength="11" maxlength="11">
         
         <!-- Account Credentials -->
-        <label for="username">Username</label>
-        <input type="text" name="username" id="username" placeholder="Choose a unique username" required>
+        <label for="username">Username *</label>
+        <input type="text" name="username" id="username" placeholder="Choose a unique username" required minlength="3" maxlength="30" pattern="[a-zA-Z0-9_]+">
         
-        <label for="password">Password</label>
+        <label for="password">Password *</label>
         <div class="password-container">
-          <input type="password" name="password" id="password" placeholder="Create a strong password" required>
+          <input type="password" name="password" id="password" placeholder="Create a strong password" required minlength="6" maxlength="50">
           <button type="button" class="password-toggle" onclick="togglePassword()" id="passwordToggle">Show</button>
         </div>
         
-        <label for="confirm">Confirm Password</label>
+        <label for="confirm">Confirm Password *</label>
         <div class="password-container">
-          <input type="password" name="confirm" id="confirm" placeholder="Re-enter your password" required>
+          <input type="password" name="confirm" id="confirm" placeholder="Re-enter your password" required minlength="6" maxlength="50">
           <button type="button" class="password-toggle" onclick="togglePassword1()" id="confirmPasswordToggle">Show</button>
         </div>
         
@@ -123,10 +121,23 @@
       document.getElementById('termsModal').style.display = 'none';
     }
 
-    // Validate Terms Before Submission
+    // Validate Terms and Passwords Before Submission
     function validateTerms(event) {
       const termsCheckbox = document.getElementById('terms');
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirm').value;
       
+      // Check if passwords match
+      if (password !== confirmPassword) {
+        event.preventDefault();
+        alert('Passwords do not match. Please make sure both password fields are identical.');
+        
+        // Focus on confirm password field
+        document.getElementById('confirm').focus();
+        return false;
+      }
+      
+      // Check if terms are accepted
       if (!termsCheckbox.checked) {
         event.preventDefault(); // Prevent form submission
         
@@ -156,6 +167,20 @@
       
       return true;
     }
+
+    // Real-time password confirmation validation
+    document.getElementById('confirm').addEventListener('input', function() {
+      const password = document.getElementById('password').value;
+      const confirmPassword = this.value;
+      
+      if (confirmPassword && password !== confirmPassword) {
+        this.setCustomValidity('Passwords do not match');
+        this.style.borderColor = '#dc3545';
+      } else {
+        this.setCustomValidity('');
+        this.style.borderColor = '';
+      }
+    });
 
     function switchTab(tabName) {
       // Hide all tab contents

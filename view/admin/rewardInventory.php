@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Rewards</title>
-    <link rel="stylesheet" href="css/rewardInventory.css">
+    <link rel="stylesheet" href="css/admin/rewardInventory.css">
 </head>
 <body>
     <!-- ==================== REWARD MANAGEMENT HEADER ==================== -->
