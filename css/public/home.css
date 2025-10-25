@@ -100,6 +100,17 @@ a {
     flex-wrap: wrap;
 }
 
+/* Desktop: Alternate left and right layout */
+@media (min-width: 901px) {
+    .step:nth-child(odd) {
+        flex-direction: row;
+    }
+    
+    .step:nth-child(even) {
+        flex-direction: row-reverse;
+    }
+}
+
 .steps {
     width: 100%;
     max-width: 300px;
@@ -115,9 +126,6 @@ a {
     box-shadow: 0 8px 20px rgba(0,0,0,0.15); 
 }
 
-.step.reverse {
-    flex-direction: row-reverse;
-}
 
 .step-text {
     font-size: 16px;
@@ -126,10 +134,24 @@ a {
     text-align: justify;
     flex: 1;
     min-width: 300px;
-} 
+    font-family: sans-serif;
+}
 
-.step-text p {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+.step-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #2D336B;
+    margin: 0 0 12px 0;
+    text-align: center;
+    font-family: sans-serif;
+}
+
+.step-description {
+    font-size: 16px;
+    line-height: 1.6;
+    margin: 0;
+    text-align: justify;
+    font-family: sans-serif;
 }
 
 .steps-text:hover {
@@ -247,7 +269,7 @@ a {
     font-size: 1.5rem;
     font-weight: 600;
     margin: 0 0 15px 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: sans-serif;
 }
 
 .block-text { 
@@ -260,7 +282,7 @@ a {
     line-height: 1.6;
     margin: 0;
     text-align: center;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: sans-serif;
 }
 
 /* Fact list styling */
@@ -268,6 +290,7 @@ a {
     margin: 10px 0 0 18px;
     padding: 0;
     color: #ffffff;
+    font-family: sans-serif;
 }
 
 .fact-list li {
@@ -306,7 +329,7 @@ a {
     color: #ffffff;
     text-align: justify;
     margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: sans-serif;
 }
 
 .about-p2 {
@@ -319,7 +342,7 @@ a {
     line-height: 1.7;
     color: #ffffff;
     text-align: justify;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: sans-serif;
     font-weight: 500;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -352,7 +375,7 @@ a {
     line-height: 1.7;
     color: #ffffff;
     text-align: justify;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: sans-serif;
     font-weight: 500;
 }
 
@@ -498,7 +521,7 @@ a {
     }
     
     .step {
-        flex-direction: column;
+        flex-direction: column !important;
         gap: 20px;
         text-align: center;
         padding: 20px;
@@ -507,9 +530,6 @@ a {
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
     
-    .step.reverse {
-        flex-direction: column;
-    }
     
     .steps {
         max-width: 100%;
@@ -522,6 +542,16 @@ a {
         line-height: 1.6;
         max-width: 100%;
         min-width: auto;
+        text-align: center;
+    }
+    
+    .step-title {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+    }
+    
+    .step-description {
+        font-size: 14px;
         text-align: center;
         padding: 0 10px;
     }
@@ -633,6 +663,16 @@ a {
         padding: 0 5px;
     }
     
+    .step-title {
+        font-size: 1.3rem;
+        margin-bottom: 8px;
+    }
+    
+    .step-description {
+        font-size: 13px;
+        text-align: center;
+    }
+    
     .contact-us-section {
         padding: 20px 10px;
     }
@@ -680,6 +720,7 @@ a {
         background: rgba(255, 255, 255, 0.8);
         border-radius: 20px;
         box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        flex-direction: column !important;
     }
     
     .steps {
@@ -687,6 +728,15 @@ a {
     }
     
     .step-text {
+        font-size: 15px;
+    }
+    
+    .step-title {
+        font-size: 1.6rem;
+        margin-bottom: 10px;
+    }
+    
+    .step-description {
         font-size: 15px;
     }
     
