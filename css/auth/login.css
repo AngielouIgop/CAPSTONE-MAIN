@@ -199,6 +199,14 @@ body, html {
     margin: 0 auto;
     max-width: 400px;
   }
+
+  /* Consistent tablet button sizing */
+  .btn-primary, .btn-secondary {
+    padding: clamp(12px, 2.5vh, 16px) 0;
+    font-size: clamp(14px, 2.5vw, 18px);
+    border-radius: clamp(6px, 1vw, 8px);
+    margin-top: clamp(10px, 2vh, 15px);
+  }
 }
 
 @media (max-width: 768px) {
