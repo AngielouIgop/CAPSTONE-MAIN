@@ -126,6 +126,94 @@ body.sidebar-hidden .header-nav ul {
   transform: scale(1.05);
 }
 
+/* Tablet mode - hide header buttons, show toggle */
+@media (max-width: 900px) and (min-width: 769px) {
+  .header-main {
+    padding: 0 clamp(8px, 2vw, 15px);
+    height: clamp(65px, 8vh, 75px);
+    flex-wrap: nowrap;
+  }
+
+  .header-nav {
+    display: none;
+    position: absolute;
+    top: clamp(65px, 8vh, 75px);
+    left: 0;
+    width: 100%;
+    background: linear-gradient(135deg, #2D336B 0%, #1a1f4a 100%);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    z-index: 999;
+    border-radius: 0 0 20px 20px;
+  }
+
+  .header-nav.active {
+    display: block;
+    animation: slideDown 0.3s ease-out;
+  }
+
+  .header-nav ul {
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    padding: clamp(15px, 3vh, 25px) 0;
+    margin: 0;
+  }
+
+  .header-nav ul li {
+    width: 100%;
+    margin: 0;
+  }
+
+  .header-nav ul li a {
+    width: clamp(80%, 85%, 90%);
+    text-align: center;
+    padding: clamp(10px, 2vh, 14px) clamp(12px, 3vw, 18px);
+    color: #ffffff;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    margin: clamp(4px, 1vh, 8px) auto;
+    display: block;
+    font-size: clamp(13px, 2.5vw, 16px);
+    font-weight: 500;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+  }
+
+  .header-nav ul li a:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+  }
+
+  .menu-toggle {
+    display: block;
+    font-size: clamp(22px, 4vw, 28px);
+    margin-left: clamp(8px, 2vw, 15px);
+    margin-right: clamp(40px, 8vw, 70px);
+    padding: clamp(6px, 1.5vw, 10px);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .menu-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+  }
+
+  .header-logo {
+    flex-shrink: 0;
+    margin-right: clamp(8px, 2vw, 15px);
+  }
+
+  .header-logo .logo-img {
+    height: clamp(45px, 6vh, 55px);
+    width: clamp(45px, 6vh, 55px);
+  }
+}
+
 @media (min-width: 901px) {
   .menu-toggle {
     display: none !important;
@@ -164,17 +252,17 @@ body.sidebar-hidden .header-nav ul {
 
 @media (max-width: 768px) {
   .header-main {
-    padding: 0 10px;
-    height: 70px;
+    padding: 0 clamp(8px, 3vw, 15px);
+    height: clamp(60px, 9vh, 75px);
     flex-wrap: nowrap;
   }
 
   .menu-toggle {
     display: block;
-    font-size: 24px;
-    margin-left: 10px;
-    margin-right: 75px;
-    padding: 8px;
+    font-size: clamp(20px, 5vw, 28px);
+    margin-left: clamp(8px, 2vw, 15px);
+    margin-right: clamp(50px, 12vw, 80px);
+    padding: clamp(6px, 1.5vw, 10px);
     border-radius: 8px;
     transition: all 0.3s ease;
     background: rgba(255, 255, 255, 0.1);
@@ -187,12 +275,12 @@ body.sidebar-hidden .header-nav ul {
 
   .header-logo {
     flex-shrink: 0;
-    margin-right: 10px;
+    margin-right: clamp(8px, 2vw, 15px);
   }
 
   .header-logo .logo-img {
-    height: 50px;
-    width: 50px;
+    height: clamp(40px, 7vh, 55px);
+    width: clamp(40px, 7vh, 55px);
   }
 
   .header-title {
@@ -206,7 +294,7 @@ body.sidebar-hidden .header-nav ul {
   .header-nav {
     display: none;
     position: absolute;
-    top: 70px;
+    top: clamp(60px, 9vh, 75px);
     left: 0;
     width: 100%;
     background: linear-gradient(135deg, #2D336B 0%, #1a1f4a 100%);
@@ -235,7 +323,7 @@ body.sidebar-hidden .header-nav ul {
     flex-direction: column;
     align-items: center;
     gap: 0;
-    padding: 20px 0;
+    padding: clamp(15px, 4vh, 25px) 0;
     margin: 0;
   }
 
@@ -245,16 +333,16 @@ body.sidebar-hidden .header-nav ul {
   }
 
   .header-nav ul li a {
-    width: 85%;
+    width: clamp(80%, 85%, 90%);
     text-align: center;
-    padding: 12px 16px;
+    padding: clamp(10px, 2.5vh, 16px) clamp(12px, 4vw, 20px);
     color: #ffffff;
     background: transparent;
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 10px;
-    margin: 6px auto;
+    margin: clamp(4px, 1vh, 8px) auto;
     display: block;
-    font-size: 14px;
+    font-size: clamp(12px, 3vw, 16px);
     font-weight: 500;
     transition: all 0.3s ease;
     backdrop-filter: blur(10px);
@@ -270,34 +358,34 @@ body.sidebar-hidden .header-nav ul {
 
 @media (max-width: 480px) {
   .header-main {
-    padding: 0 8px;
-    height: 65px;
+    padding: 0 clamp(6px, 2vw, 10px);
+    height: clamp(55px, 8vh, 70px);
   }
 
   .menu-toggle {
-    font-size: 22px;
-    margin-left: 8px;
-    margin-right: 20px;
-    padding: 6px;
+    font-size: clamp(18px, 4.5vw, 24px);
+    margin-left: clamp(6px, 1.5vw, 10px);
+    margin-right: clamp(30px, 8vw, 50px);
+    padding: clamp(5px, 1vw, 8px);
   }
 
   .header-logo .logo-img {
-    height: 45px;
-    width: 45px;
+    height: clamp(35px, 6vh, 50px);
+    width: clamp(35px, 6vh, 50px);
   }
 
   .header-nav {
-    top: 65px;
+    top: clamp(55px, 8vh, 70px);
   }
 
   .header-nav ul {
-    padding: 15px 0;
+    padding: clamp(12px, 3vh, 20px) 0;
   }
 
   .header-nav ul li a {
-    padding: 10px 12px;
-    font-size: 13px;
-    margin: 4px auto;
-    width: 80%;
+    padding: clamp(8px, 2vh, 14px) clamp(10px, 3vw, 16px);
+    font-size: clamp(11px, 2.5vw, 15px);
+    margin: clamp(3px, 0.8vh, 6px) auto;
+    width: clamp(75%, 80%, 85%);
   }
 }
