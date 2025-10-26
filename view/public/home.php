@@ -139,16 +139,22 @@ window.addEventListener('resize', setResponsiveImages);
         <img src="images/steps/step1.png" class="steps" alt="Login Step" loading="lazy">
         <div class="step-content">
             <div class="step-number">1</div>
-            <p class="step-text"><strong>Login</strong> Open the app and log in as a user.</p>
+            <div class="step-text">
+                <h3 class="step-title">Login</h3>
+                <p class="step-description">Make sure that you are already registered as a user. If not, please register first.</p>
+            </div>
         </div>
     </div>
 
     <!-- Step 2: Start Contributing -->
-    <div class="step reverse">
+    <div class="step">
         <img src="images/steps/step2.png" class="steps" alt="Start Contributing Step" loading="lazy">
         <div class="step-content">
             <div class="step-number">2</div>
-            <p class="step-text"><strong>Start</strong> Press the "Start Contributing" button.</p>
+            <div class="step-text">
+                <h3 class="step-title">Start</h3>
+                <p class="step-description">As you press the sidebar toggle button, you will see the "Start Contributing" button, press it to start contributing.</p>
+            </div>
         </div>
     </div>
 
@@ -157,16 +163,34 @@ window.addEventListener('resize', setResponsiveImages);
         <img src="images/steps/step3.png" class="steps" alt="Detection Step" loading="lazy">
         <div class="step-content">
             <div class="step-number">3</div>
-            <p class="step-text"><strong>Wait</strong> Allow the system to detect and sort your waste.</p>
+            <div class="step-text">
+                <h3 class="step-title">Wait</h3>
+                <p class="step-description">Allow the system to detect your waste.</p>
+            </div>
         </div>
     </div>
 
     <!-- Step 4: Complete Process -->
     <div class="step">
+        <img src="images/steps/step4.png" class="steps" alt="Finish Step" loading="lazy">
         <div class="step-content">
             <div class="step-number">4</div>
-            <p class="step-text"><strong>Finish</strong> When done, press the "Done" button until you see the "Thanks
-                for Contributing" message.</p>
+            <div class="step-text">
+                <h3 class="step-title">Finish</h3>
+                <p class="step-description">When done, press the "Done" button until you see the "Thanks
+                    for Contributing" message.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="step">
+        <img src="images/steps/step5.png" class="steps" alt="Claim Step" loading="lazy">
+        <div class="step-content">
+            <div class="step-number">5</div>
+            <div class="step-text">
+                <h3 class="step-title">Claim</h3>
+                <p class="step-description">If you have enough accumulated points, you can claim your reward by pressing the "Claim" button.</p>
+            </div>
         </div>
     </div>
 

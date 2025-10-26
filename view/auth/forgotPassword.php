@@ -39,7 +39,7 @@
                     
                      <!-- reCAPTCHA with image selection -->
                      <div class="g-recaptcha" 
-                         data-sitekey="6LfDIO0rAAAAAIR8LDod7HfIkp0m6FgFEmk487Yg" 
+                         data-sitekey="<?php echo RECAPTCHA_SITE_KEY; ?>" 
                          data-callback="onRecaptchaSuccess"
                          data-expired-callback="onRecaptchaExpired"
                          data-error-callback="onRecaptchaError">
@@ -89,7 +89,6 @@
             }
         }
 
-        // reCAPTCHA callbacks
         function onRecaptchaSuccess(token) {
             recaptchaCompleted = true;
             document.getElementById('verifyBtn').disabled = false;

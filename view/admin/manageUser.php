@@ -191,9 +191,6 @@
                     <button type="button" class="password-toggle" onclick="togglePassword('add-confirmPassword', this)">Show</button>
                 </div>
 
-                <!-- Profile Picture -->
-                <label for="add-profilePicture">Profile Picture</label>
-                <input type="file" id="add-profilePicture" name="profilePicture" accept="image/*">
 
                 <div class="modal-buttons">
                     <button type="submit" class="btn-confirm">Confirm</button>
