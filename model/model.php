@@ -196,8 +196,8 @@ class Model
         $query = "SELECT * FROM user WHERE username = ? AND role = ?";
         if ($stmt = $this->db->prepare($query)) {
             $stmt->bind_param('ss', $username, $role);
-            $stmt->execute();
-            $result = $stmt->get_result();
+        $stmt->execute();
+        $result = $stmt->get_result();
 
             if ($result->num_rows === 1) {
                 $user = $result->fetch_assoc();
@@ -351,8 +351,17 @@ class Model
 
             $pointsEarned = $pointsPerItem * $quantity;
 
-            if ($materialWeight > $thresholdMaterialWeight) {
+            // Calculate weight difference for bonus points
+            $weightDifference = $materialWeight - $thresholdMaterialWeight;
+            
+            if ($weightDifference > 0) {
+                if ($weightDifference >= 5 && $weightDifference <= 50) {
+                    $pointsEarned += 0.3;
+                } elseif ($weightDifference >= 51 && $weightDifference <= 100) {
                 $pointsEarned += 0.5;
+                } elseif ($weightDifference > 100) {
+                    $pointsEarned += 1.0;
+                }
             }
 
             $updateQuery = "UPDATE user 
@@ -391,8 +400,8 @@ class Model
         if ($result->num_rows === 1) {
             return $result->fetch_assoc();
         }
-        return false;
-    }
+            return false;
+        }
 
     public function verifyUserIdentity($username, $email)
     {
@@ -495,7 +504,7 @@ class Model
         while ($row = $result->fetch_assoc()) {
             $users[] = $row;
         }
-        $stmt->close();
+            $stmt->close();
         return $users;
     }
 
@@ -508,7 +517,7 @@ class Model
         while ($row = $result->fetch_assoc()) {
             $admins[] = $row;
         }
-        $stmt->close();
+            $stmt->close();
         return $admins;
     }
 
@@ -699,7 +708,7 @@ class Model
         $stmt->bind_param("i", $rewardID);
         if ($stmt->execute()) {
             $affected = $stmt->affected_rows;
-            $stmt->close();
+        $stmt->close();
             if ($affected > 0) {
                 return "Reward deleted successfully.";
             } else {
@@ -1038,8 +1047,8 @@ class Model
     {
         $stmt = $this->db->prepare("UPDATE sensor_notifications SET status = ? WHERE id = ?");
         if (!$stmt) {
-            return false;
-        }
+        return false;
+    }
         $stmt->bind_param("si", $status, $id);
         return $stmt->execute();
     }
@@ -1052,6 +1061,6 @@ class Model
         $result = $stmt->get_result();
         $row = $result->fetch_assoc();
         return $row ? $row['profilePicture'] : null;
-    }
+}
 }
 ?>
