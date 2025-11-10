@@ -1,61 +1,55 @@
 // Arduino Uno Code for Waste Bin Monitoring and Claim Servo Control
-// This code monitors ultrasonic sensors for three different bins
-// and controls claim servos, communicating with ESP32 via Serial
+// Memory-optimized version for Arduino Uno
 
 #include <Servo.h>
 #include <SoftwareSerial.h>
 
 // SoftwareSerial for communication with ESP32
-// RX=3, TX=2  (matches your wiring)
 SoftwareSerial espLink(3, 2); // RX=3, TX=2
 
-// Ultrasonic sensor pins for each bin
-// Plastic Bin
+// Ultrasonic sensor pins
 #define TRIG_PIN_PLASTIC 4
 #define ECHO_PIN_PLASTIC 5
-
-// Glass Bin  
 #define TRIG_PIN_GLASS 6
 #define ECHO_PIN_GLASS 7
-
-// Can Bin
 #define TRIG_PIN_CAN 8
 #define ECHO_PIN_CAN 9
 
 // Claim servo pins
-#define CLAIM_SERVO_PIN1 11 // Claim servo 1
-#define CLAIM_SERVO_PIN2 12  // Claim servo 2
-#define CLAIM_SERVO_PIN3 13  // Claim servo 3
+#define CLAIM_SERVO_PIN1 11
+#define CLAIM_SERVO_PIN2 12
+#define CLAIM_SERVO_PIN3 13
+
+// Buzzer pin
+#define BUZZER_PIN 10
 
 // Servo objects
 Servo claimServo1;
 Servo claimServo2;
 Servo claimServo3;
 
-// Bin full threshold distances (in cm) - using hysteresis to prevent false readings
-const int BIN_FULL_DISTANCE = 10;    // Distance to trigger "bin full"
-const int BIN_EMPTY_DISTANCE = 15;   // Distance to trigger "bin emptied" (higher threshold)
+// Constants
+const int BIN_FULL_DISTANCE = 10;
+const int BIN_EMPTY_DISTANCE = 15;
+const long checkInterval = 2000;
+const long esp32Timeout = 10000;
 
-// Bin status flags
+// Variables
 bool plasticBinFullNotified = false;
 bool glassBinFullNotified = false;
 bool canBinFullNotified = false;
-
-// Timing
-unsigned long lastCheck = 0;
-const long checkInterval = 2000; // Check every 2 seconds
-
-// Communication status
 bool esp32Connected = false;
+unsigned long lastCheck = 0;
 unsigned long lastESP32Message = 0;
-const long esp32Timeout = 10000; // 10 seconds timeout
+bool buzzerActive = false;
+unsigned long lastBuzzerToggle = 0;
+const long buzzerInterval = 500; // Buzzer beep interval (500ms on/off)
 
-// Function to get distance from ultrasonic sensor with validation
+// Function to get distance from ultrasonic sensor
 long getDistance(int trigPin, int echoPin) {
     long totalDistance = 0;
     int validReadings = 0;
     
-    // Take multiple readings for accuracy
     for (int i = 0; i < 3; i++) {
         digitalWrite(trigPin, LOW);
         delayMicroseconds(2);
@@ -63,111 +57,154 @@ long getDistance(int trigPin, int echoPin) {
         delayMicroseconds(10);
         digitalWrite(trigPin, LOW);
 
-        long duration = pulseIn(echoPin, HIGH, 30000); // 30ms timeout
+        long duration = pulseIn(echoPin, HIGH, 30000);
         if (duration > 0) {
-            long distance = duration * 0.034 / 2; // Convert to cm
-            // Only accept reasonable distances (2cm to 400cm)
+            long distance = duration * 0.034 / 2;
             if (distance >= 2 && distance <= 400) {
                 totalDistance += distance;
                 validReadings++;
             }
         }
-        delay(10); // Small delay between readings
+        delay(10);
     }
     
-    if (validReadings > 0) {
-        return totalDistance / validReadings; // Return average
+    return validReadings > 0 ? totalDistance / validReadings : 999;
+}
+
+// Function to control buzzer
+void updateBuzzer() {
+    // Check if any bin is full
+    bool anyBinFull = plasticBinFullNotified || glassBinFullNotified || canBinFullNotified;
+    
+    if (anyBinFull) {
+        // Activate buzzer with beeping pattern
+        unsigned long currentMillis = millis();
+        if (currentMillis - lastBuzzerToggle >= buzzerInterval) {
+            lastBuzzerToggle = currentMillis;
+            buzzerActive = !buzzerActive;
+            digitalWrite(BUZZER_PIN, buzzerActive ? HIGH : LOW);
+        }
     } else {
-        return 999; // Return invalid reading
+        // Turn off buzzer if all bins are empty
+        if (buzzerActive) {
+            buzzerActive = false;
+            digitalWrite(BUZZER_PIN, LOW);
+        }
     }
 }
 
-// Function to check bin status and send notifications
-void checkBinStatus(String binType, int trigPin, int echoPin, bool* binFullNotified) {
+// Function to check bin status
+void checkBinStatus(char binType, int trigPin, int echoPin, bool* binFullNotified) {
     long distance = getDistance(trigPin, echoPin);
     
-    Serial.print(binType + " bin distance: ");
+    Serial.print(binType);
+    Serial.print(" bin: ");
     Serial.println(distance);
     
-    // Check for invalid readings
     if (distance == 999) {
-        Serial.println(binType + " bin sensor error - invalid reading");
+        Serial.println("Sensor error");
         return;
     }
     
     if (distance <= BIN_FULL_DISTANCE && !(*binFullNotified)) {
-        Serial.println("⚠️ " + binType + " bin is nearly full!");
-        Serial.println("📤 Sending BIN_FULL:" + binType + " to ESP32");
-        espLink.println("BIN_FULL:" + binType);
-        Serial.println("✅ Message sent to ESP32 (ESP32 connected: " + String(esp32Connected ? "YES" : "NO") + ")");
+        Serial.print("Bin ");
+        Serial.print(binType);
+        Serial.println(" FULL!");
+        espLink.print("BIN_FULL:");
+        espLink.println(binType == 'P' ? "PLASTIC" : (binType == 'G' ? "GLASS" : "CAN"));
         *binFullNotified = true;
+        // Buzzer will be activated in updateBuzzer() function
     }
     else if (distance > BIN_EMPTY_DISTANCE && *binFullNotified) {
-        Serial.println("✅ " + binType + " bin has been emptied!");
+        Serial.print("Bin ");
+        Serial.print(binType);
+        Serial.println(" EMPTY!");
         if (esp32Connected) {
-            Serial.println("📤 Sending BIN_EMPTY:" + binType + " to ESP32");
-            espLink.println("BIN_EMPTY:" + binType);
-        } else {
-            Serial.println("❌ ESP32 not connected - notification not sent");
+            espLink.print("BIN_EMPTY:");
+            espLink.println(binType == 'P' ? "PLASTIC" : (binType == 'G' ? "GLASS" : "CAN"));
         }
         *binFullNotified = false;
+        // Buzzer will be deactivated in updateBuzzer() if all bins are empty
     }
 }
 
-// Function to handle claim servo movement
+// Function to move claim servo - Vending machine style 360 degree rotation
 void moveClaimServo(int slotNum) {
-    Serial.println("🎯 Moving claim servo for slot " + String(slotNum));
+    Serial.print("Vending machine rotation - Slot ");
+    Serial.println(slotNum);
     
+    Servo* servo = nullptr;
+    int pin = 0;
+    
+    // Select the correct servo
     if (slotNum == 1) {
-        Serial.println("🔄 Moving claim servo 1 (slot 1) on pin 10...");
-        claimServo1.write(90);
-        delay(2000); // Hold for 2 seconds
-        claimServo1.write(0);
-        Serial.println("✅ Servo 1 movement completed");
+        servo = &claimServo1;
+        pin = CLAIM_SERVO_PIN1;
     } else if (slotNum == 2) {
-        Serial.println("🔄 Moving claim servo 2 (slot 2) on pin 11...");
-        claimServo2.write(90);
-        delay(2000); // Hold for 2 seconds
-        claimServo2.write(0);
-        Serial.println("✅ Servo 2 movement completed");
+        servo = &claimServo2;
+        pin = CLAIM_SERVO_PIN2;
     } else if (slotNum == 3) {
-        Serial.println("🔄 Moving claim servo 3 (slot 3) on pin 12...");
-        claimServo3.write(90);
-        delay(2000); // Hold for 2 seconds
-        claimServo3.write(0);
-        Serial.println("✅ Servo 3 movement completed");
+        servo = &claimServo3;
+        pin = CLAIM_SERVO_PIN3;
     } else {
-        Serial.println("❌ Unknown slot number: " + String(slotNum));
+        Serial.println("Invalid slot number");
         return;
     }
     
-    // Send completion message back to ESP32
+    // Attach servo
+    servo->attach(pin);
+    delay(100);
+    
+    // Start at 0 degrees
+    servo->write(0);
+    delay(200);
+    
+    // Vending machine rotation: Smooth 360-degree clockwise rotation
+    // 0 -> 180 (first half) -> 0 (second half) = complete 360 rotation
+    Serial.println("Starting rotation...");
+    
+    // First 180 degrees: 0 to 180 (clockwise)
+    for (int angle = 0; angle <= 180; angle += 2) {
+        servo->write(angle);
+        delay(15); // Faster rotation for vending machine feel
+    }
+    
+    // Brief pause at 180 (like vending machine mechanism)
+    delay(100);
+    
+    // Second 180 degrees: 180 to 0 (completes the 360)
+    for (int angle = 180; angle >= 0; angle -= 2) {
+        servo->write(angle);
+        delay(15); // Faster rotation
+    }
+    
+    // Ensure we're back at 0
+    servo->write(0);
+    delay(200);
+    
+    // Detach to save power
+    servo->detach();
+    
+    Serial.println("360-degree rotation complete!");
+    
+    // Notify ESP32 that rotation is complete
     if (esp32Connected) {
-        espLink.println("CLAIM_SERVO_COMPLETE:" + String(slotNum));
-        Serial.println("📤 Claim servo completion sent to ESP32 for slot " + String(slotNum));
-    } else {
-        Serial.println("❌ ESP32 not connected - completion not sent");
+        espLink.print("CLAIM_SERVO_COMPLETE:");
+        espLink.println(slotNum);
     }
 }
 
-// Function to handle commands from ESP32
+// Function to handle ESP32 commands
 void handleESP32Command(String command) {
     lastESP32Message = millis();
     esp32Connected = true;
     
-    Serial.println("📨 Received from ESP32: " + command);
+    Serial.print("CMD: ");
+    Serial.println(command);
     
     if (command == "INIT") {
-        Serial.println("✅ Arduino Uno initialized - Bin monitoring and claim servo control started");
+        Serial.println("Arduino ready");
         espLink.println("ARDUINO_READY");
-        Serial.println("📤 ARDUINO_READY sent to ESP32");
-    }
-    else if (command == "STATUS") {
-        // Send current status of all bins
-        espLink.println("STATUS:PLASTIC:" + String(plasticBinFullNotified ? "FULL" : "EMPTY"));
-        espLink.println("STATUS:GLASS:" + String(glassBinFullNotified ? "FULL" : "EMPTY"));
-        espLink.println("STATUS:CAN:" + String(canBinFullNotified ? "FULL" : "EMPTY"));
-        Serial.println("📤 Status sent to ESP32");
     }
     else if (command.startsWith("CLAIM_SERVO:")) {
         int slotNum = command.substring(12).toInt();
@@ -175,23 +212,20 @@ void handleESP32Command(String command) {
     }
     else if (command == "PING") {
         espLink.println("PONG");
-        Serial.println("📤 Sent PONG to ESP32");
     }
     else if (command == "TEST") {
         espLink.println("TEST_RESPONSE");
-        Serial.println("📤 Sent TEST_RESPONSE to ESP32");
-    }
-    else {
-        Serial.println("❓ Unknown command from ESP32: " + command);
     }
 }
 
 void setup() {
-    // Initialize serial communication
-    Serial.begin(9600);       // USB Serial Monitor
-    espLink.begin(9600);      // UART link to ESP32
+    Serial.begin(9600);
+    delay(1000);
     
-    Serial.println("Uno ready – waiting for ESP32...");
+    Serial.println("Arduino starting...");
+    
+    espLink.begin(9600);
+    delay(500);
     
     // Initialize ultrasonic sensor pins
     pinMode(TRIG_PIN_PLASTIC, OUTPUT);
@@ -201,69 +235,76 @@ void setup() {
     pinMode(TRIG_PIN_CAN, OUTPUT);
     pinMode(ECHO_PIN_CAN, INPUT);
     
-    // Initialize all trigger pins to LOW
     digitalWrite(TRIG_PIN_PLASTIC, LOW);
     digitalWrite(TRIG_PIN_GLASS, LOW);
     digitalWrite(TRIG_PIN_CAN, LOW);
     
-    // Initialize claim servos
+    // Initialize buzzer pin
+    pinMode(BUZZER_PIN, OUTPUT);
+    digitalWrite(BUZZER_PIN, LOW);
+    
+    // Initialize servos
     claimServo1.attach(CLAIM_SERVO_PIN1);
     claimServo2.attach(CLAIM_SERVO_PIN2);
     claimServo3.attach(CLAIM_SERVO_PIN3);
     
-    // Initialize servos to 0 position
     claimServo1.write(0);
     claimServo2.write(0);
     claimServo3.write(0);
     
-    Serial.println("✅ Arduino Uno Bin Monitor and Claim Servo Controller Started");
-    Serial.println("📡 Listening for ESP32 commands on pins 3(RX) and 2(TX)");
+    delay(500);
     
-    delay(1000); // Give time for ESP32 to initialize
+    claimServo1.detach();
+    claimServo2.detach();
+    claimServo3.detach();
+    
+    Serial.println("Servos ready");
+    Serial.println("Waiting for ESP32...");
+    
+    delay(1000);
 }
 
 void loop() {
     unsigned long currentMillis = millis();
     
-    // Check for commands from ESP32
+    // Check for ESP32 commands
     if (espLink.available()) {
         String command = espLink.readStringUntil('\n');
         command.trim();
-        Serial.print("Got from ESP32: ");
-        Serial.println(command);
-        handleESP32Command(command);
+        
+        if (command.length() > 0 && command.length() < 50) {
+            handleESP32Command(command);
+        }
     }
     
-    // Check if ESP32 connection is still alive
+    // Check ESP32 connection timeout
     if (esp32Connected && (currentMillis - lastESP32Message > esp32Timeout)) {
         esp32Connected = false;
-        Serial.println("⚠️ ESP32 connection timeout - waiting for reconnection");
+        Serial.println("ESP32 timeout");
     }
     
     // Check bin status every 2 seconds
     if (currentMillis - lastCheck >= checkInterval) {
         lastCheck = currentMillis;
         
-        Serial.println("🔍 Checking bin status...");
-        
-        // Check each bin
-        checkBinStatus("PLASTIC", TRIG_PIN_PLASTIC, ECHO_PIN_PLASTIC, &plasticBinFullNotified);
-        delay(100); // Small delay between sensors
-        
-        checkBinStatus("GLASS", TRIG_PIN_GLASS, ECHO_PIN_GLASS, &glassBinFullNotified);
+        checkBinStatus('P', TRIG_PIN_PLASTIC, ECHO_PIN_PLASTIC, &plasticBinFullNotified);
         delay(100);
-        
-        checkBinStatus("CAN", TRIG_PIN_CAN, ECHO_PIN_CAN, &canBinFullNotified);
+        checkBinStatus('G', TRIG_PIN_GLASS, ECHO_PIN_GLASS, &glassBinFullNotified);
         delay(100);
+        checkBinStatus('C', TRIG_PIN_CAN, ECHO_PIN_CAN, &canBinFullNotified);
         
-        // Show connection status
+        // Update buzzer status based on bin states
+        updateBuzzer();
+        
         if (esp32Connected) {
-            Serial.println("✅ ESP32 connected");
+            Serial.println("ESP32 OK");
         } else {
-            Serial.println("❌ ESP32 disconnected");
+            Serial.println("ESP32 OFF");
         }
     }
     
-    // Small delay to prevent overwhelming the system
+    // Update buzzer even between bin checks for continuous beeping
+    updateBuzzer();
+    
     delay(50);
 }
