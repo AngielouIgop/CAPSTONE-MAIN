@@ -29,14 +29,6 @@
           <div class="alert alert-notice"><?php echo htmlspecialchars($notice); ?></div>
         <?php endif; ?>
 
-        <!-- Role Selection -->
-        <label for="loginRole">Login As</label>
-        <select id="loginRole" name="loginRole" required onchange="toggleLoginType()">
-          <option value="user" class="mobile-only">User</option>
-          <option value="admin" class="desktop-only">Admin</option>
-          <option value="super admin" class="desktop-only">Super Admin</option>
-        </select>
-
         <!-- Username Input -->
         <label for="username">Username</label>
         <input type="text" id="username" name="username" required>
@@ -62,59 +54,6 @@
 
   <!-- ==================== JAVASCRIPT FUNCTIONS ==================== -->
   <script>
-    // Update image based on role selection
-    function setLoginType(role) {
-      const logoImage = document.querySelector('.logo');
-      
-      if (role === 'user') {
-        logoImage.src = 'images/image-toggles/user-login.png';
-        logoImage.alt = 'User Login Logo';
-      } else if (role === 'admin') {
-        logoImage.src = 'images/image-toggles/admin-login.png';
-        logoImage.alt = 'Admin Login Logo';
-      } else if (role === 'super admin') {
-        logoImage.src = 'images/image-toggles/admin-login.png';
-        logoImage.alt = 'Super Admin Login Logo';
-      }
-    }
-
-    // Handle role selection change
-    function toggleLoginType() {
-      const select = document.getElementById('loginRole');
-      const role = select.value;
-      localStorage.setItem('loginRole', role);
-      setLoginType(role);
-    }
-
-    // Function to initialize role selection based on screen size
-    function initializeRoleSelection() {
-      const select = document.getElementById('loginRole');
-      const role = localStorage.getItem('loginRole');
-      
-      // Check if we're on mobile or desktop
-      const isMobile = window.innerWidth <= 900;
-      
-      if (isMobile) {
-        // On mobile, default to 'user' and hide admin options
-        select.value = 'user';
-        setLoginType('user');
-      } else {
-        // On desktop, default to 'admin' and hide user option
-        if (role && ['admin', 'super admin'].includes(role)) {
-          select.value = role;
-        } else {
-          select.value = 'admin';
-        }
-        setLoginType(select.value);
-      }
-    }
-
-    // Initialize page with saved role preference
-    document.addEventListener('DOMContentLoaded', initializeRoleSelection);
-    
-    // Handle window resize to update role selection
-    window.addEventListener('resize', initializeRoleSelection);
-
     // Toggle password visibility
     function togglePassword() {
       const passwordInput = document.getElementById('password');
