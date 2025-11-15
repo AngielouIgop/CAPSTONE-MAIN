@@ -299,7 +299,7 @@ a {
 }
 
 .fact-list li strong {
-    color: #FF8C00; /* orange highlight for bullet titles */
+    color: #FFD700; /* yellow highlight for bullet titles */
 }
 
 .about-img {
@@ -351,7 +351,7 @@ a {
     display: inline-block;
     font-size: 1.4rem;
     margin-bottom: 12px;
-    color: #FF8C00; /* Orange complementary to blue */
+    color: #FFD700; /* Yellow complementary to blue */
     font-weight: 700;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
@@ -389,7 +389,7 @@ a {
     display: inline-block;
     font-size: 1.4rem;
     margin-bottom: 12px;
-    color: #FF8C00; /* Orange complementary to blue */
+    color: #FFD700; /* Yellow complementary to blue */
     font-weight: 700;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }

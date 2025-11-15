@@ -32,10 +32,6 @@ body, html {
   filter: drop-shadow(10px 10px 15px rgba(0, 0, 0, 0.5));
 }
 
-.logo-side h2 {
-  margin-top: 0; 
-  /* filter: drop-shadow(10px 10px 15px rgba(0,0,0,0.5)); */
-}
 
 .form-side {
   flex: 1;
@@ -69,8 +65,7 @@ body, html {
   color: #333;
 }
 
-.login-card input,
-.login-card select {
+.login-card input {
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -266,29 +261,6 @@ body, html {
     width: 300px;
     height: 300px;
     object-fit: contain;
-  }
-}
-
-/* ==================== ROLE TOGGLE RESPONSIVE ==================== */
-/* Show only User option on mobile */
-@media (max-width: 900px) {
-  .desktop-only {
-    display: none !important;
-  }
-  
-  .mobile-only {
-    display: block;
-  }
-}
-
-/* Show only Admin and Super Admin options on desktop */
-@media (min-width: 901px) {
-  .mobile-only {
-    display: none !important;
-  }
-  
-  .desktop-only {
-    display: block;
   }
 }
 
