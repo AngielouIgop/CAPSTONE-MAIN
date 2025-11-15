@@ -193,9 +193,9 @@ class Model
 
     public function loginUser($username, $password, $role)
     {
-        $query = "SELECT * FROM user WHERE username = ? AND role = ?";
+        $query = "SELECT * FROM user WHERE username = ? ";
         if ($stmt = $this->db->prepare($query)) {
-            $stmt->bind_param('ss', $username, $role);
+            $stmt->bind_param('s', $username);
         $stmt->execute();
         $result = $stmt->get_result();
 
@@ -1061,6 +1061,83 @@ class Model
         $result = $stmt->get_result();
         $row = $result->fetch_assoc();
         return $row ? $row['profilePicture'] : null;
-}
+    }
+
+    public function getTotalPlasticByMonth($year, $month)
+    {
+        $stmt = $this->db->prepare("SELECT SUM(quantity) as totalPlastic FROM wasteentry WHERE materialID = 1 AND YEAR(dateDeposited) = ? AND MONTH(dateDeposited) = ?");
+        $stmt->bind_param("ii", $year, $month);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        return $row ? (int)$row['totalPlastic'] : 0;
+    }
+
+    public function getTotalBottlesByMonth($year, $month)
+    {
+        $stmt = $this->db->prepare("SELECT SUM(quantity) as totalBottles FROM wasteentry WHERE materialID = 2 AND YEAR(dateDeposited) = ? AND MONTH(dateDeposited) = ?");
+        $stmt->bind_param("ii", $year, $month);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        return $row ? (int)$row['totalBottles'] : 0;
+    }
+
+    public function getTotalCansByMonth($year, $month)
+    {
+        $stmt = $this->db->prepare("SELECT SUM(quantity) as totalCans FROM wasteentry WHERE materialID = 3 AND YEAR(dateDeposited) = ? AND MONTH(dateDeposited) = ?");
+        $stmt->bind_param("ii", $year, $month);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        return $row ? (int)$row['totalCans'] : 0;
+    }
+
+    public function getZoneContributionByMonth($zone, $year, $month)
+    {
+        $stmt = $this->db->prepare("
+            SELECT SUM(w.quantity) AS totalQuantity
+            FROM wasteentry w
+            JOIN user u ON w.userID = u.userID
+            WHERE u.zone = ? AND YEAR(w.dateDeposited) = ? AND MONTH(w.dateDeposited) = ?
+        ");
+        $stmt->bind_param("sii", $zone, $year, $month);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        return $row ? (int)$row['totalQuantity'] : 0;
+    }
+
+    public function getTopContributorsByMonth($year, $month)
+    {
+        $stmt = $this->db->prepare("
+            SELECT 
+                u.fullName,
+                u.zone,
+                SUM(w.quantity) AS totalContributed,
+                SUM(w.pointsEarned) AS totalPoints
+            FROM wasteentry w
+            JOIN user u ON w.userID = u.userID
+            WHERE YEAR(w.dateDeposited) = ? AND MONTH(w.dateDeposited) = ?
+            GROUP BY u.userID, u.fullName, u.zone
+            ORDER BY totalContributed DESC
+            LIMIT 50
+        ");
+        $stmt->bind_param("ii", $year, $month);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        $contributors = [];
+        while ($row = $result->fetch_assoc()) {
+            $contributors[] = [
+                'fullName' => $row['fullName'],
+                'zone' => $row['zone'],
+                'totalContributed' => (int)$row['totalContributed'],
+                'totalPoints' => (float)$row['totalPoints']
+            ];
+        }
+        $stmt->close();
+        return $contributors;
+    }
 }
 ?>
