@@ -27,13 +27,14 @@
           <a href="?command=manageUser">Manage Users</a>
           <a href="?command=rewardInventory">Reward Inventory</a>
           <a href="?command=adminReport">Reports</a>
-          <a href="?command=adminSettings">My Profile</a>
+          <a href="?command=adminSettings">Settings</a>
         <?php elseif ($_SESSION['user']['role'] === 'user'): ?>
           <!-- ==================== USER NAVIGATION ==================== -->
+          <!-- ==================== START CONTRIBUTING BUTTON (MOBILE) ==================== -->
+          <a href="#" class="sidebar-start-contributing-btn" onclick="openContributeModal(); return false;">Start Contributing</a>
           <a href="?command=dashboard">Home</a>
-          <a href="?command=userProfile">Profile</a>
-          <a href="?command=userSettings">Settings</a>
           <a href="?command=claim">Claim Rewards</a>
+          <a href="?command=userSettings">Settings</a>
         <?php endif; ?>
         <!-- ==================== LOGOUT LINK ==================== -->
         <a href="?command=logout">Logout</a>

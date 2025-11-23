@@ -33,12 +33,7 @@
     <button class="menu-toggle" id="menu-toggle">&#9776;</button>
 
   <?php elseif ($_SESSION['user']['role'] === 'user'): ?>
-    <!-- User Navigation -->
-    <nav class="header-nav" id="header-nav">
-      <ul>
-        <li><a href="#" class="start-contributing-btn" style="background:#ffca28; color:#000;" onclick="openContributeModal(); return false;">Start Contributing</a></li>
-      </ul>
-    </nav>
+    <!-- User Navigation - Start Contributing button moved to sidebar -->
     <!-- ==================== MOBILE MENU TOGGLE ==================== -->
     <button class="menu-toggle" id="menu-toggle">&#9776;</button>
 
