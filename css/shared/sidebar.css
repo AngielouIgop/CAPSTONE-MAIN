@@ -1,11 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
 :root {
   --sidebar-width: 250px;
   --sidebar-bg: rgb(0, 48, 96);
-  --sidebar-link-hover: #495057;
+  --sidebar-link-hover: #1a237e;
   --sidebar-logout-bg: #2e0cf1;
   --sidebar-logout-hover: #1a0ccf;
   --sidebar-text: #fff;
-  --sidebar-font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --sidebar-font: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .sidebar {
@@ -104,11 +106,34 @@
   padding: 12px 20px;
   border-radius: 5px;
   transition: background 0.2s;
-  font-size: 1.1em;
+  font-size: 0.9em;
+  display: block;
 }
 
 .sidebar a:hover {
   background-color: var(--sidebar-link-hover);
+}
+
+/* Active/highlighted state for clicked buttons */
+.sidebar a.active {
+  background-color: var(--sidebar-link-hover);
+  font-weight: 600;
+}
+
+/* Start Contributing Button in Sidebar (Mobile Only) */
+.sidebar-start-contributing-btn {
+  display: none; /* Hidden by default (desktop) */
+  background: #ffca28 !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  text-align: center;
+  margin-top: 10px;
+  transition: background 0.2s;
+}
+
+.sidebar-start-contributing-btn:hover {
+  background: #ffb300 !important;
+  color: #ffffff !important;
 }
 
 /* .sidebar-hidden {
@@ -225,5 +250,10 @@
   
   .overlay.active {
     display: block;
+  }
+  
+  /* Show Start Contributing Button in Sidebar on Mobile */
+  .sidebar-start-contributing-btn {
+    display: block !important;
   }
 }

@@ -1,16 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
 body, html {
   margin: 0;
   padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: #f8f9fa;
   height: auto;
-  padding-top: 30px; /* spacing under header */
+  padding-top: 35px; /* spacing under header */
   color: #222;
+  margin-bottom: 70px;
 }
 
-/* Fixed desktop layout (no responsive sidebar margin) */
-body, html {
-  margin-left: 125px ;/* matches your sidebar width */
+/* Responsive sidebar margin */
+@media (min-width: 901px) {
+  body, html {
+    margin-left: 125px; /* matches your sidebar width */
+  }
 }
 
 /* Pending Registrations Modal Styles */
@@ -91,7 +96,7 @@ body, html {
   color: white;
   border: none;
   padding: 12px 30px;
-  border-radius: 8px;
+  border-radius: 30px;
   cursor: pointer;
   font-size: 1rem;
   font-weight: 600;
@@ -138,7 +143,7 @@ body, html {
   color: white;
   border: none;
   padding: 8px 16px;
-  border-radius: 4px;
+  border-radius: 30px;
   cursor: pointer;
   font-size: 0.9rem;
   transition: background 0.3s;
@@ -153,7 +158,7 @@ body, html {
   color: white;
   border: none;
   padding: 8px 16px;
-  border-radius: 4px;
+  border-radius: 30px;
   cursor: pointer;
   font-size: 0.9rem;
   transition: background 0.3s;
@@ -177,7 +182,7 @@ body, html {
 .section-header {
   font-size: 2rem;
   font-weight: bold;
-  margin: 24px 0 8px 16px;
+  margin: 24px 0 8px 32px;
   padding: 8px 16px;
   border-radius: 8px 8px 0 0;
 }
@@ -186,9 +191,125 @@ body, html {
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  margin: 0 auto 32px auto;
-  max-width: 1100px;
+  margin: 0 32px 32px 32px;
+  max-width: 900px;
+  width: 95%;
   overflow: hidden;
+}
+
+/* Responsive adjustments for larger screens */
+@media (min-width: 1400px) {
+  .table-container {
+    max-width: 1300px;
+  }
+  
+  .section-header {
+    font-size: 2.2rem;
+    margin: 24px 0 8px 40px;
+  }
+  
+  .table-container {
+    margin-left: 40px;
+    margin-right: 40px;
+  }
+}
+
+@media (min-width: 1600px) {
+  .table-container {
+    max-width: 1500px;
+    margin-left: 44px;
+    margin-right: 44px;
+  }
+  
+  .section-header {
+    margin-left: 44px;
+  }
+  
+  .custom-table th {
+    padding: 18px 16px;
+    font-size: 1.15rem;
+  }
+  
+  .custom-table td {
+    padding: 16px 16px;
+    font-size: 1.05rem;
+  }
+}
+
+@media (min-width: 1920px) {
+  .table-container {
+    max-width: 1700px;
+  }
+  
+  .section-header {
+    font-size: 2.4rem;
+    margin: 32px 0 12px 48px;
+  }
+  
+  .table-container {
+    margin-left: 48px;
+    margin-right: 48px;
+  }
+  
+  .custom-table th {
+    padding: 20px 20px;
+    font-size: 1.2rem;
+  }
+  
+  .custom-table td {
+    padding: 18px 20px;
+    font-size: 1.1rem;
+  }
+}
+
+/* Medium screens (1024px - 1400px) */
+@media (max-width: 1400px) and (min-width: 1024px) {
+  .table-container {
+    max-width: 95%;
+  }
+  
+  .section-header {
+    margin-left: 24px;
+  }
+  
+  .table-container {
+    margin-left: 24px;
+    margin-right: 24px;
+  }
+}
+
+/* Tablet and smaller screens */
+@media (max-width: 1023px) {
+  body, html {
+    margin-left: 0;
+  }
+  
+  .table-container {
+    max-width: 100%;
+    margin: 0 16px 32px 16px;
+  }
+  
+  .section-header {
+    margin-left: 16px;
+    font-size: 1.8rem;
+  }
+  
+  .custom-table {
+    font-size: 0.9rem;
+  }
+  
+  .custom-table th,
+  .custom-table td {
+    padding: 12px 8px;
+  }
+  
+  /* Stack action buttons on smaller screens */
+  .action-btn {
+    display: block;
+    width: 100%;
+    margin-bottom: 8px;
+    margin-right: 0;
+  }
 }
 
 .custom-table {
@@ -201,9 +322,9 @@ body, html {
   background: #2d316b;
   color: #fff;
   font-weight: 600;
-  padding: 16px 12px;
-  text-align: left;
-  font-size: 1.1rem;
+  padding: 14px 10px;
+  text-align: center;
+  font-size: 1.05rem;
 }
 
 .custom-table tr {
@@ -211,10 +332,18 @@ body, html {
 }
 
 .custom-table td {
-  padding: 14px 12px;
-  font-size: 1rem;
+  padding: 10px 10px;
+  font-size: 0.95rem;
   color: #222;
   vertical-align: middle;
+  text-align: center;
+}
+
+.custom-table th:nth-child(1),
+.custom-table td:nth-child(1),
+.custom-table th:nth-child(2),
+.custom-table td:nth-child(2) {
+  text-align: left;
 }
 
 .custom-table tbody tr:nth-child(even) {
@@ -239,25 +368,33 @@ body, html {
 }
 
 .action-btn {
-  background: #2d316b;
-  color: #fff;
   border: none;
-  border-radius: 6px;
+  border-radius: 30px;
   padding: 8px 16px;
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
-  margin-right: 8px;
+  margin-right: 12px;
   text-decoration: none;
   transition: all 0.2s ease;
+  color: #fff;
 }
 
-.action-btn:last-child {
-  margin-right: 0;
+.action-btn.edit {
+  background: #2d316b;
 }
 
-.action-btn:hover {
+.action-btn.edit:hover {
   background: #1a1d4d;
+  transform: translateY(-1px);
+}
+
+.action-btn.delete {
+  background: #dc3545;
+}
+
+.action-btn.delete:hover {
+  background: #c82333;
   transform: translateY(-1px);
 }
 
@@ -269,7 +406,7 @@ body, html {
   background: #bfc8e6;
   color: #2d316b;
   border: none;
-  border-radius: 6px;
+  border-radius: 30px;
   padding: 8px 16px;
   font-size: 1rem;
   font-weight: 500;
@@ -284,13 +421,13 @@ body, html {
 
 /* Pending registrations button with counter */
 .pending-registrations-btn {
-  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+  background: linear-gradient(135deg, #ffca28 0%, #f57c00 100%);
   color: white;
   position: relative;
 }
 
 .pending-registrations-btn:hover {
-  background: linear-gradient(135deg, #f57c00 0%, #ef6c00 100%);
+  background: linear-gradient(135deg, #ffca28 0%, #ef6c00 100%);
   transform: translateY(-1px);
 }
 
@@ -549,7 +686,7 @@ body, html {
     color: #fff;
     border: none;
     padding: 10px 22px;
-    border-radius: 5px;
+    border-radius: 30px;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -565,7 +702,7 @@ body, html {
     color: #fff;
     border: none;
     padding: 10px 22px;
-    border-radius: 5px;
+    border-radius: 30px;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -589,7 +726,7 @@ body, html {
     color: #fff;
     border: none;
     padding: 10px 22px;
-    border-radius: 5px;
+    border-radius: 30px;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -605,7 +742,7 @@ body, html {
     color: #fff;
     border: none;
     padding: 10px 22px;
-    border-radius: 5px;
+    border-radius: 30px;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -666,4 +803,36 @@ body, html {
   z-index: 1601;
 }
 
-/* Mobile responsiveness removed - Admin only uses desktop */ 
+/* Additional responsive improvements */
+@media (max-width: 768px) {
+  .section-header {
+    font-size: 1.6rem;
+    margin-left: 12px;
+  }
+  
+  .pill-btn {
+    font-size: 0.9rem;
+    padding: 6px 12px;
+    margin-right: 12px;
+  }
+  
+  .custom-table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .custom-table th,
+  .custom-table td {
+    white-space: nowrap;
+    min-width: 100px;
+  }
+  
+  /* Modal adjustments for smaller screens */
+  #editUserModal .modal-content,
+  #addAdministratorModal .modal-content {
+    width: 95%;
+    margin: 10% auto;
+    padding: 20px;
+  }
+} 

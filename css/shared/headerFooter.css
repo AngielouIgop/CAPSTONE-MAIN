@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
 .header-main {
     width: 100%;
     height: 80px;
@@ -6,7 +8,7 @@
     justify-content: space-between;
     align-items: center;
     position: fixed;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     top: 0;
     left: 0;
     z-index: 1000;
@@ -106,6 +108,20 @@ body.sidebar-hidden .header-nav ul {
     background-color: #f7f7f7;
 }
 
+/* Start Contributing Button - Desktop */
+.start-contributing-btn {
+    background: #ffca28 !important;
+    color: #ffffff !important;
+    border-radius: 30px !important;
+    font-weight: 600;
+    padding: 8px 20px;
+}
+
+.start-contributing-btn:hover {
+    background: #ffb300 !important;
+    color: #ffffff !important;
+}
+
 .menu-toggle {
   display: block;
   font-size: 28px;
@@ -185,6 +201,11 @@ body.sidebar-hidden .header-nav ul {
     border-color: rgba(255, 255, 255, 0.4);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+  }
+
+  /* Start Contributing Button - Tablet (hidden, moved to sidebar on mobile) */
+  .start-contributing-btn {
+    display: none !important;
   }
 
   .menu-toggle {
@@ -354,6 +375,11 @@ body.sidebar-hidden .header-nav ul {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
   }
+
+  /* Start Contributing Button - Mobile (hidden, moved to sidebar on mobile) */
+  .start-contributing-btn {
+    display: none !important;
+  }
 }
 
 @media (max-width: 480px) {
@@ -387,5 +413,10 @@ body.sidebar-hidden .header-nav ul {
     font-size: clamp(11px, 2.5vw, 15px);
     margin: clamp(3px, 0.8vh, 6px) auto;
     width: clamp(75%, 80%, 85%);
+  }
+
+  /* Start Contributing Button - Small Mobile (hidden, moved to sidebar on mobile) */
+  .start-contributing-btn {
+    display: none !important;
   }
 }

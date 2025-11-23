@@ -1,3 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --notification-font: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
 /* NOTIFICATION MODAL BACKGROUND - SPECIFIC TO NOTIFICATION MODAL ONLY */
 #notification-modal {
   display: none;
@@ -18,6 +24,7 @@
   max-height: 50vh;
   display: flex;
   flex-direction: column; /* so header stays on top */
+  font-family: var(--notification-font);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
   animation: fadeIn 0.25s ease-in-out;
   font-family: "Segoe UI", sans-serif;

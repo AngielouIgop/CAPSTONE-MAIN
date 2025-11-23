@@ -1,7 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
 body, html {
   margin: 0;
   padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: #f8f9fa;
   height: 100%;
   padding-top: 40px; /* spacing under header */
@@ -36,7 +38,6 @@ body, html {
   font-weight: 700;
   color: #2c3e50;
   letter-spacing: 0.5px;
-  text-transform: uppercase;
   position: relative;
   padding-left: 12px; /* Reduced from 15px */
 }
@@ -59,7 +60,7 @@ body, html {
   border-radius: 8px; /* Smaller border radius */
   border: 2px solid #1900ff;
   box-shadow: 0 2px 10px rgba(25, 0, 255, 0.1);
-  min-width: 140px; /* Much smaller width */
+  min-width: 220px;
 }
 
 .rewards-header span b {
@@ -87,18 +88,18 @@ body, html {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 30px;
+  gap: 20px;
   max-width: 1200px;
   margin: 30px auto;
 }
 
 /* Card Styling */
 .reward-card {
-  width: 180px;
+  width: 140px;
   background: #fff;
   border-radius: 20px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  padding: 15px;
+  padding: 12px;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -106,32 +107,40 @@ body, html {
 }
 
 .reward-card img {
-  width: 100px;
-  height: 100px;
+  width: 75px;
+  height: 75px;
   object-fit: contain;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   border-radius: 12px;
 }
 
 .reward-name {
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 600;
   color: #222;
-  margin-bottom: 5px;
+  margin-bottom: 4px;
+  line-height: 1.3;
 }
 
 .reward-points {
-  font-size: 14px;
+  font-size: 12px;
   color: #444;
-  margin-bottom: 10px;
+  margin-bottom: 4px;
+}
+
+.reward-slot {
+  font-size: 11px;
+  color: #666;
+  margin-bottom: 8px;
+  font-weight: 500;
 }
 
 /* Buttons */
 .claim-btn {
   border: none;
-  border-radius: 20px;
-  padding: 6px 20px;
-  font-size: 14px;
+  border-radius: 30px;
+  padding: 5px 16px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: 0.2s;
@@ -152,6 +161,20 @@ body, html {
   cursor: not-allowed;
 }
 
+.claim-btn.coming-soon {
+  background-color: #ffe3b0;
+  color: #a05c00;
+  cursor: not-allowed;
+}
+
+.coming-soon-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #b26e00;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
 .reward-card.coming-soon {
   background-color: #eee;
   opacity: 0.7;
@@ -168,9 +191,33 @@ body, html {
 
 /* Tablets */
 @media (max-width: 1024px) {
+  .rewards-list {
+    gap: 18px;
+    max-width: 95%;
+    margin: 0 auto;
+  }
 
   .reward-card {
-    width: 160px;
+    width: 130px;
+    padding: 10px;
+  }
+  
+  .reward-card img {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .reward-name {
+    font-size: 12px;
+  }
+  
+  .reward-points {
+    font-size: 11px;
+  }
+  
+  .claim-btn {
+    padding: 4px 14px;
+    font-size: 11px;
   }
 }
 
@@ -208,6 +255,8 @@ body, html {
 
   .rewards-list {
     gap: 20px;
+    max-width: 96%;
+    margin: 0 auto;
   }
 
   .reward-card {
@@ -224,6 +273,11 @@ body, html {
 
   .rewards-header span b {
     font-size: 20px;
+  }
+
+  .rewards-list {
+    max-width: 98%;
+    margin: 0 auto;
   }
 
   .reward-card {

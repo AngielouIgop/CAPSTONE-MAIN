@@ -1,7 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
 body, html {
   margin: 0;
   padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: #f8f9fa;
   height: 100%;
   padding-top: 30px; /* spacing under header */
@@ -11,7 +13,7 @@ body, html {
 /* Desktop sidebar offset */
 @media (min-width: 901px) {
   body, html {
-    margin-left: 125px; /* matches your sidebar width */
+    margin-left: 100px; /* matches your sidebar width */
   }
 }
 
@@ -38,17 +40,18 @@ body, html {
   padding: 30px 20px;
   flex: 1;
   display: flex;
-  justify-content: center;
-  align-items: flex-start; /* default desktop */
+  justify-content: flex-start;
+  align-items: flex-start;
   min-height: 100vh;
   background: #f8f9fa;
 }
 
 .profile-form {
   padding: 40px;
-  max-width: 1100px; /* make field container longer */
+  max-width: 520px;
   width: 100%;
   margin: 0 auto;
+  min-height: calc(100vh - 120px);
 }
 
 /* Mobile: center vertically */
@@ -70,8 +73,7 @@ body, html {
   font-size: 2.2rem;
   font-weight: 700;
   margin-bottom: 30px;
-  color: #2c3e50;
-  text-transform: uppercase;
+  color: #003060;;
   letter-spacing: 1px;
   position: relative;
   padding-bottom: 15px;
@@ -117,7 +119,7 @@ body, html {
   background: #2336b6;
   color: #fff;
   border: none;
-  border-radius: 8px;
+  border-radius: 30px;
   padding: 0.5em 1.2em;
   font-size: 1em;
   cursor: pointer;
@@ -137,7 +139,7 @@ body, html {
   background: #ffe6e6;
   color: #2336b6;
   border: none;
-  border-radius: 8px;
+  border-radius: 30px;
   padding: 0.5em 1.2em;
   font-size: 1em;
   cursor: pointer;
@@ -181,7 +183,7 @@ body, html {
 }
 
 .form-group input {
-  width: 100%;
+  width: 95%;
   height: 50px;
   padding: 0 16px;
   border-radius: 12px;
@@ -207,7 +209,7 @@ body, html {
   background: #2336b6;
   color: #fff;
   border: none;
-  border-radius: 8px;
+  border-radius: 30px;
   padding: 0.7em 0;
   font-size: 1.1em;
   font-weight: bold;
@@ -227,7 +229,7 @@ body, html {
 /* Password toggle styles */
 .password-container {
   position: relative;
-  width: 100%;
+  width: 95%;
   height: 50px;
   border-radius: 12px;
   border: 1px solid #ccc;
@@ -286,14 +288,97 @@ body, html {
 
 /* === RESPONSIVE DESIGN === */
 
-@media (max-width: 1024px) {
-  body {
-    margin-left: 200px;
-    padding-top: 70px;
+/* Larger screens (1400px+) */
+@media (min-width: 1400px) {
+  .profile-form {
+    max-width: 1300px;
+    padding: 50px;
   }
   
+  .profile-form-title {
+    font-size: 2.4rem;
+  }
+  
+  .profile-img-box {
+    width: 320px;
+    height: 320px;
+  }
+}
+
+@media (min-width: 1600px) {
+  .profile-form {
+    max-width: 1500px;
+    padding: 60px;
+  }
+  
+  .profile-form-title {
+    font-size: 2.6rem;
+  }
+  
+  .form-group input {
+    height: 55px;
+    font-size: 1.05em;
+  }
+  
+  .save-btn {
+    width: 18%;
+    padding: 0.8em 0;
+    font-size: 1.15em;
+  }
+}
+
+@media (min-width: 1920px) {
+  .profile-form {
+    max-width: 1700px;
+    padding: 70px;
+  }
+  
+  .profile-form-title {
+    font-size: 2.8rem;
+    margin-bottom: 40px;
+  }
+  
+  .profile-img-box {
+    width: 350px;
+    height: 350px;
+  }
+  
+  .form-group input {
+    height: 60px;
+    font-size: 1.1em;
+  }
+  
+  .save-btn {
+    width: 16%;
+    padding: 0.9em 0;
+    font-size: 1.2em;
+  }
+}
+
+/* Medium screens (1024px - 1400px) */
+@media (max-width: 1400px) and (min-width: 1024px) {
+  .profile-form {
+    max-width: 95%;
+    padding: 35px;
+  }
+}
+
+@media (max-width: 1024px) {
+  body {
+    margin-left: 30px;
+    padding-top: 70px;
+  }
+
+  .profile-settings-container {
+    padding: 30px 20px;
+    justify-content: center;
+    align-items: center;
+  }
+
   .profile-form {
     padding: 3rem 2rem;
+    max-width: 96%;
+    margin: 0 auto;
   }
   
   .save-btn {
@@ -317,7 +402,13 @@ body, html {
     margin-left: 0;
     padding-top: 60px;
   }
-  
+
+  .profile-settings-container {
+    padding: 20px;
+    justify-content: center;
+    align-items: center;
+  }
+
   .profile-settings-container {
     padding-top: 40px;
     min-height: 100vh;
@@ -326,6 +417,8 @@ body, html {
   .profile-form {
     padding: 2rem 1.5rem;
     min-height: auto;
+    max-width: 97%;
+    margin: 0 auto;
   }
   
   .save-btn {
@@ -356,11 +449,15 @@ body, html {
   .profile-settings-container {
     padding-top: 30px;
     padding: 1rem;
+    justify-content: center;
+    align-items: center;
   }
   
   .profile-form {
     padding: 1.5rem 1rem;
     border-radius: 12px;
+    max-width: 98%;
+    margin: 0 auto;
   }
   
   .profile-form-title {
@@ -411,10 +508,14 @@ body, html {
   
   .profile-settings-container {
     padding: 0.5rem;
+    justify-content: center;
+    align-items: center;
   }
   
   .profile-form {
     padding: 1rem 0.8rem;
+    max-width: 99%;
+    margin: 0 auto;
   }
   
   .profile-form-title {

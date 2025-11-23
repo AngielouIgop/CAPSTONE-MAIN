@@ -97,16 +97,15 @@ body, html {
 
 .password-container input[type="password"],
 .password-container input[type="text"] {
-  padding: 12px 15px;
+  padding: 8px;
   font-size: 16px;
-  min-height: 20px;
 }
 
 .btn-primary, .btn-secondary {
   margin-top: 12px;
   padding: 10px 0;
   border: none;
-  border-radius: 5px;
+  border-radius: 30px;
   font-weight: bold;
   font-size: 1em;
   cursor: pointer;
@@ -199,7 +198,7 @@ body, html {
   .btn-primary, .btn-secondary {
     padding: clamp(12px, 2.5vh, 16px) 0;
     font-size: clamp(14px, 2.5vw, 18px);
-    border-radius: clamp(6px, 1vw, 8px);
+    border-radius: 30px;
     margin-top: clamp(10px, 2vh, 15px);
   }
 }

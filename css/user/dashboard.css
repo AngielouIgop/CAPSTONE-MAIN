@@ -1,10 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
 body, html {
   margin: 0;
   padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: #f8f9fa;
-  height: 100%;
+  height: 270vh;
   padding-top: 30px; /* spacing under header */
+  margin-bottom: 100px;
   color: #222;
 }
 
@@ -17,6 +20,147 @@ body, html {
 
 .dashboard {
   padding: 20px;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.profile-avatar {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-name {
+  font-size: 1.8rem;
+  margin: 0;
+  color: #003060;
+}
+
+.profile-zone {
+  margin: 4px 0 0;
+  color: #6c7a89;
+}
+
+.rewards-section {
+  background: #fff;
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  margin-bottom: 30px;
+}
+
+.rewards-title {
+  display: inline-block;
+  padding: 0.35rem 1rem;
+  background: #3566d8;
+  color: #fff;
+  border-radius: 6px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.points-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.points-label {
+  font-weight: 600;
+  color: #003060;
+}
+
+.points-value {
+  font-weight: 700;
+  color: #ff9800;
+}
+
+.rewards-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+}
+
+.reward-card {
+  background: #fefefe;
+  border-radius: 14px;
+  padding: 1rem;
+  text-align: center;
+  border: 1px solid rgba(0,0,0,0.05);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+}
+
+.reward-card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 0.75rem;
+}
+
+.reward-name {
+  font-weight: 600;
+  color: #003060;
+  margin-bottom: 0.3rem;
+}
+
+.reward-points {
+  color: #6c7a89;
+  margin-bottom: 0.75rem;
+}
+
+.claim-btn {
+  width: 100%;
+  border: none;
+  border-radius: 30px;
+  padding: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.claim-btn.available {
+  background: #2336b6;
+  color: #fff;
+}
+
+.claim-btn.available:hover {
+  background: #1a237e;
+}
+
+.claim-btn.insufficient {
+  background: #f1f1f1;
+  color: #777;
+  cursor: not-allowed;
+}
+
+.no-rewards {
+  margin: 0;
+  color: #6c7a89;
 }
 
 .dashboard h2 {
@@ -92,6 +236,98 @@ body, html {
   color: #003060;
   font-size: 1.1rem;
   font-weight: 600;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 5000;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 18px;
+  width: 420px;
+  max-width: 90%;
+  padding: 0 24px 24px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.modal-logo {
+  width: 46px;
+  height: 46px;
+}
+
+.modal-title {
+  font-weight: 700;
+  color: #2336b6;
+  font-size: 1.1rem;
+}
+
+.modal-body {
+  padding-top: 16px;
+  text-align: center;
+}
+
+.modal-instruction {
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.reward-preview {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.2rem;
+}
+
+.reward-preview img {
+  width: 90px;
+  height: 90px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.modal-btn {
+  flex: 1;
+  border: none;
+  border-radius: 30px;
+  padding: 0.7rem 0;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-confirm {
+  background: #2336b6;
+  color: #fff;
+}
+
+.btn-cancel {
+  background: #f1f1f1;
+  color: #555;
 }
 
 /* No data styling */
@@ -210,10 +446,14 @@ body, html {
   body, html {
     margin-left: 125px; /* Keep sidebar margin for large tablets */
     padding-top: 70px;
+    height: auto;
+    min-height: 100vh;
   }
   
   .dashboard {
     padding: 18px;
+    max-width: 90%;
+    margin: 0 auto 60px;
   }
   
   .dashboard h2 {
@@ -238,10 +478,14 @@ body, html {
   body, html {
     margin-left: 0; /* Sidebar collapsed on medium tablets */
     padding-top: 70px;
+    height: auto;
+    min-height: 100vh;
   }
   
   .dashboard {
     padding: 16px;
+    max-width: 92%;
+    margin: 0 auto 60px;
   }
   
   .dashboard h2 {
@@ -267,6 +511,8 @@ body, html {
   body, html {
     margin-left: 0; /* Remove sidebar margin on mobile */
     padding-top: 70px;
+    height: auto;
+    min-height: 100vh;
   }
   
   .dashboard-grid {
@@ -276,6 +522,8 @@ body, html {
   
   .dashboard {
     padding: 15px;
+    max-width: 94%;
+    margin: 0 auto 60px;
   }
   
   .dashboard-top {
@@ -337,10 +585,14 @@ body, html {
   body, html {
     margin-left: 0; /* No sidebar margin on mobile */
     padding-top: 70px;
+    height: auto;
+    min-height: 100vh;
   }
   
   .dashboard {
     padding: 10px;
+    max-width: 96%;
+    margin: 0 auto 60px;
   }
   
   .dashboard h2 {
@@ -428,10 +680,14 @@ body, html {
   body, html {
     margin-left: 0; /* No sidebar margin on small mobile */
     padding-top: 30px;
+    height: auto;
+    min-height: 50vh;
   }
   
   .dashboard {
     padding: 8px;
+    max-width: 98%;
+    margin: 0 auto 60px;
   }
   
   .dashboard h2 {

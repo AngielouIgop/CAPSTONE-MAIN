@@ -1,16 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
 body, html {
   margin: 0;
   padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: #f8f9fa;
   height: 100%;
   padding-top: 30px; /* spacing under header */
   color: #222;
 }
 
-/* Fixed desktop layout (no responsive sidebar margin) */
-body, html {
-  margin-left: 125px ;/* matches your sidebar width */
+/* Responsive sidebar margin */
+@media (min-width: 901px) {
+  body, html {
+    margin-left: 125px; /* matches your sidebar width */
+  }
 }
 
 .reward-section-header {
@@ -23,12 +27,121 @@ body, html {
 }
 
 .reward-table-container {
-
+  background: #fff;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   margin: 0 auto 32px auto;
-  max-width: 1100px;
+  max-width: 900px;
+  width: 95%;
   overflow: hidden;
+}
+
+/* Responsive adjustments for larger screens */
+@media (min-width: 1400px) {
+  .reward-table-container {
+    max-width: 1300px;
+  }
+  
+  .reward-section-header {
+    font-size: 2.2rem;
+    margin: 24px 0 8px 24px;
+  }
+}
+
+@media (min-width: 1600px) {
+  .reward-table-container {
+    max-width: 1500px;
+  }
+  
+  .reward-custom-table th {
+    padding: 18px 16px;
+    font-size: 1.15rem;
+  }
+  
+  .reward-custom-table td {
+    padding: 16px 16px;
+    font-size: 1.05rem;
+  }
+  
+  .reward-image {
+    width: 50px;
+    height: 50px;
+  }
+}
+
+@media (min-width: 1920px) {
+  .reward-table-container {
+    max-width: 1700px;
+  }
+  
+  .reward-section-header {
+    font-size: 2.4rem;
+    margin: 32px 0 12px 32px;
+  }
+  
+  .reward-custom-table th {
+    padding: 20px 20px;
+    font-size: 1.2rem;
+  }
+  
+  .reward-custom-table td {
+    padding: 18px 20px;
+    font-size: 1.1rem;
+  }
+  
+  .reward-image {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+/* Medium screens (1024px - 1400px) */
+@media (max-width: 1400px) and (min-width: 1024px) {
+  .reward-table-container {
+    max-width: 95%;
+  }
+  
+  .reward-section-header {
+    margin-left: 12px;
+  }
+}
+
+/* Tablet and smaller screens */
+@media (max-width: 1023px) {
+  body, html {
+    margin-left: 0;
+  }
+  
+  .reward-table-container {
+    max-width: 100%;
+    margin: 0 16px 32px 16px;
+  }
+  
+  .reward-section-header {
+    margin-left: 16px;
+    font-size: 1.8rem;
+  }
+  
+  .reward-custom-table {
+    font-size: 0.9rem;
+  }
+  
+  .reward-custom-table th,
+  .reward-custom-table td {
+    padding: 12px 8px;
+  }
+  
+  /* Stack action buttons on smaller screens */
+  .reward-actions-cell {
+    gap: 15px;
+  }
+  
+  .reward-action-btn,
+  .reward-delete-btn {
+    width: 100%;
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
 }
 
 .reward-custom-table {
@@ -41,9 +154,9 @@ body, html {
   background: #2d316b;
   color: #fff;
   font-weight: 600;
-  padding: 16px 12px;
-  text-align: left;
-  font-size: 1.1rem;
+  padding: 14px 10px;
+  text-align: center;
+  font-size: 1.05rem;
 }
 
 .reward-custom-table tr {
@@ -51,10 +164,16 @@ body, html {
 }
 
 .reward-custom-table td {
-  padding: 14px 12px;
-  font-size: 1rem;
+  padding: 10px 10px;
+  font-size: 0.95rem;
   color: #222;
   vertical-align: middle;
+  text-align: center;
+}
+
+.reward-custom-table th:nth-child(2),
+.reward-custom-table td:nth-child(2) {
+  text-align: left;
 }
 
 .reward-custom-table tbody tr:nth-child(even) {
@@ -112,6 +231,12 @@ body, html {
   border: 1px solid #f5c6cb;
 }
 
+.status-badge.coming-soon {
+  background-color: #fff4c4;
+  color: #8a5b00;
+  border: 1px solid #f0d48a;
+}
+
 .image-preview-container {
   margin: 10px 0;
   text-align: center;
@@ -122,38 +247,64 @@ body, html {
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.reward-delete-btn {
-  background: #dc3545;
-}
-
-.reward-delete-btn:hover {
-  background: #c82333;
+/* Action buttons container */
+.reward-actions-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-items: flex-start;
 }
 
 .reward-action-btn {
   background: #2d316b;
   color: #fff;
   border: none;
-  border-radius: 6px;
-  padding: 8px 16px;
-  font-size: 1rem;
+  border-radius: 30px;
+  padding: 4px 10px;
+  font-size: 0.85rem;
   font-weight: 500;
   cursor: pointer;
-  margin-right: 8px;
   text-decoration: none;
   transition: all 0.2s ease;
-}
-
-.reward-action-btn:last-child {
-  margin-right: 0;
+  white-space: nowrap;
+  min-width: 60px;
+  text-align: center;
+  display: inline-block;
 }
 
 .reward-action-btn:hover {
   background: #1a1d4d;
   transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .reward-action-btn:active {
+  transform: translateY(0);
+}
+
+.reward-delete-btn {
+  background: #dc3545;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  padding: 4px 10px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  min-width: 60px;
+  text-align: center;
+  display: inline-block;
+}
+
+.reward-delete-btn:hover {
+  background: #c82333;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.reward-delete-btn:active {
   transform: translateY(0);
 }
 
@@ -161,7 +312,7 @@ body, html {
   background: #bfc8e6;
   color: #2d316b;
   border: none;
-  border-radius: 6px;
+  border-radius: 30px;
   padding: 8px 16px;
   font-size: 1rem;
   font-weight: 500;
@@ -275,7 +426,7 @@ body, html {
     color: #fff;
     border: none;
     padding: 10px 22px;
-    border-radius: 5px;
+    border-radius: 30px;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -291,7 +442,7 @@ body, html {
     color: #fff;
     border: none;
     padding: 10px 22px;
-    border-radius: 5px;
+    border-radius: 30px;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -302,4 +453,46 @@ body, html {
     transform: translateY(-1px);
 }
 
-/* Mobile responsiveness removed - Admin only uses desktop */
+/* Additional responsive improvements */
+@media (max-width: 768px) {
+  .reward-section-header {
+    font-size: 1.6rem;
+    margin-left: 12px;
+  }
+  
+  .reward-pill-btn {
+    font-size: 0.9rem;
+    padding: 6px 12px;
+    margin-left: 8px;
+  }
+  
+  .reward-custom-table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .reward-custom-table th,
+  .reward-custom-table td {
+    white-space: nowrap;
+    min-width: 100px;
+  }
+  
+  .reward-actions-cell {
+    gap: 12px;
+  }
+  
+  .reward-action-btn,
+  .reward-delete-btn {
+    width: 100%;
+    padding: 5px 8px;
+    font-size: 0.75rem;
+  }
+  
+  /* Modal adjustments for smaller screens */
+  .reward-modal-content {
+    width: 95%;
+    margin: 10% auto;
+    padding: 20px;
+  }
+}
