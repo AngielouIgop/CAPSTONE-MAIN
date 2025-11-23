@@ -48,6 +48,14 @@ class Controller
                     $error = "Please fill out all the required fields.";
                 } elseif ($password !== $confirm) {
                     $error = "Passwords do not match.";
+                } elseif (strlen($password) < 8) {
+                    $error = "Password must be at least 8 characters long.";
+                } elseif (!preg_match('/[a-zA-Z]/', $password)) {
+                    $error = "Password must contain at least one letter.";
+                } elseif (!preg_match('/[0-9]/', $password)) {
+                    $error = "Password must contain at least one number.";
+                } elseif (!preg_match('/[^a-zA-Z0-9]/', $password)) {
+                    $error = "Password must contain at least one special character.";
                 } elseif (!$terms) {
                     $error = "You must agree to the Terms and Conditions and Privacy Policy to register.";
                 } elseif ($this->model->userExists($username) || $this->model->pendingUserExists($username)) {
@@ -67,50 +75,61 @@ class Controller
                 }
                 break;
 
-            case 'login':
-                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                    $username = $_POST['username'] ?? '';
-                    $password = $_POST['password'] ?? '';
-                    $loginRole = strtolower($_POST['loginRole'] ?? '');
-                    $error = '';
-                    $notice = '';
-
-                    if ($this->model->userExists($username)) {
-                        $user = $this->model->loginUser($username, $password, $loginRole);
-                        if ($user) {
-                            if ($user['role'] === $loginRole) {
-                                $_SESSION['user'] = $user;
-                                $_SESSION['userID'] = $user['userID'];
-                                $_SESSION['username'] = $user['username'];
-
-                                $this->model->setCurrentUser($user['userID'], $user['username']);
-
-                                if ($loginRole === 'admin') {
-                                    header('Location: ?command=adminDashboard');
-                                } elseif ($loginRole === 'super admin') {
-                                    header('Location: ?command=adminDashboard');
+                case 'login':
+                    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                        $username = $_POST['username'] ?? '';
+                        $password = $_POST['password'] ?? '';
+                        $error = '';
+                        $notice = '';
+                
+                        if ($this->model->userExists($username)) {
+                            $user = $this->model->loginUser($username, $password, '');
+                            if ($user) {
+                                // Check if user is already logged in (using is_active flag)
+                                // current_session_id is stored for tracking purposes
+                                $currentSessionId = session_id();
+                                $stmt = $this->model->db->prepare("SELECT id, current_session_id FROM `current_user` WHERE userID = ? AND is_active = 1");
+                                $stmt->bind_param("i", $user['userID']);
+                                $stmt->execute();
+                                $result = $stmt->get_result();
+                                $row = $result->fetch_assoc();
+                                $stmt->close();
+                
+                                if($result->num_rows > 0) {
+                                    // User is already logged in - block new login
+                                    $error = "This account is already logged in on another device. Please logout from that device first.";
                                 } else {
-                                    header('Location: ?command=dashboard');
+                                    // User is not active - allow login and store current_session_id
+                                    $_SESSION['user'] = $user;
+                                    $_SESSION['userID'] = $user['userID'];
+                                    $_SESSION['username'] = $user['username'];
+                
+                                    $this->model->setCurrentUser($user['userID'], $user['username'], $currentSessionId);
+                
+                                    if ($user['role'] === 'admin') {
+                                        header('Location: ?command=adminDashboard');
+                                    } elseif ($user['role'] === 'super admin') {
+                                        header('Location: ?command=adminDashboard');
+                                    } else {
+                                        header('Location: ?command=dashboard');
+                                    }
+                                    exit;
                                 }
-                                exit;
-                            } else {
-                                $error = "Selected role doesn't match your account.";
+                            } else {    
+                                $error = "Invalid username or password.";
                             }
                         } else {
-                            $error = "Invalid username or password.";
-                        }
-                    } else {
-                        if ($this->model->isRegistrationPending($username)) {
-                            $notice = "Your registration is still being processed. Please wait for admin approval.";
-                        } elseif ($this->model->isRegistrationRejected($username)) {
-                            $notice = "Your registration has been rejected. Please contact the administrator for more information.";
-                        } else {
-                            $error = "User does not exist.";
+                            if ($this->model->isRegistrationPending($username)) {
+                                $notice = "Your registration is still being processed. Please wait for admin approval.";
+                            } elseif ($this->model->isRegistrationRejected($username)) {
+                                $notice = "Your registration has been rejected. Please contact the administrator for more information.";
+                            } else {
+                                $error = "User does not exist.";
+                            }
                         }
                     }
-                }
-                include_once('view/auth/login.php');
-                break;
+                    include_once('view/auth/login.php');
+                    break;
 
             case 'forgotPassword':
                 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -150,8 +169,14 @@ class Controller
                             $error = "Please fill out all the required fields.";
                         } elseif ($newPassword !== $confirmPassword) {
                             $error = "Passwords do not match.";
-                        } elseif (strlen($newPassword) < 6) {
-                            $error = "Password must be at least 6 characters long.";
+                        } elseif (strlen($newPassword) < 8) {
+                            $error = "Password must be at least 8 characters long.";
+                        } elseif (!preg_match('/[a-zA-Z]/', $newPassword)) {
+                            $error = "Password must contain at least one letter.";
+                        } elseif (!preg_match('/[0-9]/', $newPassword)) {
+                            $error = "Password must contain at least one number.";
+                        } elseif (!preg_match('/[^a-zA-Z0-9]/', $newPassword)) {
+                            $error = "Password must contain at least one special character.";
                         } else {
                             if ($this->model->verifyPasswordResetToken($userID, $token)) {
                                 if ($this->model->updateUserPassword($userID, $newPassword)) {
@@ -177,10 +202,62 @@ class Controller
                 break;
 
             case 'logout':
-                $this->model->clearCurrentUser();
+                // Get the current session ID and userID BEFORE destroying session
+                $currentSessionId = session_id();
+                $userID = isset($_SESSION['user']['userID']) ? $_SESSION['user']['userID'] : null;
+                
+                // Clear database records FIRST (before destroying session)
+                // Use the id from current_user table instead of userID
+                if ($userID !== null || $currentSessionId) {
+                    try {
+                        // Find the record by userID or session_id and get its id
+                        $stmt = $this->model->db->prepare("SELECT id FROM `current_user` WHERE (userID = ? OR current_session_id = ?) AND is_active = 1 LIMIT 1");
+                        if ($userID && $currentSessionId) {
+                            $stmt->bind_param("is", $userID, $currentSessionId);
+                        } elseif ($userID) {
+                            $stmt = $this->model->db->prepare("SELECT id FROM `current_user` WHERE userID = ? AND is_active = 1 LIMIT 1");
+                            $stmt->bind_param("i", $userID);
+                        } else {
+                            $stmt = $this->model->db->prepare("SELECT id FROM `current_user` WHERE current_session_id = ? AND is_active = 1 LIMIT 1");
+                            $stmt->bind_param("s", $currentSessionId);
+                        }
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+                        $row = $result->fetch_assoc();
+                        $stmt->close();
+                        
+                        if ($row && isset($row['id'])) {
+                            $recordId = $row['id'];
+                            // Delete the record using the id
+                            $deleteStmt = $this->model->db->prepare("DELETE FROM `current_user` WHERE id = ?");
+                            $deleteStmt->bind_param("i", $recordId);
+                            $deleteStmt->execute();
+                            $deleteStmt->close();
+                        }
+                    } catch (Exception $e) {
+                        // Log error but continue with logout
+                        error_log("Logout error: " . $e->getMessage());
+                    }
+                }
+                
+                // Clear all session variables
+                $_SESSION = array();
+                
+                // Delete the session cookie
+                if (ini_get("session.use_cookies")) {
+                    $params = session_get_cookie_params();
+                    setcookie(session_name(), '', time() - 42000,
+                        $params["path"], $params["domain"],
+                        $params["secure"], $params["httponly"]
+                    );
+                }
+                
+                // Destroy the session completely
                 session_unset();
                 session_destroy();
-                header("Location: ?command=login");
+                
+                // Output a proper HTML page with redirect
+                echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta http-equiv="refresh" content="0;url=?command=login"><script>window.location.replace("?command=login");</script></head><body><p>Logging out... <a href="?command=login">Click here if you are not redirected</a></p></body></html>';
                 exit();
 
             case 'dashboard':
@@ -194,23 +271,13 @@ class Controller
                 $wasteHistory = $this->model->getUserWasteHistory($userID);
                 $mostContributedWaste = $this->model->getMostContributedWaste();
                 $topContributors = $this->model->getTopContributors();
+                $totalCurrentPoints = (float) $this->model->getUserPoints($userID);
+                $rewards = $this->model->getAllRewards();
 
                 include_once('view/user/dashboard.php');
                 break;
 
-            case 'userProfile':
-                if (!isset($_SESSION['user'])) {
-                    header('Location: ?command=Login');
-                    exit();
-                }
-                $userID = $_SESSION['user']['userID'];
-                $users = $this->model->getUserData($userID);
-                $totalCurrentPoints = (float) $this->model->getUserPoints($userID);
-                $rewards = $this->model->getAllRewards();
-
-                include_once('view/user/userProfile.php');
-                break;
-
+          
             case 'userSettings':
                 if (!isset($_SESSION['user'])) {
                     header('Location: ?command=login');
