@@ -1,7 +1,17 @@
+// ========================================
+// NOTIFICATION MODAL - ORGANIZED BY FUNCTIONS
+// ========================================
+
+// ==================== CONSTANTS ====================
 const modal = document.getElementById('notification-modal');
 const notificationList = document.getElementById('notification-list');
 
-// Populate the notification list
+// ==================== NOTIFICATION FUNCTIONS ====================
+
+/**
+ * Populate the notification list with notification items
+ * @param {Array} notifications - Array of notification objects
+ */
 function populateNotificationList(notifications) {
   notificationList.innerHTML = '';
 
@@ -25,40 +35,9 @@ function populateNotificationList(notifications) {
   });
 }
 
-// Event delegation for "Done", "View Registration", and close buttons
-notificationList.addEventListener('click', (e) => {
-  const target = e.target;
-
-  if (target.classList.contains('done-single-btn')) {
-    const notifId = target.dataset.id;
-    fetch('endpoints/updateNotification.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: `id=${notifId}`
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        target.parentElement.style.opacity = 0.5;
-        setTimeout(() => {
-          target.parentElement.remove();
-          // Update counter after removing notification
-          updateNotificationCounter();
-        }, 400);
-      } else {
-        alert('Error: ' + data.message);
-      }
-    })
-    .catch(err => console.error('Error:', err));
-  }
-
-
-  if (target.classList.contains('notif-close-btn')) {
-    target.parentElement.remove();
-  }
-});
-
-// Update notification counter
+/**
+ * Update the notification counter badge
+ */
 function updateNotificationCounter() {
   fetch('endpoints/getUnreadNotifications.php')
     .then(res => res.json())
@@ -79,38 +58,104 @@ function updateNotificationCounter() {
     .catch(err => console.error('Error updating counter:', err));
 }
 
-// Open modal and fetch unread notifications
+/**
+ * Mark a single notification as read
+ * @param {number} notifId - The ID of the notification to mark as read
+ */
+function markNotificationAsRead(notifId) {
+  fetch('endpoints/updateNotification.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `id=${notifId}`
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      updateNotificationCounter();
+    } else {
+      alert('Error: ' + data.message);
+    }
+  })
+  .catch(err => console.error('Error:', err));
+}
+
+/**
+ * Mark all notifications as read
+ */
+function markAllNotificationsAsRead() {
+  fetch('endpoints/markAllNotificationsAsRead.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      notificationList.innerHTML = '';
+      updateNotificationCounter();
+    } else {
+      alert('Error: ' + data.message);
+    }
+  })
+  .catch(err => {
+    console.error('Error:', err);
+    alert('Failed to mark notifications as read.');
+  });
+}
+
+// ==================== MODAL FUNCTIONS ====================
+
+/**
+ * Open the notification modal and load unread notifications
+ */
 function openNotificationModal() {
   fetch('endpoints/getUnreadNotifications.php')
     .then(res => res.json())
     .then(data => {
       populateNotificationList(data);
       modal.style.display = 'block';
-      // Update counter after opening modal
       updateNotificationCounter();
     })
     .catch(err => console.error('Error:', err));
 }
 
-// Close modal
+/**
+ * Close the notification modal
+ */
 function closeNotificationModal() {
   modal.style.display = 'none';
 }
 
-// Event listeners
+// ==================== EVENT LISTENERS ====================
+
+// Notification list click delegation (for Done and Close buttons)
+notificationList.addEventListener('click', (e) => {
+  const target = e.target;
+
+  if (target.classList.contains('done-single-btn')) {
+    const notifId = target.dataset.id;
+    target.parentElement.style.opacity = 0.5;
+    setTimeout(() => {
+      target.parentElement.remove();
+      markNotificationAsRead(notifId);
+    }, 400);
+  }
+
+  if (target.classList.contains('notif-close-btn')) {
+    target.parentElement.remove();
+  }
+});
+
+// Modal open/close event listeners
 document.querySelector('.notifications-btn').addEventListener('click', openNotificationModal);
 document.querySelector('.modal-close-btn').addEventListener('click', closeNotificationModal);
 window.addEventListener('click', e => {
   if (e.target === modal) closeNotificationModal();
 });
 
-// Clear all notifications (just clears UI)
-document.querySelector('.clear-btn').addEventListener('click', () => {
-  notificationList.innerHTML = '';
-  // Update counter after clearing
-  updateNotificationCounter();
-});
+// Clear all notifications button
+document.querySelector('.clear-btn').addEventListener('click', markAllNotificationsAsRead);
 
+// ==================== INITIALIZATION ====================
 
 // Update counter on page load
 document.addEventListener('DOMContentLoaded', function() {

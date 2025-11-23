@@ -1,7 +1,21 @@
-// Claim Modal Functionality
+// ========================================
+// CLAIM MODAL - ORGANIZED BY FUNCTIONS
+// ========================================
+
+// ==================== GLOBAL VARIABLES ====================
 let currentRewardId = null;
 let currentSlotNum = null;
 
+// ==================== MODAL FUNCTIONS ====================
+
+/**
+ * Open the claim reward modal
+ * @param {string} rewardImage - URL of the reward image
+ * @param {string} rewardName - Name of the reward
+ * @param {number} pointsRequired - Points required to claim
+ * @param {number} rewardId - ID of the reward
+ * @param {number} slotNum - Slot number of the reward
+ */
 function openClaimModal(rewardImage, rewardName, pointsRequired, rewardId, slotNum) {
   const modal = document.getElementById('claimModal');
   const modalImage = document.getElementById('modalRewardImage');
@@ -35,6 +49,9 @@ function openClaimModal(rewardImage, rewardName, pointsRequired, rewardId, slotN
   };
 }
 
+/**
+ * Close the claim reward modal
+ */
 function closeClaimModal() {
   const modal = document.getElementById('claimModal');
   modal.classList.remove('show');
@@ -42,25 +59,12 @@ function closeClaimModal() {
   currentSlotNum = null;
 }
 
-// Event listeners
-document.addEventListener('DOMContentLoaded', function() {
-  const modal = document.getElementById('claimModal');
-  const confirmBtn = document.getElementById('confirmClaim');
-  const cancelBtn = document.getElementById('cancelClaim');
-  
-  if (confirmBtn) {
-    confirmBtn.addEventListener('click', function() {
-      if (currentRewardId) {
-        claimReward(currentRewardId);
-      }
-    });
-  }
-  
-  if (cancelBtn) {
-    cancelBtn.addEventListener('click', closeClaimModal);
-  }
-});
+// ==================== REWARD CLAIMING FUNCTIONS ====================
 
+/**
+ * Claim a reward
+ * @param {number} rewardId - The ID of the reward to claim
+ */
 function claimReward(rewardId) {
   // Show loading state
   const confirmBtn = document.getElementById('confirmClaim');
@@ -80,7 +84,6 @@ function claimReward(rewardId) {
   .then(data => {
     if (data.success) {
       alert('Reward claimed successfully!');
-      // Close modal
       closeClaimModal();
       // Reload page to update points and available rewards
       window.location.reload();
@@ -99,3 +102,22 @@ function claimReward(rewardId) {
   });
 }
 
+// ==================== EVENT LISTENERS & INITIALIZATION ====================
+
+document.addEventListener('DOMContentLoaded', function() {
+  const modal = document.getElementById('claimModal');
+  const confirmBtn = document.getElementById('confirmClaim');
+  const cancelBtn = document.getElementById('cancelClaim');
+  
+  if (confirmBtn) {
+    confirmBtn.addEventListener('click', function() {
+      if (currentRewardId) {
+        claimReward(currentRewardId);
+      }
+    });
+  }
+  
+  if (cancelBtn) {
+    cancelBtn.addEventListener('click', closeClaimModal);
+  }
+});
