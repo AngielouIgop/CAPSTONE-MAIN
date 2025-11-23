@@ -260,7 +260,7 @@ class Model
         return $status === 'rejected';
     }
 
-    public function setCurrentUser($userID, $username)
+    public function setCurrentUser($userID, $username, $sessionId = null)
     {
         $roleStmt = $this->db->prepare("SELECT role FROM user WHERE userID = ?");
         $roleStmt->bind_param("i", $userID);
@@ -272,36 +272,48 @@ class Model
         }
         $roleStmt->close();
 
-        $checkStmt = $this->db->prepare("SELECT id FROM `current_user` WHERE userID = ? AND is_active = TRUE");
+        // Check if ANY record exists for this userID (regardless of is_active status)
+        $checkStmt = $this->db->prepare("SELECT id FROM `current_user` WHERE userID = ?");
         $checkStmt->bind_param("i", $userID);
         $checkStmt->execute();
         $checkResult = $checkStmt->get_result();
 
         if ($checkResult->num_rows > 0) {
-            $updateStmt = $this->db->prepare("UPDATE `current_user` SET username = ?, role = ?, last_activity = CURRENT_TIMESTAMP WHERE userID = ? AND is_active = TRUE");
-            $updateStmt->bind_param("ssi", $username, $userRole, $userID);
+            // Record exists - update it and set is_active = 1
+            $updateStmt = $this->db->prepare("UPDATE `current_user` SET username = ?, role = ?, is_active = 1, current_session_id = ?, last_activity = CURRENT_TIMESTAMP WHERE userID = ?");
+            $updateStmt->bind_param("sssi", $username, $userRole, $sessionId, $userID);
             $updateStmt->execute();
             $updateStmt->close();
         } else {
-            $stmt = $this->db->prepare("INSERT INTO `current_user` (userID, username, role) VALUES (?, ?, ?)");
-            $stmt->bind_param("iss", $userID, $username, $userRole);
+            // No record exists - insert new one
+            $stmt = $this->db->prepare("INSERT INTO `current_user` (userID, username, role, is_active, current_session_id) VALUES (?, ?, ?, 1, ?)");
+            $stmt->bind_param("isss", $userID, $username, $userRole, $sessionId);
             $stmt->execute();
             $stmt->close();
         }
         $checkStmt->close();
     }
 
-    public function clearCurrentUser()
+    public function clearCurrentUser($userID = null)
     {
-        $stmt = $this->db->prepare("DELETE FROM `current_user`");
-        $result = $stmt->execute();
-        $stmt->close();
+        if ($userID !== null) {
+            // Delete only the specified user's record
+            $stmt = $this->db->prepare("DELETE FROM `current_user` WHERE userID = ?");
+            $stmt->bind_param("i", $userID);
+            $result = $stmt->execute();
+            $stmt->close();
+        } else {
+            // Delete all records (for ESP32 hardware reset)
+            $stmt = $this->db->prepare("DELETE FROM `current_user`");
+            $result = $stmt->execute();
+            $stmt->close();
+        }
         return $result;
     }
 
     public function clearUserSession($userID)
     {
-        $stmt = $this->db->prepare("UPDATE current_user SET is_active = FALSE WHERE userID = ?");
+        $stmt = $this->db->prepare("UPDATE current_user SET is_active = FALSE, current_session_id = NULL WHERE userID = ?");
         $stmt->bind_param("i", $userID);
         $result = $stmt->execute();
         $stmt->close();
@@ -1051,6 +1063,17 @@ class Model
     }
         $stmt->bind_param("si", $status, $id);
         return $stmt->execute();
+    }
+
+    public function markAllNotificationsAsRead()
+    {
+        $stmt = $this->db->prepare("UPDATE sensor_notifications SET status = 'read' WHERE status = 'unread'");
+        if (!$stmt) {
+            return false;
+        }
+        $result = $stmt->execute();
+        $stmt->close();
+        return $result;
     }
 
     public function getPicturePathById($userID)
