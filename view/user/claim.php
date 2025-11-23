@@ -23,8 +23,12 @@
       $rewardCount = 0;
       if (!empty($rewards)) {
         foreach ($rewards as $reward) {
-          // Show rewards from all slots (1, 2, 3) that are available
-          if ($reward['availability'] == 1 && in_array($reward['slotNum'], [1, 2, 3])) {
+          $availability = (int)$reward['availability'];
+          $isAvailable = $availability === 1 || $availability === 2;
+          $isComingSoon = $availability === 2;
+
+          // Show rewards from all slots (1, 2, 3) that are active (available or coming soon)
+          if ($isAvailable && in_array($reward['slotNum'], [1, 2, 3])) {
             $rewardCount++;
             if (!empty($reward['rewardImg'])) {
               if (file_exists($reward['rewardImg'])) {
@@ -37,14 +41,32 @@
               $src = 'images/default-reward.png';
             }
     ?>
-      <div class="reward-card">
+      <?php
+        $cardClasses = 'reward-card';
+        if ($isComingSoon) {
+          $cardClasses .= ' coming-soon';
+        }
+        $canClaim = !$isComingSoon && $totalCurrentPoints >= $reward['pointsRequired'];
+      ?>
+      <div class="<?= $cardClasses ?>">
         <img src="<?php echo htmlspecialchars($src); ?>" alt="<?php echo htmlspecialchars($reward['rewardName']); ?>">
         <div class="reward-name"><?php echo htmlspecialchars($reward['rewardName']); ?></div>
         <div class="reward-points"><?php echo htmlspecialchars($reward['pointsRequired']); ?> pts</div>
         <div class="reward-slot">Slot <?php echo htmlspecialchars($reward['slotNum']); ?></div>
-        <button class="claim-btn <?php echo ($totalCurrentPoints >= $reward['pointsRequired']) ? 'available' : 'insufficient'; ?>"
-          <?php echo ($totalCurrentPoints >= $reward['pointsRequired']) ? 'onclick="openClaimModal(\'' . htmlspecialchars($src) . '\', \'' . htmlspecialchars($reward['rewardName']) . '\', ' . $reward['pointsRequired'] . ', ' . $reward['rewardID'] . ', ' . $reward['slotNum'] . ')"' : 'disabled'; ?>>
-          <?php echo ($totalCurrentPoints >= $reward['pointsRequired']) ? 'Claim' : 'Insufficient points'; ?>
+        <?php if ($isComingSoon): ?>
+          <div class="coming-soon-label">Coming Soon</div>
+        <?php endif; ?>
+        <button class="claim-btn <?php echo $canClaim ? 'available' : ($isComingSoon ? 'coming-soon' : 'insufficient'); ?>"
+          <?php echo $canClaim ? 'onclick="openClaimModal(\'' . htmlspecialchars($src) . '\', \'' . htmlspecialchars($reward['rewardName']) . '\', ' . $reward['pointsRequired'] . ', ' . $reward['rewardID'] . ', ' . $reward['slotNum'] . ')"' : 'disabled'; ?>>
+          <?php
+            if ($isComingSoon) {
+              echo 'Coming Soon';
+            } elseif ($canClaim) {
+              echo 'Claim';
+            } else {
+              echo 'Insufficient points';
+            }
+          ?>
         </button>
       </div>
     <?php

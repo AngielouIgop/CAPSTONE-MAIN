@@ -38,7 +38,7 @@
             $src = 'data:image/jpeg;base64,' . $imgData;
           }
         } else {
-          $src = 'images/default-profile.jpg';
+              $src = 'images/profilePic/default-profile.png';
         }
         ?>
         <img src="<?php echo $src; ?>" alt="Profile Picture" class="profile-img" id="previewImage">

@@ -10,13 +10,92 @@
 </head>
 
 <body>
+  <?php
+    $profileData = $users ?? $user ?? [];
+    $profileName = $profileData['fullName'] ?? '';
+    $profileZone = $profileData['zone'] ?? '';
+  ?>
   <div class="dashboard">
     <h2>Dashboard</h2>
 
     <!-- ==================== DASHBOARD HEADER ==================== -->
     <div class="dashboard-top">
       <div class="dashboard-header">
-        <h2>Welcome User <?= htmlspecialchars($user['fullName']) ?>!</h2>
+        <h2>Welcome <?= htmlspecialchars($profileName ?: ($user['fullName'] ?? 'User')) ?>!</h2>
+      </div>
+    </div>
+
+    <!-- ==================== PROFILE OVERVIEW ==================== -->
+    <div class="profile-header">
+      <div class="profile-avatar">
+        <?php
+          if (!empty($profileData['profilePicture'])) {
+            if (file_exists($profileData['profilePicture'])) {
+              $avatarSrc = $profileData['profilePicture'];
+            } else {
+              $imgData = base64_encode($profileData['profilePicture']);
+              $avatarSrc = 'data:image/jpeg;base64,' . $imgData;
+            }
+          } else {
+            $avatarSrc = 'images/profilePic/default-profile.png';
+          }
+        ?>
+        <img src="<?= htmlspecialchars($avatarSrc) ?>" alt="Profile Picture">
+      </div>
+      <div class="profile-details">
+        <h2 class="profile-name"><?= htmlspecialchars($profileName) ?></h2>
+        <?php if (!empty($profileZone)): ?>
+          <p class="profile-zone"><?= htmlspecialchars($profileZone) ?></p>
+        <?php endif; ?>
+      </div>
+    </div>
+
+    <!-- ==================== REWARDS SECTION ==================== -->
+    <div class="rewards-section">
+      <div class="points-row">
+        <span class="points-label">Current Points:</span>
+        <span class="points-value"><?= number_format($totalCurrentPoints ?? 0, 2) ?></span>
+      </div>
+
+      <div class="rewards-inner">
+        <p class="rewards-title"><strong>Available Rewards:</strong></p>
+        <div class="rewards-list">
+          <?php
+            $hasAvailable = false;
+            if (!empty($rewards)):
+              foreach ($rewards as $reward):
+                if (($reward['availability'] ?? 0) == 1 && in_array($reward['slotNum'], [1,2,3])):
+                  $hasAvailable = true;
+                  if (!empty($reward['rewardImg'])) {
+                    if (file_exists($reward['rewardImg'])) {
+                      $rewardSrc = $reward['rewardImg'];
+                    } else {
+                      $imgData = base64_encode($reward['rewardImg']);
+                      $rewardSrc = 'data:image/jpeg;base64,' . $imgData;
+                    }
+                  } else {
+                    $rewardSrc = 'images/default-reward.png';
+                  }
+          ?>
+            <div class="reward-card">
+              <img src="<?= htmlspecialchars($rewardSrc) ?>" alt="<?= htmlspecialchars($reward['rewardName']) ?>">
+              <div class="reward-name"><?= htmlspecialchars($reward['rewardName']) ?></div>
+              <div class="reward-points"><?= htmlspecialchars($reward['pointsRequired']) ?> points</div>
+              <?php $canClaim = ($totalCurrentPoints ?? 0) >= $reward['pointsRequired']; ?>
+              <button class="claim-btn <?= $canClaim ? 'available' : 'insufficient' ?>"
+                      <?= $canClaim ? "onclick=\"openClaimModal('".htmlspecialchars($rewardSrc)."', '".htmlspecialchars($reward['rewardName'])."', ".$reward['pointsRequired'].", ".$reward['rewardID'].", ".$reward['slotNum'].")\"" : 'disabled' ?>>
+                <?= $canClaim ? 'Claim' : 'Insufficient Points' ?>
+              </button>
+            </div>
+          <?php
+                endif;
+              endforeach;
+            endif;
+            if (!$hasAvailable):
+          ?>
+            <p class="no-rewards">No rewards available at the moment.</p>
+          <?php endif; ?>
+        </div>
       </div>
     </div>
 
@@ -119,6 +198,32 @@
     </div> 
   </div> 
 
+  <!-- ==================== CLAIM CONFIRMATION MODAL ==================== -->
+  <div id="claimModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <img src="images/logos/basura logo.png" alt="Basura Logo" class="modal-logo" />
+        <span class="modal-title">B.A.S.U.R.A. Rewards</span>
+      </div>
+      <div class="modal-body">
+        <p class="modal-instruction">Are you sure you want to claim this reward?</p>
+        <div class="reward-preview">
+          <img id="modalRewardImage" src="" alt="Reward Image">
+          <div class="reward-details">
+            <div class="current-points">
+              <span class="points-label">CURRENT POINTS:</span>
+              <span class="points-value"><?= htmlspecialchars($totalCurrentPoints ?? 0) ?> PTS</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="modal-btn btn-confirm" id="confirmClaim">Yes</button>
+          <button class="modal-btn btn-cancel" id="cancelClaim">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ==================== CALENDAR JAVASCRIPT ==================== -->
   <script>
     // Calendar Rendering
@@ -162,5 +267,6 @@
     renderCalendar();
   </script>
   <script src="js/contributeModal.js"></script>
+  <script src="js/claimModal.js"></script>
 </body>
 </html>
