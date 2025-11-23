@@ -29,7 +29,7 @@
     <div class="profile-form-top">
       <div class="profile-img-box">
         <?php
-        $src = !empty($admin['profilePicture']) && file_exists($admin['profilePicture']) ? $admin['profilePicture'] : 'images/default-profile.jpg';
+        $src = !empty($admin['profilePicture']) && file_exists($admin['profilePicture']) ? $admin['profilePicture'] : 'images/profilePic/default-profile.png';
         ?>
         <img src="<?php echo $src; ?>" alt="Profile Picture" class="profile-img" id="previewImage">
       </div>

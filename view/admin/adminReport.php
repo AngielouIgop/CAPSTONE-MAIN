@@ -346,7 +346,7 @@
                     display: true,
                     text: `Monthly Contributions – ${reportData.monthName}`,
                     font: {
-                      family: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+                      family: "'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
                       size: 28,
                       weight: 'bold'
                     },

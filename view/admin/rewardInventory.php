@@ -56,8 +56,17 @@
                             <td class="reward-points"><?= htmlspecialchars($reward['pointsRequired']) ?> pts</td>
                             <td class="reward-slot"><?= htmlspecialchars($reward['slotNum']) ?></td>
                             <td>
-                                <span class="status-badge <?= $reward['availability'] == 1 ? 'available' : 'unavailable' ?>">
-                                    <?= $reward['availability'] == 1 ? 'Available' : 'Unavailable' ?>
+                                <?php
+                                    $statusMap = [
+                                        '1' => ['class' => 'available', 'label' => 'Available'],
+                                        '0' => ['class' => 'unavailable', 'label' => 'Unavailable'],
+                                        '2' => ['class' => 'coming-soon', 'label' => 'Coming Soon'],
+                                    ];
+                                    $statusKey = (string)$reward['availability'];
+                                    $status = $statusMap[$statusKey] ?? $statusMap['0'];
+                                ?>
+                                <span class="status-badge <?= $status['class'] ?>">
+                                    <?= $status['label'] ?>
                                 </span>
                             </td>
                             <td>
@@ -116,7 +125,8 @@
                 <label for="reward-edit-availability">Status *</label>
                 <select id="reward-edit-availability" name="availability" required>
                     <option value="1">Available</option>
-                    <option value="0">Not Available</option>
+                    <option value="0">Unavailable</option>
+                    <option value="2">Coming Soon</option>
                 </select>
 
                 <div class="reward-modal-buttons">
@@ -160,7 +170,8 @@
                 <label for="reward-add-availability">Status *</label>
                 <select id="reward-add-availability" name="availability" required>
                     <option value="1">Available</option>
-                    <option value="0">Not Available</option>
+                    <option value="0">Unavailable</option>
+                    <option value="2">Coming Soon</option>
                 </select>
 
                 <div class="reward-modal-buttons">

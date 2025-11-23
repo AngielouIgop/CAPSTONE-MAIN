@@ -42,13 +42,13 @@
                         <td><?= htmlspecialchars($user['zone']) ?></td>
                         <td><?= htmlspecialchars($user['totalCurrentPoints']) ?> pts</td>
                         <td>
-                            <a href="#" class="action-btn edit-btn" data-userid="<?= $user['userID']; ?>"
+                            <a href="#" class="action-btn edit edit-btn" data-userid="<?= $user['userID']; ?>"
                                 data-fullname="<?= htmlspecialchars($user['fullName']); ?>"
                                 data-email="<?= htmlspecialchars($user['email']); ?>"
                                 data-contactnumber="<?= htmlspecialchars($user['contactNumber']); ?>"
                                 data-zone="<?= htmlspecialchars($user['zone']); ?>"
                                 data-username="<?= htmlspecialchars($user['username']); ?>">Edit</a>
-                            <a href="index.php?command=deleteUser&userID=<?= $user['userID']; ?>" class="action-btn"
+                            <a href="index.php?command=deleteUser&userID=<?= $user['userID']; ?>" class="action-btn delete"
                                 onclick="return confirm('Are you sure you want to delete <?= htmlspecialchars($user['username'] ?? $user['contactNumber'] ?? 'this user'); ?>?')">Delete</a>
                         </td>
                     </tr>
@@ -81,7 +81,7 @@
                         <td><?= htmlspecialchars($admin['contactNumber']) ?></td>
                         <td><?= htmlspecialchars($admin['position']) ?></td>
                         <td><?= htmlspecialchars($admin['registrationDate']) ?></td>
-                        <td><a href="index.php?command=deleteUser&userID=<?= $admin['userID']; ?>" class="action-btn"
+                        <td><a href="index.php?command=deleteUser&userID=<?= $admin['userID']; ?>" class="action-btn delete"
                         onclick="return confirm('Are you sure you want to delete <?= htmlspecialchars($admin['username'] ?? $admin['contactNumber'] ?? 'this admin'); ?>?')">Delete</a></td>
                     </tr>
                 <?php endforeach; ?>
@@ -134,16 +134,12 @@
 
                 <!-- Password Fields -->
                 <label for="edit-password">Password</label>
-                <div class="password-container">
-                    <input type="password" id="edit-password" name="password" placeholder="Leave blank to keep current password">
-                    <button type="button" class="password-toggle" onclick="togglePassword('edit-password', this)">Show</button>
-                </div>
+                <input type="password" id="edit-password" name="password" placeholder="Leave blank to keep current password">
+                <button type="button" class="password-toggle" onclick="togglePassword('edit-password', this)">Show</button>
 
                 <label for="edit-confirmPassword">Confirm Password</label>
-                <div class="password-container">
-                    <input type="password" id="edit-confirmPassword" name="confirmPassword" placeholder="Confirm the new password">
-                    <button type="button" class="password-toggle" onclick="togglePassword('edit-confirmPassword', this)">Show</button>
-                </div>
+                <input type="password" id="edit-confirmPassword" name="confirmPassword" placeholder="Confirm the new password">
+                <button type="button" class="password-toggle" onclick="togglePassword('edit-confirmPassword', this)">Show</button>
 
                 <div class="modal-buttons">
                     <button type="submit" class="btn-confirm">Confirm</button>
@@ -180,16 +176,12 @@
 
                 <!-- Password Fields -->
                 <label for="add-password">Password</label>
-                <div class="password-container">
-                    <input type="password" id="add-password" name="password" placeholder="Create a strong password">
-                    <button type="button" class="password-toggle" onclick="togglePassword('add-password', this)">Show</button>
-                </div>
+                <input type="password" id="add-password" name="password" placeholder="Create a strong password">
+                <button type="button" class="password-toggle" onclick="togglePassword('add-password', this)">Show</button>
 
                 <label for="add-confirmPassword">Confirm Password</label>
-                <div class="password-container">
-                    <input type="password" id="add-confirmPassword" name="confirmPassword" placeholder="Re-enter password">
-                    <button type="button" class="password-toggle" onclick="togglePassword('add-confirmPassword', this)">Show</button>
-                </div>
+                <input type="password" id="add-confirmPassword" name="confirmPassword" placeholder="Re-enter password">
+                <button type="button" class="password-toggle" onclick="togglePassword('add-confirmPassword', this)">Show</button>
 
 
                 <div class="modal-buttons">
