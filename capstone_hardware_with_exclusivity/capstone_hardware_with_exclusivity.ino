@@ -6,9 +6,9 @@
 
 // WiFi credentials
 const char* ssid = "iPhone";
-const char* password = "gelo12345";
-const char* serverName = "http://172.20.10.2/CAPSTONE-MAIN/endpoint.php";
-const char* statusCheckUrl = "http://172.20.10.2/CAPSTONE-MAIN/checkContributionStatus.php";
+const char* password = "gelo1234";
+const char* serverName = "http://172.20.10.4/CAPSTONE-MAIN/endpoint.php";
+const char* statusCheckUrl = "http://172.20.10.4/CAPSTONE-MAIN/checkContributionStatus.php";
 
 // HX711 weight sensors (Plastic, Glass, Can)
 #define DOUT_PLASTIC 33
@@ -89,7 +89,7 @@ long getDistance() {
 
 bool fetchCurrentUser() {
     HTTPClient http;
-    http.begin("http://172.20.10.2/CAPSTONE-MAIN/get_current_user.php");
+    http.begin("http://172.20.10.4/CAPSTONE-MAIN/get_current_user.php");
     int httpResponseCode = http.GET();
     if (httpResponseCode > 0) {
         String response = http.getString();
