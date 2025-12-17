@@ -181,7 +181,7 @@ class Model
 
     public function registerUser($fullname, $email, $zone, $brgyIDNum, $contactNumber, $username, $password)
     {
-        if ($this->userExists($username) || $this->pendingUserExists($username)) {
+        if ($this->userExists($username) || $this->pendingUserExists($username) || $this->brgyIdExists($brgyIDNum)) {
             return false;
         }
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
@@ -189,6 +189,39 @@ class Model
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("sssssss", $fullname, $email, $zone, $brgyIDNum, $contactNumber, $username, $hashedPassword);
         return $stmt->execute();
+    }
+
+    public function brgyIdExists($brgyIDNum)
+    {
+        // Check approved users
+        $query = "SELECT 1 FROM user WHERE brgyIDNum = ? LIMIT 1";
+        if ($stmt = $this->db->prepare($query)) {
+            $stmt->bind_param("s", $brgyIDNum);
+            $stmt->execute();
+            $stmt->store_result();
+            $exists = $stmt->num_rows > 0;
+            $stmt->free_result();
+            $stmt->close();
+            if ($exists) {
+                return true;
+            }
+        }
+
+        // Check pending registrations to avoid duplicates in approval queue
+        $pendingQuery = "SELECT 1 FROM pending_registrations WHERE brgyIDNum = ? LIMIT 1";
+        if ($pendingStmt = $this->db->prepare($pendingQuery)) {
+            $pendingStmt->bind_param("s", $brgyIDNum);
+            $pendingStmt->execute();
+            $pendingStmt->store_result();
+            $exists = $pendingStmt->num_rows > 0;
+            $pendingStmt->free_result();
+            $pendingStmt->close();
+            if ($exists) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function loginUser($username, $password, $role)
@@ -286,7 +319,7 @@ class Model
             $updateStmt->close();
         } else {
             // No record exists - insert new one
-            $stmt = $this->db->prepare("INSERT INTO `current_user` (userID, username, role, is_active, current_session_id) VALUES (?, ?, ?, 1, ?)");
+            $stmt = $this->db->prepare("INSERT INTO `current_user` (userID, username, role, is_active, current_session_id, last_activity) VALUES (?, ?, ?, 1, ?, CURRENT_TIMESTAMP)");
             $stmt->bind_param("isss", $userID, $username, $userRole, $sessionId);
             $stmt->execute();
             $stmt->close();
@@ -482,6 +515,33 @@ class Model
         $secretKey = RECAPTCHA_SECRET_KEY;
         $recaptchaUrl = 'https://www.google.com/recaptcha/api/siteverify';
         
+        // Use cURL for faster, more reliable requests with timeout
+        if (function_exists('curl_init')) {
+            $ch = curl_init($recaptchaUrl);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
+                'secret' => $secretKey,
+                'response' => $recaptchaResponse,
+                'remoteip' => $_SERVER['REMOTE_ADDR']
+            ]));
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 5); // 5 second timeout
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3); // 3 second connection timeout
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+            
+            $result = curl_exec($ch);
+            $curlError = curl_error($ch);
+            curl_close($ch);
+            
+            if ($curlError) {
+                error_log("reCAPTCHA cURL error: " . $curlError);
+                return false;
+            }
+            
+            $response = json_decode($result, true);
+            return $response['success'] ?? false;
+        } else {
+            // Fallback to file_get_contents with timeout
         $data = array(
             'secret' => $secretKey,
             'response' => $recaptchaResponse,
@@ -492,15 +552,21 @@ class Model
             'http' => array(
                 'header' => "Content-type: application/x-www-form-urlencoded\r\n",
                 'method' => 'POST',
-                'content' => http_build_query($data)
+                    'content' => http_build_query($data),
+                    'timeout' => 5 // 5 second timeout
             )
         );
         
         $context = stream_context_create($options);
-        $result = file_get_contents($recaptchaUrl, false, $context);
-        $response = json_decode($result, true);
+            $result = @file_get_contents($recaptchaUrl, false, $context);
         
+            if ($result === false) {
+                return false;
+            }
+            
+            $response = json_decode($result, true);
         return $response['success'] ?? false;
+        }
     }
 
     // ===========================================
@@ -614,9 +680,9 @@ class Model
             return false;
         }
 
-        $insertQuery = "INSERT INTO user (fullname, email, zone, contactNumber, username, password, role, totalCurrentPoints) VALUES (?,?,?,?,?,?,'user', 0.00)";
+        $insertQuery = "INSERT INTO user (fullname, email, zone, brgyIDNum, contactNumber, username, password, role, totalCurrentPoints) VALUES (?,?,?,?,?,?,?,'user', 0.00)";
         $insertStmt = $this->db->prepare($insertQuery);
-        $insertStmt->bind_param("ssssss", $pendingUser['fullName'], $pendingUser['email'], $pendingUser['zone'], $pendingUser['contactNumber'], $pendingUser['username'], $pendingUser['password']);
+        $insertStmt->bind_param("sssssss", $pendingUser['fullName'], $pendingUser['email'], $pendingUser['zone'], $pendingUser['brgyIDNum'], $pendingUser['contactNumber'], $pendingUser['username'], $pendingUser['password']);
 
         if ($insertStmt->execute()) {
             $updateQuery = "UPDATE pending_registrations SET status = 'approved' WHERE id = ?";
@@ -650,11 +716,11 @@ class Model
         return $stmt->execute();
     }
 
-    public function updateUserProfile($userID, $fullName, $zone, $email, $contactNumber, $username, $hashedPassword)
+    public function updateUserProfile($userID, $fullName, $brgyIDNum, $zone, $email, $contactNumber, $username, $hashedPassword)
     {
-        $sql = "UPDATE user SET fullName=?, zone=?, email=?, contactNumber=?, username=?";
-        $params = [$fullName, $zone, $email, $contactNumber, $username];
-        $types = "sssss";
+        $sql = "UPDATE user SET fullName=?, brgyIDNum=?, zone=?, email=?, contactNumber=?, username=?";
+        $params = [$fullName, $brgyIDNum, $zone, $email, $contactNumber, $username];
+        $types = "ssssss";
 
         if ($hashedPassword) {
             $sql .= ", password=?";
@@ -860,42 +926,7 @@ class Model
         return $history;
     }
 
-    public function getContZone1()
-    {
-        return $this->getZoneContribution('Zone 1');
-    }
-
-    public function getContZone2()
-    {
-        return $this->getZoneContribution('Zone 2');
-    }
-
-    public function getContZone3()
-    {
-        return $this->getZoneContribution('Zone 3');
-    }
-
-    public function getContZone4()
-    {
-        return $this->getZoneContribution('Zone 4');
-    }
-
-    public function getContZone5()
-    {
-        return $this->getZoneContribution('Zone 5');
-    }
-
-    public function getContZone6()
-    {
-        return $this->getZoneContribution('Zone 6');
-    }
-
-    public function getContZone7()
-    {
-        return $this->getZoneContribution('Zone 7');
-    }
-
-    private function getZoneContribution($zone)
+    public function getZoneContribution($zone)
     {
         $stmt = $this->db->prepare("
             SELECT SUM(w.quantity) AS totalQuantity
@@ -1054,6 +1085,49 @@ class Model
         $stmt->close();
         return $result;
     }
+
+    /**
+     * Delete inactive sessions from current_user table (for auto-logout cleanup)
+     * @param int $minutes Minutes of inactivity before deletion (default: 5 minutes like GCash)
+     * @return bool Success status
+     */
+    public function deleteInactiveSessions($minutes = 5)
+    {
+        $stmt = $this->db->prepare("
+            DELETE FROM current_user 
+            WHERE last_activity < DATE_SUB(NOW(), INTERVAL ? MINUTE) AND is_active = TRUE
+        ");
+        $stmt->bind_param("i", $minutes);
+        $result = $stmt->execute();
+        $affectedRows = $stmt->affected_rows;
+        $stmt->close();
+        return $result;
+    }
+
+    /**
+     * Update last_activity timestamp for a user in current_user table
+     * @param int $userID The user ID to update
+     * @return bool Success status
+     */
+    public function updateUserActivity($userID)
+    {
+        $stmt = $this->db->prepare("
+            UPDATE current_user 
+            SET last_activity = CURRENT_TIMESTAMP 
+            WHERE userID = ? AND is_active = TRUE
+        ");
+        
+        if (!$stmt) {
+            error_log("Failed to prepare updateUserActivity statement: " . $this->db->error);
+            return false;
+        }
+        
+        $stmt->bind_param("i", $userID);
+        $result = $stmt->execute();
+        $stmt->close();
+        return $result;
+    }
+
 
     public function updateNotifStatus($id, $status = 'read')
     {
