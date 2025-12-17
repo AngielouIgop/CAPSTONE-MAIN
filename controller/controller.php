@@ -58,6 +58,8 @@ class Controller
                     $error = "Password must contain at least one special character.";
                 } elseif (!$terms) {
                     $error = "You must agree to the Terms and Conditions and Privacy Policy to register.";
+                } elseif ($this->model->brgyIdExists($brgyIDNum)) {
+                    $error = "Barangay ID already in use. Please request a new brgy ID to the barangay hall.";
                 } elseif ($this->model->userExists($username) || $this->model->pendingUserExists($username)) {
                     $error = "Username already exists.";
                 } else {
@@ -359,12 +361,35 @@ class Controller
                         }
                     }
 
-                    $targetDir = "images/profilePic/";
+                    // Create user-specific folder name: "FullName Profile Picture Folder"
+                    $userFolderName = $fullName . " Profile Picture Folder";
+                    // Sanitize folder name (remove invalid characters, keep spaces and underscores)
+                    $userFolderName = preg_replace('/[^a-zA-Z0-9\s\-_]/', '', $userFolderName);
+                    // Replace spaces with underscores for folder name
+                    $userFolderName = str_replace(' ', '_', $userFolderName);
+
+                    // Base directory
+                    $baseDir = "images/profilePic/";
+                    // User-specific subfolder path
+                    $targetDir = $baseDir . $userFolderName . "/";
+
+                    if (!is_dir($baseDir)) {
+                        mkdir($baseDir, 0777, true );
+                    }
+                    
                     if (!is_dir($targetDir)) {
                         mkdir($targetDir, 0777, true);
                     }
-                    $fileName = uniqid() . '_' . basename($_FILES["profilePicture"]["name"]);
+
+                    // Generate filename: "FullName_profile_picture_timestamp.extension"
+                    $sanitizedFullName = str_replace(' ', '_', preg_replace('/[^a-zA-Z0-9\s\-_]/', '', $fullName));
+                    $fileExtension = strtolower(pathinfo($_FILES["profilePicture"]["name"], PATHINFO_EXTENSION));
+                    $timestamp = time();
+                    $fileName = $sanitizedFullName . "_profile_picture_" . $timestamp . "." . $fileExtension;
+                    
                     $newProfilePicturePath = $targetDir . $fileName;
+                    
+                    // Validate image file type
                     $imageFileType = strtolower(pathinfo($newProfilePicturePath, PATHINFO_EXTENSION));
                     $check = getimagesize($_FILES["profilePicture"]["tmp_name"]);
 
@@ -377,10 +402,13 @@ class Controller
                         echo "<script>alert('Only JPG, JPEG, PNG & GIF files are allowed.'); window.location.href='?command=" . $redirectCommand . "';</script>";
                         break;
                     }
+                    
+                    // Move uploaded file to user-specific folder
                     if (!move_uploaded_file($_FILES["profilePicture"]["tmp_name"], $newProfilePicturePath)) {
                         echo "<script>alert('Failed to upload image.'); window.location.href='?command=" . $redirectCommand . "';</script>";
                         break;
                     }
+                    
                     $profilePicturePath = $newProfilePicturePath;
                 }
 
@@ -424,15 +452,15 @@ class Controller
                 $pendingRegistrationCount = count($pendingRegistrations);
 
                 $sensorNotificationCount = count($this->model->getNotifications());
-                $notificationCount = $sensorNotificationCount + $pendingRegistrationCount;
+                $notificationCount = $sensorNotificationCount;
 
-                $getContZone1 = $this->model->getContZone1();
-                $getContZone2 = $this->model->getContZone2();
-                $getContZone3 = $this->model->getContZone3();
-                $getContZone4 = $this->model->getContZone4();
-                $getContZone5 = $this->model->getContZone5();
-                $getContZone6 = $this->model->getContZone6();
-                $getContZone7 = $this->model->getContZone7();
+                $getContZone1 = $this->model->getZoneContribution('Zone 1');
+                $getContZone2 = $this->model->getZoneContribution('Zone 2');
+                $getContZone3 = $this->model->getZoneContribution('Zone 3');
+                $getContZone4 = $this->model->getZoneContribution('Zone 4');
+                $getContZone5 = $this->model->getZoneContribution('Zone 5');
+                $getContZone6 = $this->model->getZoneContribution('Zone 6');
+                $getContZone7 = $this->model->getZoneContribution('Zone 7');
 
                 include_once('view/admin/adminDashboard.php');
                 break;
@@ -477,13 +505,13 @@ class Controller
                     $wastePerMaterial = $this->model->getWasteContributionsPerMaterialThisMonth();
                     $wasteHistory = $this->model->getWasteHistory();
 
-                    $getContZone1 = $this->model->getContZone1();
-                    $getContZone2 = $this->model->getContZone2();
-                    $getContZone3 = $this->model->getContZone3();
-                    $getContZone4 = $this->model->getContZone4();
-                    $getContZone5 = $this->model->getContZone5();
-                    $getContZone6 = $this->model->getContZone6();
-                    $getContZone7 = $this->model->getContZone7();
+                    $getContZone1 = $this->model->getZoneContribution('Zone 1');
+                    $getContZone2 = $this->model->getZoneContribution('Zone 2');
+                    $getContZone3 = $this->model->getZoneContribution('Zone 3');
+                    $getContZone4 = $this->model->getZoneContribution('Zone 4');
+                    $getContZone5 = $this->model->getZoneContribution('Zone 5');
+                    $getContZone6 = $this->model->getZoneContribution('Zone 6');
+                    $getContZone7 = $this->model->getZoneContribution('Zone 7');
                 }
 
                 $users = $this->model->getTopUsers(7);
@@ -502,12 +530,18 @@ class Controller
             case 'updateUserProfile':
                 $userID = $_POST['userID'];
                 $fullName = $_POST['fullname'];
+                $brgyIDNum = $_POST['brgyidnum'] ?? '';
                 $email = $_POST['email'];
                 $zone = $_POST['zone'];
                 $contactNumber = $_POST['contactNumber'];
                 $username = $_POST['username'];
                 $password = $_POST['password'];
                 $confirmPassword = $_POST['confirmPassword'];
+
+                if (empty($brgyIDNum)) {
+                    echo "<script>alert('Barangay ID is required.'); window.location.href='?command=manageUser';</script>";
+                    exit();
+                }
 
                 if (!empty($password) && $password !== $confirmPassword) {
                     echo "<script>alert('Passwords do not match!'); window.location.href='?command=manageUser';</script>";
@@ -519,6 +553,7 @@ class Controller
                 $result = $this->model->updateUserProfile(
                     $userID,
                     $fullName,
+                    $brgyIDNum,
                     $zone,
                     $email,
                     $contactNumber,
@@ -563,17 +598,25 @@ class Controller
                     $error = "Please fill out all the required fields.";
                 } elseif ($password !== $confirm) {
                     $error = "Passwords do not match.";
-                } elseif ($this->model->userExists($username)) {
-                    $error = "Username already exists.";
-                } else {
-                    $success = $this->model->addAdministrator($fullname, $email, $position, $contactNumber, $username, $password, 'admin');
-                    if ($success) {
-                        echo "<script>alert('Administrator added successfully.'); window.location.href='?command=manageUser';</script>";
-                        exit();
+                } elseif (strlen($password) < 8){
+                        $error = "Password must be at least 8 characters long.";
+                    } elseif (!preg_match('/[a-zA-Z]/', $password)) {
+                        $error = "Password must contain at least one letter.";
+                    } elseif (!preg_match('/[0-9]/', $password)) {
+                        $error = "Password must contain at least one number.";
+                    } elseif (!preg_match('/[^a-zA-Z0-9]/', $password)) {
+                        $error = "Password must contain at least one special character.";
+                    } elseif ($this->model->userExists($username)) {
+                        $error = "Username already exists.";
                     } else {
-                        $error = "Failed to add administrator. Please try again.";
+                        $success = $this->model->addAdministrator($fullname, $email, $position, $contactNumber, $username, $password, 'admin');
+                        if ($success) {
+                            echo "<script>alert('Administrator added successfully.'); window.location.href='?command=manageUser';</script>";
+                            exit();
+                        } else {
+                            $error = "Failed to add administrator. Please try again.";
+                        }
                     }
-                }
 
                 if ($error) {
                     echo "<script>alert('$error'); window.location.href='?command=manageUser';</script>";
@@ -582,7 +625,8 @@ class Controller
 
             case 'rewardInventory':
                 if (!isset($_SESSION['user'])) {
-                    header('Location: ?command=Login');
+                    header('Location: ?command=login');
+                    exit();
                 }
                 $userID = $_SESSION['user']['userID'];
                 $rewards = $this->model->getAllRewards();
