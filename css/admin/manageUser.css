@@ -421,14 +421,9 @@ body, html {
 
 /* Pending registrations button with counter */
 .pending-registrations-btn {
-  background: linear-gradient(135deg, #ffca28 0%, #f57c00 100%);
+  background: #ffca28;
   color: white;
   position: relative;
-}
-
-.pending-registrations-btn:hover {
-  background: linear-gradient(135deg, #ffca28 0%, #ef6c00 100%);
-  transform: translateY(-1px);
 }
 
 .pending-icon {
