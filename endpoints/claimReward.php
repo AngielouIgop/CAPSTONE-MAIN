@@ -30,6 +30,9 @@ error_log("Claim attempt - UserID: $userID, RewardID: $rewardId, SlotNum: $slotN
 require_once('../model/model.php');
 $model = new Model();
 
+// ==================== UPDATE USER ACTIVITY ====================
+$model->updateUserActivity($userID);
+
 // ==================== USER POINTS CHECK ====================
 $userPoints = $model->getUserPoints($userID);
 error_log("User points: $userPoints");

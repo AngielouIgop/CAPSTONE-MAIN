@@ -25,6 +25,9 @@ try {
     $result = $stmt->get_result();
     
     if ($result && ($row = $result->fetch_assoc())) {
+        // ==================== UPDATE USER ACTIVITY ====================
+        $model->updateUserActivity($row['userID']);
+        
         echo json_encode([
             'userID' => (int)$row['userID'],
             'username' => $row['username']

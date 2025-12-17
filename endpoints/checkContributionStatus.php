@@ -45,6 +45,8 @@ class CheckContributionStatus
             $row = $result->fetch_assoc();
             $userID = (int)$row['userID'];
             $username = (string)$row['username'];
+            // ==================== UPDATE USER ACTIVITY ====================
+            $this->model->updateUserActivity($userID);
         }
         $stmt->close();
 

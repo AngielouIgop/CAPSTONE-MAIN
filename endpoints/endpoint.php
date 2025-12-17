@@ -53,6 +53,9 @@ class Endpoint
             if (!$userCheck) {
                 throw new Exception("Invalid userID: $userID");
             }
+            
+            // ==================== UPDATE USER ACTIVITY ====================
+            $this->model->updateUserActivity($userID);
 
             // ==================== MATERIAL VALIDATION ====================
             $materialQuery = "SELECT materialID FROM materialtype WHERE materialName = ?";
@@ -74,6 +77,22 @@ class Endpoint
             $quantity = 1;
 
             $stmt->close();
+
+            // ==================== THRESHOLD WEIGHT CHECK ====================
+            // If weight is default value (0.0), fetch thresholdMaterialWeight from database
+            if ($weight == 0.0 || $weight <= 0) {
+                $thresholdQuery = "SELECT thresholdMaterialWeight FROM materialtype WHERE materialID = ?";
+                $stmt = $this->model->db->prepare($thresholdQuery);
+                if ($stmt) {
+                    $stmt->bind_param("i", $materialID);
+                    $stmt->execute();
+                    $thresholdResult = $stmt->get_result();
+                    if ($thresholdResult && ($thresholdRow = $thresholdResult->fetch_assoc())) {
+                        $weight = floatval($thresholdRow['thresholdMaterialWeight']);
+                    }
+                    $stmt->close();
+                }
+            }
 
             // ==================== POINTS CALCULATION ====================
             $pointsEarned = $this->model->calcPoints($userID, $materialID, $quantity, $weight);

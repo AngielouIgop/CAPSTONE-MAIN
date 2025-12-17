@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 class SetContributionStatus
 {
@@ -13,6 +14,12 @@ class SetContributionStatus
     public function processRequest()
     {
         header('Content-Type: application/json');
+
+        // ==================== SESSION VALIDATION ====================
+        if (!isset($_SESSION['user'])) {
+            echo json_encode(['status' => 'error', 'message' => 'User not logged in']);
+            exit;
+        }
 
         $db = $this->model->db;
 
@@ -32,27 +39,34 @@ class SetContributionStatus
             }
         }
 
-        // ==================== CURRENT USER CHECK ====================
-        $currentUser = null;
-        $stmt = $db->prepare("SELECT userID, username FROM `current_user` LIMIT 1");
-        $stmt->execute();
-        $result = $stmt->get_result();
-        if ($result && $result->num_rows > 0) {
-            $currentUser = $result->fetch_assoc();
+        // ==================== GET USER FROM SESSION ====================
+        $userID = $_SESSION['user']['userID'];
+        $username = $_SESSION['user']['username'];
+
+        // ==================== ENSURE USER EXISTS IN current_user TABLE ====================
+        // Check if user exists in current_user table
+        $checkStmt = $db->prepare("SELECT id FROM `current_user` WHERE userID = ?");
+        if ($checkStmt) {
+            $checkStmt->bind_param("i", $userID);
+            $checkStmt->execute();
+            $checkResult = $checkStmt->get_result();
+            
+            if ($checkResult->num_rows === 0) {
+                // User doesn't exist in current_user table, add them
+                $this->model->setCurrentUser($userID, $username, session_id());
+            }
+            $checkStmt->close();
         }
-        $stmt->close();
+
+        // ==================== UPDATE USER ACTIVITY ====================
+        $this->model->updateUserActivity($userID);
 
         // ==================== CONTRIBUTION START ====================
         if ($action === 'start') {
-            if (!$currentUser) {
-                echo json_encode(['status' => 'error', 'message' => 'No current user found']);
-                exit;
-            }
-
             $payload = [
                 'contribution_started' => true,
-                'userID' => (int)$currentUser['userID'],
-                'username' => (string)$currentUser['username'],
+                'userID' => (int)$userID,
+                'username' => (string)$username,
                 'timestamp' => date('Y-m-d H:i:s')
             ];
 
@@ -69,8 +83,8 @@ class SetContributionStatus
         elseif ($action === 'stop') {
             $payload = [
                 'contribution_started' => false,
-                'userID' => $currentUser ? (int)$currentUser['userID'] : null,
-                'username' => $currentUser ? (string)$currentUser['username'] : null,
+                'userID' => (int)$userID,
+                'username' => (string)$username,
                 'timestamp' => date('Y-m-d H:i:s')
             ];
 
