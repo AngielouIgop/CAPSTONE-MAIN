@@ -38,6 +38,11 @@ echo "<title>B.A.S.U.R.A. Rewards</title>";
   </div>
 
   <script src="js/toggle.js"></script>
+  
+  <?php if (isset($_SESSION['user'])): ?>
+    <!-- Inactivity Tracker - Auto-logout feature -->
+    <script src="js/inactivityTracker.js"></script>
+  <?php endif; ?>
 
 
 </body>
