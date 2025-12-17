@@ -30,32 +30,32 @@
         <?php endif; ?>
         
         <!-- Personal Information -->
-        <label for="fullname">Full Name *</label>
+        <label for="fullname">Full Name <span class="required-text">(required)</span></label>
         <input type="text" name="fullname" id="fullname" placeholder="Enter your full name" required minlength="2" maxlength="100" value="<?php echo isset($_POST['fullname']) ? htmlspecialchars($_POST['fullname']) : ''; ?>">
         
-        <label for="email">Email *</label>
+        <label for="email">Email <span class="required-text">(required)</span></label>
         <input type="email" name="email" id="email" placeholder="Enter your email address" required maxlength="100" value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>">
         
-        <label for="zone">Zone *</label>
+        <label for="zone">Zone <span class="required-text">(required)</span></label>
         <input type="text" name="zone" id="zone" placeholder="e.g., Zone 1, Zone 2, etc." required minlength="2" maxlength="50" value="<?php echo isset($_POST['zone']) ? htmlspecialchars($_POST['zone']) : ''; ?>">
         
-        <label for="brgyIDNum">Brgy ID *</label>
-        <input type="text" name="brgyIDNum" id="brgyIDNum" placeholder="Enter your barangay ID number (Ex: 2022-28)" required minlength="5" maxlength="20" value="<?php echo isset($_POST['brgyIDNum']) ? htmlspecialchars($_POST['brgyIDNum']) : ''; ?>">
+        <label for="brgyIDNum">Brgy ID <span class="required-text">(required)</span></label>
+        <input type="text" name="brgyIDNum" id="brgyIDNum" placeholder="Enter your barangay ID number (Ex: 2022-28)" required minlength="7" maxlength="7" value="<?php echo isset($_POST['brgyIDNum']) ? htmlspecialchars($_POST['brgyIDNum']) : ''; ?>">
         
-        <label for="contactNumber">Contact Number *</label>
+        <label for="contactNumber">Contact Number <span class="required-text">(required)</span></label>
         <input type="tel" name="contactNumber" id="contactNumber" placeholder="e.g., 09123456789" required pattern="[0-9]{11}" minlength="11" maxlength="11" value="<?php echo isset($_POST['contactNumber']) ? htmlspecialchars($_POST['contactNumber']) : ''; ?>">
         
         <!-- Account Credentials -->
-        <label for="username">Username *</label>
+        <label for="username">Username <span class="required-text">(required)</span></label>
         <input type="text" name="username" id="username" placeholder="Choose a unique username" required minlength="3" maxlength="30" pattern="[a-zA-Z0-9_]+" value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username']) : ''; ?>">
         
-        <label for="password">Password *</label>
+        <label for="password">Password <span class="required-text">(required)</span></label>
         <div class="password-container">
           <input type="password" name="password" id="password" placeholder="Create a strong password" required minlength="8" maxlength="50">
           <button type="button" class="password-toggle" onclick="togglePassword()" id="passwordToggle">Show</button>
         </div>
         
-        <label for="confirm">Confirm Password *</label>
+        <label for="confirm">Confirm Password <span class="required-text">(required)</span></label>
         <div class="password-container">
           <input type="password" name="confirm" id="confirm" placeholder="Re-enter your password" required minlength="8" maxlength="50">
           <button type="button" class="password-toggle" onclick="togglePassword1()" id="confirmPasswordToggle">Show</button>

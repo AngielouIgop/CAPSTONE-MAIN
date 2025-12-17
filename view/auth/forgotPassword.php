@@ -10,14 +10,12 @@
 </head>
 <body>
     <div class="login-container">
-        <div class="logo-side">
-            <img src="images/logos/basura logo.png" alt="Logo" class="logo">
-            <h1>B.A.S.U.R.A. Rewards</h1>
-            <p>Password Recovery</p>
+    <div class="logo-side">
+            <img src="images/image-toggles/password-recovery.png" alt="Logo" class="logo">
         </div>
         
         <div class="form-side">
-            <form class="login-card" method="POST" action="?command=forgotPassword">
+            <form id="forgotPasswordForm" class="login-card" method="POST" action="?command=forgotPassword">
                 <h2>Reset Your Password</h2>
                 
                 <?php if (!empty($error)): ?>
@@ -89,21 +87,20 @@
             }
         }
 
+        let recaptchaCompleted = false;
+
         function onRecaptchaSuccess(token) {
             recaptchaCompleted = true;
-            document.getElementById('verifyBtn').disabled = false;
             console.log('reCAPTCHA completed successfully');
         }
 
         function onRecaptchaExpired() {
             recaptchaCompleted = false;
-            document.getElementById('verifyBtn').disabled = true;
             console.log('reCAPTCHA expired');
         }
 
         function onRecaptchaError() {
             recaptchaCompleted = false;
-            document.getElementById('verifyBtn').disabled = true;
             console.log('reCAPTCHA error');
         }
 

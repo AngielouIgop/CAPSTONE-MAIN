@@ -29,15 +29,13 @@
     <div class="profile-header">
       <div class="profile-avatar">
         <?php
-          if (!empty($profileData['profilePicture'])) {
-            if (file_exists($profileData['profilePicture'])) {
-              $avatarSrc = $profileData['profilePicture'];
-            } else {
-              $imgData = base64_encode($profileData['profilePicture']);
-              $avatarSrc = 'data:image/jpeg;base64,' . $imgData;
+          $avatarSrc = 'images/profilePic/default-profile.png';
+          $storedPath = $profileData['profilePicture'] ?? '';
+          if (!empty($storedPath)) {
+            $normalizedPath = str_replace('\\', '/', $storedPath);
+            if (file_exists($normalizedPath)) {
+              $avatarSrc = $normalizedPath;
             }
-          } else {
-            $avatarSrc = 'images/profilePic/default-profile.png';
           }
         ?>
         <img src="<?= htmlspecialchars($avatarSrc) ?>" alt="Profile Picture">
@@ -50,54 +48,7 @@
       </div>
     </div>
 
-    <!-- ==================== REWARDS SECTION ==================== -->
-    <div class="rewards-section">
-      <div class="points-row">
-        <span class="points-label">Current Points:</span>
-        <span class="points-value"><?= number_format($totalCurrentPoints ?? 0, 2) ?></span>
-      </div>
-
-      <div class="rewards-inner">
-        <p class="rewards-title"><strong>Available Rewards:</strong></p>
-        <div class="rewards-list">
-          <?php
-            $hasAvailable = false;
-            if (!empty($rewards)):
-              foreach ($rewards as $reward):
-                if (($reward['availability'] ?? 0) == 1 && in_array($reward['slotNum'], [1,2,3])):
-                  $hasAvailable = true;
-                  if (!empty($reward['rewardImg'])) {
-                    if (file_exists($reward['rewardImg'])) {
-                      $rewardSrc = $reward['rewardImg'];
-                    } else {
-                      $imgData = base64_encode($reward['rewardImg']);
-                      $rewardSrc = 'data:image/jpeg;base64,' . $imgData;
-                    }
-                  } else {
-                    $rewardSrc = 'images/default-reward.png';
-                  }
-          ?>
-            <div class="reward-card">
-              <img src="<?= htmlspecialchars($rewardSrc) ?>" alt="<?= htmlspecialchars($reward['rewardName']) ?>">
-              <div class="reward-name"><?= htmlspecialchars($reward['rewardName']) ?></div>
-              <div class="reward-points"><?= htmlspecialchars($reward['pointsRequired']) ?> points</div>
-              <?php $canClaim = ($totalCurrentPoints ?? 0) >= $reward['pointsRequired']; ?>
-              <button class="claim-btn <?= $canClaim ? 'available' : 'insufficient' ?>"
-                      <?= $canClaim ? "onclick=\"openClaimModal('".htmlspecialchars($rewardSrc)."', '".htmlspecialchars($reward['rewardName'])."', ".$reward['pointsRequired'].", ".$reward['rewardID'].", ".$reward['slotNum'].")\"" : 'disabled' ?>>
-                <?= $canClaim ? 'Claim' : 'Insufficient Points' ?>
-              </button>
-            </div>
-          <?php
-                endif;
-              endforeach;
-            endif;
-            if (!$hasAvailable):
-          ?>
-            <p class="no-rewards">No rewards available at the moment.</p>
-          <?php endif; ?>
-        </div>
-      </div>
-    </div>
+  
 
     <!-- ==================== MAIN DASHBOARD GRID ==================== -->
     <div class="dashboard-grid">
@@ -176,11 +127,11 @@
           // Map waste types to image files
           $wasteImages = [
             'plastic bottles' => 'images/waste-types/plasticBottle.png',
-            'plastic bottle' => 'images/plasticBottle.png',
+            'plastic bottle' => 'images/waste-types/plasticBottle.png',
             'glass bottles' => 'images/waste-types/glassBottle.png',
             'glass bottle' => 'images/waste-types/glassBottle.png',
-            'tin cans' => 'images/waste-types/tinCan.png',
-            'tin can' => 'images/tinCan.png',
+            'can' => 'images/waste-types/tinCan.png',
+            'cans' => 'images/waste-types/tinCan.png',
           ];
           
           $wasteName = strtolower($mostContributedWaste['materialName']);
@@ -197,6 +148,55 @@
       </div>
     </div> 
   </div> 
+
+   <!-- ==================== REWARDS SECTION ==================== -->
+   <div class="rewards-section">
+      <div class="points-row">
+        <span class="points-label">Current Points:</span>
+        <span class="points-value"><?= number_format($totalCurrentPoints ?? 0, 2) ?></span>
+      </div>
+
+      <div class="rewards-inner">
+        <p class="rewards-title"><strong>Available Rewards:</strong></p>
+        <div class="rewards-list">
+          <?php
+            $hasAvailable = false;
+            if (!empty($rewards)):
+              foreach ($rewards as $reward):
+                if (($reward['availability'] ?? 0) == 1 && in_array($reward['slotNum'], [1,2,3])):
+                  $hasAvailable = true;
+                  if (!empty($reward['rewardImg'])) {
+                    if (file_exists($reward['rewardImg'])) {
+                      $rewardSrc = $reward['rewardImg'];
+                    } else {
+                      $imgData = base64_encode($reward['rewardImg']);
+                      $rewardSrc = 'data:image/jpeg;base64,' . $imgData;
+                    }
+                  } else {
+                    $rewardSrc = 'images/default-reward.png';
+                  }
+          ?>
+            <div class="reward-card">
+              <img src="<?= htmlspecialchars($rewardSrc) ?>" alt="<?= htmlspecialchars($reward['rewardName']) ?>">
+              <div class="reward-name"><?= htmlspecialchars($reward['rewardName']) ?></div>
+              <div class="reward-points"><?= htmlspecialchars($reward['pointsRequired']) ?> points</div>
+              <?php $canClaim = ($totalCurrentPoints ?? 0) >= $reward['pointsRequired']; ?>
+              <button class="claim-btn <?= $canClaim ? 'available' : 'insufficient' ?>"
+                      <?= $canClaim ? "onclick=\"openClaimModal('".htmlspecialchars($rewardSrc)."', '".htmlspecialchars($reward['rewardName'])."', ".$reward['pointsRequired'].", ".$reward['rewardID'].", ".$reward['slotNum'].")\"" : 'disabled' ?>>
+                <?= $canClaim ? 'Claim' : 'Insufficient Points' ?>
+              </button>
+            </div>
+          <?php
+                endif;
+              endforeach;
+            endif;
+            if (!$hasAvailable):
+          ?>
+            <p class="no-rewards">No rewards available at the moment.</p>
+          <?php endif; ?>
+        </div>
+      </div>
+    </div>
 
   <!-- ==================== CLAIM CONFIRMATION MODAL ==================== -->
   <div id="claimModal" class="modal">

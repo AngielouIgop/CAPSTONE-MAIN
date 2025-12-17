@@ -30,18 +30,16 @@
     <div class="profile-form-top">
       <div class="profile-img-box">
         <?php
-        if (!empty($users['profilePicture'])) {
-          if (file_exists($users['profilePicture'])) {
-            $src = $users['profilePicture'];
-          } else {
-            $imgData = base64_encode($users['profilePicture']);
-            $src = 'data:image/jpeg;base64,' . $imgData;
+        $src = 'images/profilePic/default-profile.png';
+        $storedPath = $users['profilePicture'] ?? '';
+        if (!empty($storedPath)) {
+          $normalizedPath = str_replace('\\', '/', $storedPath);
+          if (file_exists($normalizedPath)) {
+            $src = $normalizedPath;
           }
-        } else {
-              $src = 'images/profilePic/default-profile.png';
         }
         ?>
-        <img src="<?php echo $src; ?>" alt="Profile Picture" class="profile-img" id="previewImage">
+        <img src="<?= htmlspecialchars($src); ?>" alt="Profile Picture" class="profile-img" id="previewImage">
       </div>
       <div class="profile-img-actions">
         <label class="change-picture-btn">

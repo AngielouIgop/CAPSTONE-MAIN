@@ -57,7 +57,7 @@ window.addEventListener('resize', setResponsiveImages);
                         class="cap-initial">A</span>wareness (BASURA) Rewards 
                 </span>
                 <span class="description-text">is a smart waste management system inspired by the bottles in exchange
-                for print credits program of the SK Baluyan Council. It encourages proper recycling by rewarding users
+                for print credits program of a sangguniang kabataan council. It encourages proper recycling by rewarding users
                 with points every time they contribute recyclable materials like plastic bottles, glass bottles, or
                 metal cans. Once an item is accepted, the system automatically sorts it into the right bin and records
                 the contribution. Users can later exchange their collected points for essential goods such as canned

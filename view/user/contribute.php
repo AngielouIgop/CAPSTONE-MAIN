@@ -27,11 +27,11 @@
   </div>
   
   <!-- ==================== THANK YOU MODAL ==================== -->
-  <div id="thankYouModal" class="modal-overlay" style="display:none;">
+  <div id="thankYouModal" class="modal-overlay thankyou-modal" style="display:none;">
     <div class="modal-content">
       <div class="modal-header">
         <img src="images/logos/basura logo.png" alt="Basura Logo" class="modal-logo" />
-        <span class="modal-title">Thank You!</span>
+        <span class="modal-title">B.A.S.U.R.A. Rewards</span>
       </div>
       <div class="modal-body" style="text-align:center;">
         <p class="modal-instruction">Thank you for Contributing</p>

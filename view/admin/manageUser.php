@@ -28,6 +28,7 @@
                     <th></th>
                     <th>Name</th>
                     <th>Phone</th>
+                    <th>Brgy ID</th>
                     <th>Zone</th>
                     <th>Total Accumulated Points</th>
                     <th>Actions</th>
@@ -39,6 +40,7 @@
                         <td><span class="profile-icon">👤</span></td>
                         <td><?= htmlspecialchars($user['fullName']) ?></td>
                         <td><?= htmlspecialchars($user['contactNumber']) ?></td>
+                        <td><?= htmlspecialchars($user['brgyIDNum']) ?></td>
                         <td><?= htmlspecialchars($user['zone']) ?></td>
                         <td><?= htmlspecialchars($user['totalCurrentPoints']) ?> pts</td>
                         <td>
@@ -47,6 +49,7 @@
                                 data-email="<?= htmlspecialchars($user['email']); ?>"
                                 data-contactnumber="<?= htmlspecialchars($user['contactNumber']); ?>"
                                 data-zone="<?= htmlspecialchars($user['zone']); ?>"
+                                data-brgyidnum="<?= htmlspecialchars($user['brgyIDNum']); ?>"
                                 data-username="<?= htmlspecialchars($user['username']); ?>">Edit</a>
                             <a href="index.php?command=deleteUser&userID=<?= $user['userID']; ?>" class="action-btn delete"
                                 onclick="return confirm('Are you sure you want to delete <?= htmlspecialchars($user['username'] ?? $user['contactNumber'] ?? 'this user'); ?>?')">Delete</a>
@@ -120,6 +123,9 @@
                 <label for="edit-fullname">Fullname</label>
                 <input type="text" id="edit-fullname" name="fullname" required>
 
+                <label for="edit-brgyidnum">Brgy ID</label>
+                <input type="text" id="edit-brgyidnum" name="brgyidnum" required>
+
                 <label for="edit-email">Email</label>
                 <input type="email" id="edit-email" name="email" required>
 
@@ -169,7 +175,7 @@
                 <input type="text" id="add-position" name="position" placeholder="e.g., Barangay Captain, SK Kagawad 1, Barangay Kagawad 1" required>
 
                 <label for="add-contactNumber">Contact Number</label>
-                <input type="text" id="add-contactNumber" name="contactNumber" placeholder="e.g., 09123456789" required>
+                <input type="text" id="add-contactNumber" name="contactNumber" placeholder="e.g., 09123456789" required pattern = "[0-9]{11}" minlength="11" maxlength="11">
 
                 <label for="add-username">Username</label>
                 <input type="text" id="add-username" name="username" placeholder="Choose a unique username" required>
@@ -193,18 +199,4 @@
     </div>
 
     <script src="js/manageUser.js"></script>
-    
-    <!-- ==================== PASSWORD TOGGLE FUNCTION ==================== -->
-    <script>
-        function togglePassword(inputId, toggleBtn) {
-            const input = document.getElementById(inputId);
-            if (input.type === "password") {
-                input.type = "text";
-                toggleBtn.textContent = "Hide";
-            } else {
-                input.type = "password";
-                toggleBtn.textContent = "Show";
-            }
-        }
-    </script>
 </html>

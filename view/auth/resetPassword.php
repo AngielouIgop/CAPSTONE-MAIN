@@ -9,9 +9,7 @@
 <body>
     <div class="login-container">
         <div class="logo-side">
-            <img src="images/logos/basura logo.png" alt="Logo" class="logo">
-            <h1>B.A.S.U.R.A. Rewards</h1>
-            <p>Reset Your Password</p>
+            <img src="images/image-toggles/password-recovery.png" alt="Logo" class="logo">
         </div>
         
         <div class="form-side">

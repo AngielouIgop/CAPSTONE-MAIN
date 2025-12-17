@@ -148,9 +148,9 @@ document.addEventListener('DOMContentLoaded', function() {
         labels: ['Plastic Bottles', 'Tin Cans', 'Glass Bottles'],
         datasets: [{
           data: [<?= $totalPlastic ?>, <?= $totalCans ?>, <?= $totalGlassBottles ?>],
-                backgroundColor: ['#4cafef', '#ffb74d', '#81c784'], // Blue for plastic bottles, Orange for cans, Green for glass bottles
-                borderColor: ['#1e88e5', '#f57c00', '#388e3c'], // Blue for plastic bottles, Orange for cans, Green for glass bottles
-                borderWidth: 1
+          backgroundColor: ['#4cafef', '#ffb74d', '#81c784'], // Blue, Orange, Green
+          borderColor: ['#1e88e5', '#f57c00', '#388e3c'], // Blue, Orange, Green
+          borderWidth: 1
         }]
       },
       options: {
@@ -161,7 +161,28 @@ document.addEventListener('DOMContentLoaded', function() {
             position: 'bottom',
             labels: {
               padding: 20,
-              usePointStyle: true
+              usePointStyle: true,
+              color: '#333',
+              font: {
+                size: 15
+              },
+              generateLabels: function(chart) {
+                const data = chart.data;
+                if (data.labels.length && data.datasets.length) {
+                  const dataset = data.datasets[0];
+                  return data.labels.map((label, i) => {
+                    return {
+                      text: label,
+                      fillStyle: dataset.backgroundColor[i],
+                      strokeStyle: dataset.borderColor[i],
+                      lineWidth: dataset.borderWidth || 1,
+                      hidden: false,
+                      index: i
+                    };
+                  });
+                }
+                return [];
+              }
             }
           }
         }
@@ -177,8 +198,8 @@ document.addEventListener('DOMContentLoaded', function() {
         datasets: [{
           label: 'Contributions',
           data: [<?= $getContZone1 ?>, <?= $getContZone2 ?>, <?= $getContZone3 ?>, <?= $getContZone4 ?>, <?= $getContZone5 ?>, <?= $getContZone6 ?>, <?= $getContZone7 ?>],
-          backgroundColor: 'rgba(96, 0, 251, 0.8)',
-          borderColor: 'rgb(255, 255, 255)',
+          backgroundColor: 'rgba(63, 0, 251, 0.8)',
+          borderColor: 'rgb(13, 11, 11)',
           borderWidth: 1
         }]
       },

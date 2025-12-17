@@ -29,9 +29,16 @@
     <div class="profile-form-top">
       <div class="profile-img-box">
         <?php
-        $src = !empty($admin['profilePicture']) && file_exists($admin['profilePicture']) ? $admin['profilePicture'] : 'images/profilePic/default-profile.png';
+        $src = 'images/profilePic/default-profile.png';
+        $storedPath = $admin['profilePicture'] ?? '';
+        if (!empty($storedPath)) {
+          $normalizedPath = str_replace('\\', '/', $storedPath);
+          if (file_exists($normalizedPath)) {
+            $src = $normalizedPath;
+          }
+        }
         ?>
-        <img src="<?php echo $src; ?>" alt="Profile Picture" class="profile-img" id="previewImage">
+        <img src="<?= htmlspecialchars($src); ?>" alt="Profile Picture" class="profile-img" id="previewImage">
       </div>
       <div class="profile-img-actions">
         <label class="change-picture-btn">
